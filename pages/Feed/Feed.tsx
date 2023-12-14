@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import { colors, GeoCitiesLogo } from '../../components';
+import { colors, GeoCitiesButton, GeoCitiesLogo } from '../../components';
 const geocitiesLogoIcon = require('../../assets/static-images/icon.svg');
 const simeonIcon = require('../../assets/static-images/simeon_profile.jpeg');
 
@@ -28,7 +28,7 @@ function Feed_DisplayLayer({
 }: FeedDisplayLayerProps) {
     return (
         <View style={styles.container}>
-            <GeoCitiesLogo color={colors.salmonPink} height={50} onPress={handleNavigation} width={50} />
+            <GeoCitiesButton buttonColor={colors.salmonPink} mode='outlined' onPress={handleNavigation} text="Profile" />
         </View>
     );
 }
