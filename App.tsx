@@ -2,11 +2,12 @@ import { useCallback, useRef } from 'react';
 import { Dimensions, Image, ScrollView, StyleSheet, Text, View} from 'react-native';
 import { NavigationContainer, NavigationState } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import { useFonts, Montserrat_400Regular } from '@expo-google-fonts/montserrat';
 import { MD3DarkTheme as DefaultTheme, PaperProvider } from 'react-native-paper';
 import * as SplashScreen from 'expo-splash-screen';
 import { Feed, Profile } from './pages';
-import { GeoCitiesAppBar, colors } from './components'
+import { GeoCitiesAppBar, GeoCitiesNavigationDrawer, colors } from './components'
 
 // App Display Layer Props 
 type AppDisplayLayerProps = {
@@ -15,6 +16,9 @@ type AppDisplayLayerProps = {
 
 // Stack navigation
 const Stack = createNativeStackNavigator();
+
+// Drawer navigation 
+const Drawer = createDrawerNavigator();
 
 // Style theming 
 const theme = {
@@ -55,16 +59,16 @@ function App_DisplayLayer({
       <NavigationContainer ref={navigationRef as any} onStateChange={onNavigationStateChange}>
         <View style={styles.container}>
           <GeoCitiesAppBar navigationRef={navigationRef} />
-          <Stack.Navigator initialRouteName="Profile" screenOptions={{ gestureEnabled: false, headerShown: false }}>
-            <Stack.Screen 
+          <Drawer.Navigator drawerContent={() => <GeoCitiesNavigationDrawer />} initialRouteName="Profile" screenOptions={{ headerShown: false }}>
+            <Drawer.Screen 
               component={Feed}
               name="Feed"
             />
-            <Stack.Screen 
+            <Drawer.Screen 
               component={Profile}
               name="Profile"
             />
-          </Stack.Navigator>
+          </Drawer.Navigator>
         </View>
       </NavigationContainer>
     </PaperProvider>

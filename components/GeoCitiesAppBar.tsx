@@ -33,8 +33,8 @@ export default function GeoCitiesAppBar({
 
     return (
         <Appbar.Header style={styles.appBarStyle} elevated>
-            <Appbar.Content title={<GeoCitiesLogo height={40} width={40} color={colors.white} />} />
             <Appbar.Action icon="menu" onPress={dummy} />
+            <Appbar.Content title={<GeoCitiesLogo height={40} width={40} color={colors.white} />} />
         </Appbar.Header>
     );
 }
