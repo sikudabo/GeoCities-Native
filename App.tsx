@@ -6,6 +6,7 @@ import { useFonts, Montserrat_400Regular } from '@expo-google-fonts/montserrat';
 import { MD3DarkTheme as DefaultTheme, PaperProvider } from 'react-native-paper';
 import * as SplashScreen from 'expo-splash-screen';
 import { Feed, Profile } from './pages';
+import { colors } from './components';
 
 // App Display Layer Props 
 type AppDisplayLayerProps = {
@@ -20,8 +21,8 @@ const theme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    primary: 'black',
-    secondary: 'green',
+    primary: colors.coolBlue,
+    secondary: colors.salmonPink,
   },
 };
 
