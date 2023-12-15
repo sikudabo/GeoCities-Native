@@ -6,10 +6,12 @@ import { colors } from './colors';
 
 type GeoCitiesAppBarProps = {
     navigationRef: any;
+    openDrawer: () => void;
 };
 
 export default function GeoCitiesAppBar({
     navigationRef,
+    openDrawer,
 }: GeoCitiesAppBarProps) {
     const [routeIndex, setRouteIndex] = useState(typeof navigationRef.current !== 'undefined' && typeof navigationRef.current.getRootState().index !== 'undefined' ? navigationRef.current.getRootState().index : 0);
     const styles = StyleSheet.create({
@@ -31,9 +33,15 @@ export default function GeoCitiesAppBar({
         navigationRef.current.navigate('Feed');
     }
 
+    function openNavigationDrawer() {
+        if (navigationRef.current) {
+            navigationRef.current.navigate('Feed');
+        }
+    }
+
     return (
         <Appbar.Header style={styles.appBarStyle} elevated>
-            <Appbar.Action icon="menu" onPress={dummy} />
+            <Appbar.Action icon="menu" onPress={openDrawer} />
             <Appbar.Content title={<GeoCitiesLogo height={40} width={40} color={colors.white} />} />
         </Appbar.Header>
     );

@@ -1,6 +1,6 @@
 import { useCallback, useRef } from 'react';
 import { Dimensions, Image, ScrollView, StyleSheet, Text, View} from 'react-native';
-import { NavigationContainer, NavigationState } from '@react-navigation/native';
+import { DrawerActions, NavigationContainer, NavigationState } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { useFonts, Montserrat_400Regular } from '@expo-google-fonts/montserrat';
@@ -54,11 +54,15 @@ function App_DisplayLayer({
     console.log('The navigation state is:', state.routeNames);
   }
 
+  const openDrawer = () => {
+    (navigationRef?.current as any)?.dispatch(DrawerActions.openDrawer())
+  }
+
   return (
     <PaperProvider theme={theme}>
       <NavigationContainer ref={navigationRef as any} onStateChange={onNavigationStateChange}>
         <View style={styles.container}>
-          <GeoCitiesAppBar navigationRef={navigationRef} />
+          <GeoCitiesAppBar navigationRef={navigationRef} openDrawer={openDrawer}/>
           <Drawer.Navigator drawerContent={() => <GeoCitiesNavigationDrawer />} initialRouteName="Profile" screenOptions={{ headerShown: false }}>
             <Drawer.Screen 
               component={Feed}
