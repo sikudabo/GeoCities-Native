@@ -1,4 +1,5 @@
 import { colors } from "./colors";
+import GeoCitiesAppBar from "./GeoCitiesAppBar";
 import GeoCitiesBodyText from "./GeoCitiesBodyText";
 import GeoCitiesButton from "./GeoCitiesButton";
 import GeoCitiesCheckbox from "./GeoCitiesCheckbox";
@@ -10,6 +11,7 @@ import GeoCitiesRadioGroup from './GeoCitiesRadioGroup';
 
 export {
     colors,
+    GeoCitiesAppBar,
     GeoCitiesBodyText,
     GeoCitiesButton,
     GeoCitiesCheckbox,

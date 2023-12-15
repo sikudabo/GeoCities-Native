@@ -1,12 +1,12 @@
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { Dimensions, Image, ScrollView, StyleSheet, Text, View} from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, NavigationState } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useFonts, Montserrat_400Regular } from '@expo-google-fonts/montserrat';
 import { MD3DarkTheme as DefaultTheme, PaperProvider } from 'react-native-paper';
 import * as SplashScreen from 'expo-splash-screen';
 import { Feed, Profile } from './pages';
-import { colors } from './components';
+import { GeoCitiesAppBar, colors } from './components'
 
 // App Display Layer Props 
 type AppDisplayLayerProps = {
@@ -34,6 +34,8 @@ function App_DisplayLayer({
   fontsLoaded,
 }: AppDisplayLayerProps) {
 
+  const navigationRef = useRef();
+
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
@@ -44,10 +46,15 @@ function App_DisplayLayer({
     return null;
   }
 
+  const onNavigationStateChange = (state: any) => {
+    console.log('The navigation state is:', state.routeNames);
+  }
+
   return (
     <PaperProvider theme={theme}>
-      <NavigationContainer>
+      <NavigationContainer ref={navigationRef as any} onStateChange={onNavigationStateChange}>
         <View style={styles.container}>
+          <GeoCitiesAppBar navigationRef={navigationRef} />
           <Stack.Navigator initialRouteName="Profile" screenOptions={{ gestureEnabled: false, headerShown: false }}>
             <Stack.Screen 
               component={Feed}
