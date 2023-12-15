@@ -1,4 +1,4 @@
-import Svg, { Circle, G, Path } from 'react-native-svg';
+import Svg, { G, Path } from 'react-native-svg';
 import { colors } from './colors';
 
 type GeoCitiesLogoProps = {

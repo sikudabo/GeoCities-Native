@@ -47,7 +47,7 @@ function App_DisplayLayer({
     <PaperProvider theme={theme}>
       <NavigationContainer>
         <View style={styles.container}>
-          <Stack.Navigator initialRouteName="Profile" screenOptions={{ headerShown: false }}>
+          <Stack.Navigator initialRouteName="Profile" screenOptions={{ gestureEnabled: false, headerShown: false }}>
             <Stack.Screen 
               component={Feed}
               name="Feed"

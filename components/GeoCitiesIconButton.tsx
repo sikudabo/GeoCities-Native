@@ -27,5 +27,5 @@ export default function GeoCitiesIconButton({
             size={buttonSize}
             style={styles.iconButtonStyles}
         />
-    )
+    );
 }
