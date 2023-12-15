@@ -10,6 +10,7 @@ type GeoCitiesLongTextAlertProps = {
     isOpen: boolean;
 }
 
+const height = Dimensions.get('screen').height;
 const width = Dimensions.get('screen').width;
 
 export default function GeoCitiesLongTextAlert({
@@ -22,8 +23,8 @@ export default function GeoCitiesLongTextAlert({
     return (
         <View style={styles.container}>
             <Portal>
-                <Dialog dismissable={false} style={{ backgroundColor: colors.white, borderRadius: 5 }} visible={isOpen}>
-                    <Dialog.Title>
+                <Dialog dismissable={false} style={styles.dialog} visible={isOpen}>
+                    <Dialog.Title style={{ textAlign: 'center' }}>
                         <GeoCitiesBodyText color={colors.error} fontSize={30} fontWeight='900' text="Error" textAlign='center'/>
                     </Dialog.Title>
                     <View style={styles.iconContainer}>
@@ -32,7 +33,7 @@ export default function GeoCitiesLongTextAlert({
                     <Dialog.ScrollArea style={styles.scrollAreaContainer}>
                         <ScrollView>
                             <Dialog.Content style={styles.contentContainer}>
-                                <GeoCitiesBodyText fontSize={12} text={longText} textAlign="left" />
+                                <GeoCitiesBodyText fontSize={12} text="You must enter a username!" textAlign="center" />
                             </Dialog.Content>
                         </ScrollView>
                     </Dialog.ScrollArea>
@@ -47,6 +48,9 @@ export default function GeoCitiesLongTextAlert({
 
 const styles = StyleSheet.create({
     container: {
+        alignItems: 'flex-start',
+        display: 'flex',
+        justifyContent: 'flex-start',
         paddingLeft: 0,
         paddingRight: 0,
         paddingTop: 200,
@@ -56,6 +60,10 @@ const styles = StyleSheet.create({
         paddingLeft: 0,
         paddingRight: 0,
         paddingTop: 30,
+    },
+    dialog: {
+        backgroundColor: colors.white,
+        borderRadius: 5,
     },
     iconContainer: {
         paddingBottom: 10,

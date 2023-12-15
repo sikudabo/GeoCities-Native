@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     height: 400,
-    paddingLeft: 10,
+    paddingLeft: 0,
     paddingRight: 10,
     paddingTop: 20,
   },
