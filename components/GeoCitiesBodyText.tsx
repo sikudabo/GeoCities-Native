@@ -4,7 +4,7 @@ import { colors } from './colors';
 type GeoCitiesBodyTextProps = {
     color?: string;
     fontSize?: number;
-    fontWeight?: "normal" | "bold" | "100" | "200" | "300" | "400" | "500" | "600" | "700" | "800" | "900" | undefined;
+    fontWeight?: "normal" | "bold" | "100" | "200" | "300" | "400" | "500" | "600" | "700" | "800" | "900" | number | undefined;
     text: string;
     textAlign?: "left" | "auto" | "right" | "center" | "justify" | undefined;
 };
@@ -21,7 +21,7 @@ export default function GeoCitiesBodyText({
             color,
             fontFamily: 'Montserrat_400Regular',
             fontSize,
-            fontWeight,
+            fontWeight: fontWeight.toString() as any,
             textAlign,
         },
     });
