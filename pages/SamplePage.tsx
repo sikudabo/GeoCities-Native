@@ -2,7 +2,7 @@ import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native';
 import { colors, GeoCitiesBodyText } from '../components';
 const SimeonProfile = require('../assets/static-images/simeon_profile.jpeg')
 
-export default function SamplePage() {
+export default function SamplePage({ navigation, route }: any) {
     return (
         <View style={styles.container}>
             <ImageBackground source={SimeonProfile} style={styles.img}>

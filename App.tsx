@@ -63,10 +63,13 @@ function App_DisplayLayer({
       <NavigationContainer ref={navigationRef as any} onStateChange={onNavigationStateChange}>
         <View style={styles.container}>
           <GeoCitiesAppBar navigationRef={navigationRef} openDrawer={openDrawer}/>
-          <Drawer.Navigator drawerContent={() => <GeoCitiesNavigationDrawer />} initialRouteName="Sample" screenOptions={{ headerShown: false }}>
+          <Drawer.Navigator drawerContent={() => <GeoCitiesNavigationDrawer />} initialRouteName="Profile" screenOptions={{ headerShown: false }}>
             <Drawer.Screen 
               component={SamplePage}
               name="Sample"
+              options={{
+                title: "Hello world",
+              }}
             />
             <Drawer.Screen 
               component={Feed}
