@@ -10,6 +10,7 @@ import GeoCitiesLogo from "./GeoCitiesLogo";
 import GeoCitiesNavigationDrawer from "./GeoCitiesNavigationDrawer";
 import GeoCitiesLongTextAlert from "./GeoCitiesLongTextAlert";
 import GeoCitiesRadioGroup from './GeoCitiesRadioGroup';
+import LoadingIndicator from "./LoadingIndicator";
 
 export {
     colors,
@@ -24,4 +25,5 @@ export {
     GeoCitiesLongTextAlert,
     GeoCitiesNavigationDrawer,
     GeoCitiesRadioGroup,
+    LoadingIndicator,
 };

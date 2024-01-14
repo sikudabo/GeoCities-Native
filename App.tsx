@@ -6,12 +6,14 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { useFonts, Montserrat_400Regular } from '@expo-google-fonts/montserrat';
 import { MD3DarkTheme as DefaultTheme, PaperProvider } from 'react-native-paper';
 import * as SplashScreen from 'expo-splash-screen';
+import { useShowLoader } from './hooks';
 import { Feed, Profile, SamplePage, SignUpPage } from './pages';
-import { GeoCitiesAppBar, GeoCitiesNavigationDrawer, colors } from './components'
+import { GeoCitiesAppBar, GeoCitiesNavigationDrawer, LoadingIndicator, colors } from './components'
 
 // App Display Layer Props 
 type AppDisplayLayerProps = {
   fontsLoaded: boolean;
+  isLoading: boolean;
 };
 
 // Stack navigation
@@ -36,6 +38,7 @@ export default function App() {
 
 function App_DisplayLayer({
   fontsLoaded,
+  isLoading,
 }: AppDisplayLayerProps) {
 
   const navigationRef = useRef();
@@ -58,10 +61,18 @@ function App_DisplayLayer({
     (navigationRef?.current as any)?.dispatch(DrawerActions.openDrawer())
   }
 
+  if (isLoading) {
+    return (
+      <PaperProvider theme={theme}>
+        <LoadingIndicator />
+      </PaperProvider>
+    );
+  }
+
   return (
     <PaperProvider theme={theme}>
       <NavigationContainer ref={navigationRef as any} onStateChange={onNavigationStateChange}>
-        <View style={styles.container}>
+        <View onLayout={onLayoutRootView} style={styles.container}>
           <GeoCitiesAppBar navigationRef={navigationRef} openDrawer={openDrawer}/>
           <Drawer.Navigator drawerContent={({ navigation }) => <GeoCitiesNavigationDrawer navigation={navigation} />} screenOptions={{ headerShown: false }}>
             <Drawer.Screen 
@@ -94,12 +105,14 @@ function App_DisplayLayer({
 }
 
 function useDataLayer() {
+  const { isLoading } = useShowLoader();
   const [fontsLoaded] = useFonts({
     Montserrat_400Regular,
   });
 
   return {
     fontsLoaded,
+    isLoading,
   };
 }
 
