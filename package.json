@@ -26,6 +26,7 @@
     "expo": "~49.0.15",
     "expo-app-loading": "^2.1.1",
     "expo-av": "^13.6.0",
+    "expo-facebook": "^12.2.0",
     "expo-file-system": "^15.6.0",
     "expo-image-picker": "^14.5.0",
     "expo-splash-screen": "^0.20.5",
