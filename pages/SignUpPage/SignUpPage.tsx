@@ -72,7 +72,7 @@ export default function SignUpPage() {
                             <TextInput mode='outlined' label="Password" left={<TextInput.Icon icon="lock" />} outlineColor={colors.geoCitiesGreen} placeholder="Password" activeOutlineColor={colors.white} secureTextEntry />
                         </KeyboardAvoidingView>
                     </View>
-                    <KeyboardAvoidingView behavior="padding" style={styles.keyboardContainer}>
+                    <KeyboardAvoidingView behavior="position" style={styles.keyboardContainer}>
                         <View style={styles.inputHolder}>
                             <TextInput mode='outlined' label="City" left={<TextInput.Icon icon="city" />} outlineColor={colors.geoCitiesGreen} placeholder="City" activeOutlineColor={colors.white} />
                         </View>
