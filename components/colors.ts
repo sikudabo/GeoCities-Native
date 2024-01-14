@@ -25,6 +25,7 @@ export enum colors {
     mint = '#B5E5CF',
     mistyBlue = '#81ABBC',
     navyBlue = '#313E61',
+    nightGray = '#141d26',
     primary = '#0080C6',
     salmonPink = '#FF91A4',
     success = '#1b5e20',
