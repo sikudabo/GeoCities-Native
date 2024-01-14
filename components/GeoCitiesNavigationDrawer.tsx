@@ -8,7 +8,7 @@ import GeoCitiesBodyText from './GeoCitiesBodyText';
 import { colors } from './colors';
 const SimeonAvatar = require('../assets/static-images/simeon_profile.jpeg');
 
-export default function GeoCitiesNavigationDrawer() {
+export default function GeoCitiesNavigationDrawer({ navigation }: { navigation: any }) {
     const styles = StyleSheet.create({
         container: {
             backgroundColor: colors.white,
@@ -60,7 +60,7 @@ export default function GeoCitiesNavigationDrawer() {
                             />
                         )}
                         label="Profile"
-                        onPress={() => console.log('Profile Clicked')}
+                        onPress={() => navigation.navigate('Profile')}
                     />
                     <DrawerItem 
                         icon={() => (
@@ -70,7 +70,7 @@ export default function GeoCitiesNavigationDrawer() {
                             />
                         )}
                         label="Feed"
-                        onPress={() => console.log('Feed')}
+                        onPress={() => navigation.navigate('Feed')}
                     />
                     <DrawerItem 
                         icon={() => (

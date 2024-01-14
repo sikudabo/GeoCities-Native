@@ -6,7 +6,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { useFonts, Montserrat_400Regular } from '@expo-google-fonts/montserrat';
 import { MD3DarkTheme as DefaultTheme, PaperProvider } from 'react-native-paper';
 import * as SplashScreen from 'expo-splash-screen';
-import { Feed, Profile, SamplePage } from './pages';
+import { Feed, Profile, SamplePage, SignUpPage } from './pages';
 import { GeoCitiesAppBar, GeoCitiesNavigationDrawer, colors } from './components'
 
 // App Display Layer Props 
@@ -63,7 +63,14 @@ function App_DisplayLayer({
       <NavigationContainer ref={navigationRef as any} onStateChange={onNavigationStateChange}>
         <View style={styles.container}>
           <GeoCitiesAppBar navigationRef={navigationRef} openDrawer={openDrawer}/>
-          <Drawer.Navigator drawerContent={() => <GeoCitiesNavigationDrawer />} initialRouteName="Profile" screenOptions={{ headerShown: false }}>
+          <Drawer.Navigator drawerContent={({ navigation }) => <GeoCitiesNavigationDrawer navigation={navigation} />} screenOptions={{ headerShown: false }}>
+            <Drawer.Screen 
+              component={SignUpPage}
+              name="SignUp"
+              options={{
+                title: "Sign Up",
+              }}
+            />
             <Drawer.Screen 
               component={SamplePage}
               name="Sample"
