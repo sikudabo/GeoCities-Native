@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, ScrollView, StyleSheet, View } from 'react-native';
 import { HelperText, Surface, TextInput } from 'react-native-paper';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { GeoCitiesBodyText, GeoCitiesButton, GeoCitiesLogo, colors } from '../../components';
@@ -22,11 +22,20 @@ export default function SignUpPage() {
             <Surface elevation={4} style={styles.formContainer}>
                 <ScrollView>
                     <View style={styles.inputHolder}>
-                        <TextInput mode='outlined' label="Email" left={<TextInput.Icon icon="mail" />} outlineColor={colors.geoCitiesGreen} placeholder="Email" activeOutlineColor={colors.white} />
+                        <KeyboardAvoidingView behavior="padding" style={styles.keyboardContainer}>
+                            <TextInput mode='outlined' label="Email" left={<TextInput.Icon icon="mail" />} outlineColor={colors.geoCitiesGreen} placeholder="Email" activeOutlineColor={colors.white} />
+                        </KeyboardAvoidingView>
                     </View>
                     <View style={styles.inputHolder}>
-                        <TextInput mode='outlined' label="Password" left={<TextInput.Icon icon="lock" />} outlineColor={colors.geoCitiesGreen} placeholder="Password" activeOutlineColor={colors.white} secureTextEntry />
+                        <KeyboardAvoidingView behavior="padding" style={styles.keyboardContainer}>
+                            <TextInput mode='outlined' label="Password" left={<TextInput.Icon icon="lock" />} outlineColor={colors.geoCitiesGreen} placeholder="Password" activeOutlineColor={colors.white} secureTextEntry />
+                        </KeyboardAvoidingView>
                     </View>
+                    <KeyboardAvoidingView behavior="padding" style={styles.keyboardContainer}>
+                        <View style={styles.inputHolder}>
+                            <TextInput mode='outlined' label="City" left={<TextInput.Icon icon="city" />} outlineColor={colors.geoCitiesGreen} placeholder="City" activeOutlineColor={colors.white} />
+                        </View>
+                    </KeyboardAvoidingView>
                     <View style={styles.inputHolder}>
                         {!pickerIsOpen && (
                             <>
@@ -76,6 +85,9 @@ const styles = StyleSheet.create({
     },
     inputHolder: {
         marginTop: 10,
+    },
+    keyboardContainer: {
+        flex: 1,
     },
     loginContainer: {
         alignItems: 'center',
