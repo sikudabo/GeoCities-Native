@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { KeyboardAvoidingView, ScrollView, StyleSheet, View } from 'react-native';
 import Dropdown from 'react-native-paper-dropdown';
+import * as ImagePicker from 'expo-image-picker';
 import { HelperText, Surface, TextInput } from 'react-native-paper';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { states } from '../../utils/constants';
@@ -22,10 +23,35 @@ export default function SignUpPage() {
     const [birthday, setBirthday] = useState(new Date(2023, 2, 21));
     const [showDropdown, setShowDropdown] = useState(false);
     const [locationState, setLocationState] = useState(states[0]);
+    const [avatar, setAvatar] = useState<any>();
+    const [uri, setUri] = useState<Blob | null>(null);
+    const [fileName, setFileName] = useState('');
 
     function handleBirthdayChange(event: DateTimePickerEvent, date: any) {
         const newDate = new Date(date);
         setBirthday(newDate);
+    }
+
+    async function takePicture() {
+        await ImagePicker.requestCameraPermissionsAsync();
+        const result = await ImagePicker.launchCameraAsync({
+            allowsEditing: false,
+            aspect: [16, 9],
+            cameraType: ImagePicker.CameraType.front,
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        });
+
+        if (result.canceled) {
+            return;
+        }
+
+        const localUri = result.assets[0].uri;
+        
+        const filename = localUri.split('/').pop();
+
+        setAvatar(result as any);
+        setUri(localUri as any);
+        setFileName(filename as string);
     }
 
     return (
@@ -98,6 +124,18 @@ export default function SignUpPage() {
                                     />
                                 </View>
                             )}
+                        <View style={styles.inputHolder}>
+                            <GeoCitiesButton
+                                buttonColor={colors.geoCitiesGreen}
+                                icon="camera"
+                                onPress={takePicture}
+                                text="Avatar"
+                                textColor={colors.white}
+                            />
+                            <HelperText type="info">
+                                Required* 
+                            </HelperText>
+                        </View>
                     </View>
                 </ScrollView>
             </Surface>
