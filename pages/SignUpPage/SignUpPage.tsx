@@ -1,12 +1,27 @@
 import { useState } from 'react';
 import { KeyboardAvoidingView, ScrollView, StyleSheet, View } from 'react-native';
+import Dropdown from 'react-native-paper-dropdown';
 import { HelperText, Surface, TextInput } from 'react-native-paper';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import { states } from '../../utils/constants';
 import { GeoCitiesBodyText, GeoCitiesButton, GeoCitiesLogo, colors } from '../../components';
+
+type StateObjectType = {
+    label: string;
+    value: string;
+}
+
+let statesList: StateObjectType[] = []
+
+states.forEach(state => {
+    statesList.push({ label: state, value: state });
+});
 
 export default function SignUpPage() {
     const [pickerIsOpen, setPickerIsOpen] = useState(false);
     const [birthday, setBirthday] = useState(new Date(2023, 2, 21));
+    const [showDropdown, setShowDropdown] = useState(false);
+    const [locationState, setLocationState] = useState(states[0]);
 
     function handleBirthdayChange(event: DateTimePickerEvent, date: any) {
         const newDate = new Date(date);
@@ -37,6 +52,24 @@ export default function SignUpPage() {
                         </View>
                     </KeyboardAvoidingView>
                     <View style={styles.inputHolder}>
+                        <Dropdown
+                            dropDownItemTextStyle={{
+                                color: colors.white,
+                            }}
+                            dropDownItemSelectedTextStyle={{
+                                color: colors.geoCitiesGreen,
+                            }}
+                            label="State"
+                            mode="outlined"
+                            visible={showDropdown}
+                            showDropDown={() => setShowDropdown(true)}
+                            onDismiss={() => setShowDropdown(false)}
+                            value={locationState}
+                            setValue={setLocationState}
+                            list={statesList}
+                        />
+                    </View>
+                    <View style={styles.inputHolder}>
                         {!pickerIsOpen && (
                             <>
                                 <GeoCitiesButton buttonColor={colors.geoCitiesBlue} onPress={() => setPickerIsOpen(true)} text="Birthday" textColor={colors.white} />
@@ -49,7 +82,7 @@ export default function SignUpPage() {
                                 <View>
                                     <DateTimePicker 
                                         accentColor={colors.white}
-                                        display="inline"
+                                        display="spinner"
                                         maximumDate={new Date()}
                                         mode="date"
                                         onChange={handleBirthdayChange}
