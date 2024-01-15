@@ -8,7 +8,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { HelperText, Surface, TextInput } from 'react-native-paper';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { states } from '../../utils/constants';
-import { useShowDialog } from '../../hooks';
+import { useShowDialog, useShowLoader } from '../../hooks';
 import { useUser } from '../../hooks/storage-hooks';
 import { putBinaryData } from '../../utils/requests';
 import { checkValidAge, checkValidEmail, formatUserBirthday } from '../../utils/helpers';
@@ -40,6 +40,7 @@ export default function SignUpPage() {
     const [name, setFileName] = useState('');
     const redirectUri = AuthSession.makeRedirectUri();
     const { setUser } = useUser();
+    const { setIsLoading } = useShowLoader();
     const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError } = useShowDialog();
     const [__, _, fbPromptAsync] = Facebook.useAuthRequest({
         clientId: process.env.EXPO_PUBLIC_API_FB_CODE,
@@ -125,7 +126,9 @@ export default function SignUpPage() {
     }
 
     async function handleSubmit() {
+        setIsLoading(true);
         if (!checkValidEmail(email)) {
+            setIsLoading(false);
             setIsError(true);
             setDialogTitle('Whoops!');
             setDialogMessage('You must enter a valid email address.');
@@ -134,6 +137,7 @@ export default function SignUpPage() {
         }
 
         if (password.length < 6) {
+            setIsLoading(false);
             setIsError(true);
             setDialogTitle('Whoops!');
             setDialogMessage('You must enter a password that is at least 6 characters long.');
@@ -142,6 +146,7 @@ export default function SignUpPage() {
         }
 
         if (!city) {
+            setIsLoading(false);
             setIsError(true);
             setDialogTitle('Whoops!');
             setDialogMessage('You must enter the city you currently live in.');
@@ -150,6 +155,7 @@ export default function SignUpPage() {
         }
 
         if (!checkValidAge(formatUserBirthday(birthday))) {
+            setIsLoading(false);
             setIsError(true);
             setDialogTitle('Whoops!');
             setDialogMessage('You must at least be 13 years old to sign up for GeoCities.');
@@ -158,6 +164,7 @@ export default function SignUpPage() {
         }
 
         if (!avatar || !name || !uri) {
+            setIsLoading(false);
             setIsError(true);
             setDialogTitle('Whoops!');
             setDialogMessage('You must enter a picture of yourself. Not adding a selfie will lead to your account being deleted. This helps reduce trolling and makes sure everyone on GeoCities is a real human.');
@@ -166,6 +173,7 @@ export default function SignUpPage() {
         }
 
         if (!firstName || !lastName) {
+            setIsLoading(false);
             setIsError(true);
             setDialogTitle('Whoops!');
             setDialogMessage('You need to login with Facebook so that we can retrieve your first and last name to make sure you are a real human.');
@@ -189,6 +197,7 @@ export default function SignUpPage() {
         }).then(res => {
             const { isError, user } = res;
             if (!isError) {
+                setIsLoading(false);
                 const newUser = user;
                 newUser.isLoggedIn = true;
                 setUser(newUser);
