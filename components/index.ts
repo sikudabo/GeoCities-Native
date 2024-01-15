@@ -4,6 +4,7 @@ import GeoCitiesAvatar from "./GeoCitiesAvatar";
 import GeoCitiesBodyText from "./GeoCitiesBodyText";
 import GeoCitiesButton from "./GeoCitiesButton";
 import GeoCitiesCheckbox from "./GeoCitiesCheckbox";
+import GeoCitiesDialog from "./GeoCitiesDialog";
 import GeoCitiesFAB from "./GeoCitiesFAB";
 import GeoCitiesIconButton from "./GeoCitiesIconButton";
 import GeoCitiesLogo from "./GeoCitiesLogo";
@@ -19,6 +20,7 @@ export {
     GeoCitiesBodyText,
     GeoCitiesButton,
     GeoCitiesCheckbox,
+    GeoCitiesDialog,
     GeoCitiesFAB,
     GeoCitiesIconButton,
     GeoCitiesLogo,
