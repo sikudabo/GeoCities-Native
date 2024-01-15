@@ -96,17 +96,17 @@ export default function SignUpPage() {
                 <ScrollView>
                     <View style={styles.inputHolder}>
                         <KeyboardAvoidingView behavior="padding" style={styles.keyboardContainer}>
-                            <TextInput mode='outlined' label="Email" left={<TextInput.Icon icon="mail" />} outlineColor={colors.geoCitiesGreen} placeholder="Email" activeOutlineColor={colors.white} />
+                            <TextInput mode='outlined' label="Email" left={<TextInput.Icon icon="mail" />} outlineColor={colors.white} placeholder="Email" activeOutlineColor={colors.white} />
                         </KeyboardAvoidingView>
                     </View>
                     <View style={styles.inputHolder}>
                         <KeyboardAvoidingView behavior="padding" style={styles.keyboardContainer}>
-                            <TextInput mode='outlined' label="Password" left={<TextInput.Icon icon="lock" />} outlineColor={colors.geoCitiesGreen} placeholder="Password" activeOutlineColor={colors.white} secureTextEntry />
+                            <TextInput mode='outlined' label="Password" left={<TextInput.Icon icon="lock" />} outlineColor={colors.white} placeholder="Password" activeOutlineColor={colors.white} secureTextEntry />
                         </KeyboardAvoidingView>
                     </View>
                     <KeyboardAvoidingView behavior="position" style={styles.keyboardContainer}>
                         <View style={styles.inputHolder}>
-                            <TextInput mode='outlined' label="City" left={<TextInput.Icon icon="city" />} outlineColor={colors.geoCitiesGreen} placeholder="City" activeOutlineColor={colors.white} />
+                            <TextInput mode='outlined' label="City" left={<TextInput.Icon icon="city" />} outlineColor={colors.white} placeholder="City" activeOutlineColor={colors.white} />
                         </View>
                     </KeyboardAvoidingView>
                     <View style={styles.inputHolder}>
@@ -170,10 +170,17 @@ export default function SignUpPage() {
                         </View>
                         <View style={styles.inputHolder}>
                             <GeoCitiesButton
-                                buttonColor="#316FF6"
+                                buttonColor={colors.fbBlue}
                                 icon="facebook"
                                 onPress={facebookConfirmation}
                                 text="Facebook Login"
+                                textColor={colors.white}
+                            />
+                        </View>
+                        <View style={styles.bottomButtonContainer}>
+                            <GeoCitiesButton
+                                buttonColor={colors.crimson}
+                                text="Submit"
                                 textColor={colors.white}
                             />
                         </View>
@@ -185,11 +192,16 @@ export default function SignUpPage() {
 }
 
 const styles = StyleSheet.create({
+    bottomButtonContainer: {
+        paddingTop: 20,
+    },
     datePickerStyles: {
         color: colors.white,
     },
     formContainer: {
-        height: '100%',
+        borderRadius: 20,
+        height: '75%',
+        paddingBottom: 50,
         paddingLeft: 10,
         paddingRight: 10,
         paddingTop: 20,
@@ -205,6 +217,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: colors.nightGray,
         height: '100%',
+        paddingBottom: 10,
+        paddingLeft: 10,
+        paddingRight: 10,
         paddingTop: 75,
         width:'100%',
     },

@@ -14,6 +14,7 @@ export enum colors {
     crimson = '#990000',
     eaglesGreen = '#004C54',
     error = '#c62828',
+    fbBlue = '#316FF6',
     geoCitiesBlue = '#00143C',
     geoCitiesGreen = '#004900',
     hornetsPurple = '#280071',
