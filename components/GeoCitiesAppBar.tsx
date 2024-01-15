@@ -31,7 +31,7 @@ export default function GeoCitiesAppBar({
     }, [navigationRef.current]);
 
     return (
-        isLoggedIn ? (
+        !isLoggedIn ? (
             <Appbar.Header style={styles.appBarStyle} elevated>
                 <Appbar.Action icon="menu" onPress={openDrawer} />
                 <Appbar.Content title={<GeoCitiesLogo height={40} width={40} color={colors.white} />} />
