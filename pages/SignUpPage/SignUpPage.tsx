@@ -9,7 +9,7 @@ import { HelperText, Surface, TextInput } from 'react-native-paper';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { states } from '../../utils/constants';
 import { useShowDialog } from '../../hooks';
-import { checkValidEmail } from '../../utils/helpers';
+import { checkValidAge, checkValidEmail, formatUserBirthday } from '../../utils/helpers';
 import { GeoCitiesBodyText, GeoCitiesButton, GeoCitiesLogo, colors } from '../../components';
 
 type StateObjectType = {
@@ -125,6 +125,22 @@ export default function SignUpPage() {
             setIsError(true);
             setDialogTitle('Whoops!');
             setDialogMessage('You must enter the city you currently live in.');
+            handleDialogMessageChange(true);
+            return;
+        }
+
+        if (!checkValidAge(formatUserBirthday(birthday))) {
+            setIsError(true);
+            setDialogTitle('Whoops!');
+            setDialogMessage('You must at least be 13 years old to sign up for GeoCities.');
+            handleDialogMessageChange(true);
+            return;
+        }
+
+        if (!avatar || !fileName || !uri) {
+            setIsError(true);
+            setDialogTitle('Whoops!');
+            setDialogMessage('You must enter a picture of yourself. Not adding a selfie will lead to your account being deleted. This helps reduce trolling and makes sure everyone on GeoCities is a real human.');
             handleDialogMessageChange(true);
             return;
         }

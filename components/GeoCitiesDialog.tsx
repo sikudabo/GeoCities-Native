@@ -44,7 +44,7 @@ function GeoCitiesDialog_DisplayLayer({
                     <Dialog.ScrollArea style={styles.scrollAreaContainer}>
                         <ScrollView>
                             <Dialog.Content style={styles.contentContainer}>
-                                <GeoCitiesBodyText fontSize={12} text={message} textAlign="center" />
+                                <GeoCitiesBodyText fontSize={12} text={message} textAlign={message.length > 50 ? 'left' : 'center'} />
                             </Dialog.Content>
                         </ScrollView>
                     </Dialog.ScrollArea>
@@ -86,6 +86,7 @@ const styles = StyleSheet.create({
         paddingLeft: 0,
         paddingRight: 0,
         paddingTop: 30,
+        textAlign: 'left',
     },
     dialog: {
         backgroundColor: colors.white,
