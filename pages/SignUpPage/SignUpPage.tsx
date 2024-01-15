@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { KeyboardAvoidingView, ScrollView, StyleSheet, View } from 'react-native';
 import Dropdown from 'react-native-paper-dropdown';
-import * as Facebook from 'expo-facebook';
+import * as AuthSession from 'expo-auth-session';
+import * as Facebook from 'expo-auth-session/providers/facebook';
 import * as ImagePicker from 'expo-image-picker';
 import { HelperText, Surface, TextInput } from 'react-native-paper';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
@@ -27,6 +28,9 @@ export default function SignUpPage() {
     const [avatar, setAvatar] = useState<any>();
     const [uri, setUri] = useState<Blob | null>(null);
     const [fileName, setFileName] = useState('');
+    const [__, _, fbPromptAsync] = Facebook.useAuthRequest({
+        clientId: process.env.EXPO_PUBLIC_API_FB_CODE,
+    });
 
     function handleBirthdayChange(event: DateTimePickerEvent, date: any) {
         const newDate = new Date(date);
@@ -53,6 +57,20 @@ export default function SignUpPage() {
         setAvatar(result as any);
         setUri(localUri as any);
         setFileName(filename as string);
+    }
+
+    async function facebookConfirmation() {
+        /* const redirectUri = AuthSession.makeRedirectUri({
+            native: `fb${process.env.EXPO_PUBLIC_API_FB_CODE}://authorize`,
+        });
+
+        const authUrl = Facebook.useAuthRequest({
+            clientId: process.env.EXPO_PUBLIC_API_FB_CODE,
+            responseType: AuthSession.ResponseType.Token,
+        }); */
+
+        const response = await fbPromptAsync();
+        console.log('The response is:', response);
     }
 
     return (
@@ -136,6 +154,15 @@ export default function SignUpPage() {
                             <HelperText type="info">
                                 Required* 
                             </HelperText>
+                        </View>
+                        <View style={styles.inputHolder}>
+                            <GeoCitiesButton
+                                buttonColor="#316FF6"
+                                icon="facebook"
+                                onPress={facebookConfirmation}
+                                text="Facebook Login"
+                                textColor={colors.white}
+                            />
                         </View>
                     </View>
                 </ScrollView>

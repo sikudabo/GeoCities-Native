@@ -1,0 +1,7 @@
+<resources>
+  <string name="app_name">geocities</string>
+  <string name="expo_splash_screen_resize_mode" translatable="false">contain</string>
+  <string name="expo_splash_screen_status_bar_translucent" translatable="false">false</string>
+  <string name="facebook_app_id">345919778379017</string>
+  <string name="fb_login_protocol_scheme">fb345919778379017</string>
+</resources>
