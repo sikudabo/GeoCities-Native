@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { KeyboardAvoidingView, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
+import axios from 'axios';
+import * as Facebook from 'expo-auth-session/providers/facebook';
 import { HelperText, Surface, TextInput } from 'react-native-paper';
 import { checkValidEmail } from '../../utils/helpers';
 import { postNonBinaryData } from '../../utils/requests';
@@ -14,6 +16,7 @@ type SignInPageProps = {
 type SignInPageDisplayLayerProps = {
     email: string;
     handleEmailChange: (email: string) => void;
+    handleFacebookLogin: () => void;
     handlePasswordChange: (password: string) => void;
     handleSignUpNav: () => void;
     handleSubmit: () => void;
@@ -27,6 +30,7 @@ export default function SignInPage({ navigation }: SignInPageProps) {
 function SignInPage_DisplayLayer({
     email,
     handleEmailChange,
+    handleFacebookLogin,
     handlePasswordChange,
     handleSignUpNav,
     handleSubmit,
@@ -59,7 +63,7 @@ function SignInPage_DisplayLayer({
                                 <GeoCitiesButton buttonColor={colors.geoCitiesGreen} text="Login" onPress={handleSubmit} textColor={colors.white} />
                             </View>
                             <View style={styles.loginButtonContainer}>
-                                <GeoCitiesButton buttonColor={colors.fbBlue} icon="facebook" text="Login With Facebook" textColor={colors.white} />
+                                <GeoCitiesButton buttonColor={colors.fbBlue} icon="facebook" onPress={handleFacebookLogin} text="Login With Facebook" textColor={colors.white} />
                             </View>
                             <View style={styles.loginButtonContainer}>
                                 <GeoCitiesButton buttonColor={colors.geoCitiesBlue} onPress={handleSignUpNav} text="Sign Up" textColor={colors.white} />
@@ -81,9 +85,79 @@ function useDataLayer({ navigation }: SignInPageProps) {
     const { setIsLoading } = useShowLoader();
     const { setUser } = useUser();
     const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError } = useShowDialog();
+    const [__, _, fbPromptAsync] = Facebook.useAuthRequest({
+        clientId: process.env.EXPO_PUBLIC_API_FB_CODE,
+        redirectUri: `fb${process.env.EXPO_PUBLIC_API_FB_CODE}://authorize`,
+    });
 
     function handleEmailChange(email: string) {
         setEmail(email);
+    }
+
+    async function handleFacebookLogin() {
+        setIsLoading(true);
+        const response = await fbPromptAsync();
+
+        if (response.type === 'success') {
+            const { accessToken } = response?.authentication ? response.authentication : { accessToken: '' };
+
+            if (accessToken) {
+                await axios({
+                    method: 'GET',
+                    url: `https://graph.facebook.com/me?fields=id,name,email&access_token=${accessToken}`
+                }).then(async (res) => {
+                    const { id } = res.data;
+                    await postNonBinaryData({
+                        data: {
+                            isEmailLogin: false,
+                            fbId: id,
+                        },
+                        uri: 'login',
+                    }).then(res => {
+                        const { isError, message } = res;
+
+                        if (isError) {
+                            setIsLoading(false);
+                            setIsError(true);
+                            setDialogTitle('Whoops!');
+                            setDialogMessage(message);
+                            handleDialogMessageChange(true);
+                            return;
+                        }
+
+                        const { user } = res;
+                        setIsLoading(false);
+                        setIsError(false);
+                        setDialogTitle('Success!');
+                        setDialogMessage(message);
+                        handleDialogMessageChange(true);
+                        const newUser = user;
+                        newUser.isLoggedIn = true;
+                        setUser(newUser);
+                    }).catch(err => {
+                        console.log('Error logging a user in with Facebook login:', err.message);
+                        setIsLoading(false);
+                        setIsError(true);
+                        setDialogTitle('Whoops!');
+                        setDialogMessage('There was an error logging you in. Please try again!');
+                        handleDialogMessageChange(true);
+                        return;
+                    });
+                }).catch(err => {
+                    console.log('Axios error logging a user in with Facebook:', err.message);
+                    setIsLoading(false);
+                    setIsError(true);
+                    setDialogTitle('Whoops!');
+                    setDialogMessage('There was an error logging you in. Please try again!');
+                    handleDialogMessageChange(true);
+                    return;
+                });
+            } else {
+                setIsLoading(false);
+            }
+        } else {
+            setIsLoading(false);
+        }
     }
 
     function handlePasswordChange(password: string) {
@@ -155,6 +229,7 @@ function useDataLayer({ navigation }: SignInPageProps) {
     return {
         email,
         handleEmailChange,
+        handleFacebookLogin,
         handlePasswordChange,
         handleSignUpNav,
         handleSubmit,

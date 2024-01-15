@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { KeyboardAvoidingView, ScrollView, StyleSheet, View } from 'react-native';
 import axios, { GenericFormData } from 'axios';
 import Dropdown from 'react-native-paper-dropdown';
-import * as AuthSession from 'expo-auth-session';
 import * as Facebook from 'expo-auth-session/providers/facebook';
 import * as ImagePicker from 'expo-image-picker';
 import { HelperText, Surface, TextInput } from 'react-native-paper';
@@ -39,8 +38,6 @@ export default function SignUpPage() {
     const [uri, setUri] = useState<Blob | null>(null);
     const [name, setName] = useState('');
     const [fbId, setFbId] = useState('');
-    const redirectUri = AuthSession.makeRedirectUri();
-    const [fileType, setFileType] = useState('');
     const { setUser } = useUser();
     const { setIsLoading } = useShowLoader();
     const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError } = useShowDialog();
@@ -83,7 +80,6 @@ export default function SignUpPage() {
         
         const filename = localUri.split('/').pop();
 
-        setFileType(result.assets[0].type as any);
         setAvatar(result as any);
         setUri(localUri as any);
         setName(filename as string);
