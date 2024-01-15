@@ -26,6 +26,11 @@ function GeoCitiesDialog_DisplayLayer({
     message,
     title
 }: GeoCitiesDialogDisplayLayerProps) {
+
+    if(!isOpen) {
+        return <></>;
+    }
+    
     return (
         <View style={styles.container}>
             <Portal>

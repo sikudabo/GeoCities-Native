@@ -8,7 +8,7 @@ import { MD3DarkTheme as DefaultTheme, PaperProvider } from 'react-native-paper'
 import * as SplashScreen from 'expo-splash-screen';
 import { useShowLoader } from './hooks';
 import { Feed, Profile, SamplePage, SignUpPage } from './pages';
-import { GeoCitiesAppBar, GeoCitiesNavigationDrawer, LoadingIndicator, colors } from './components'
+import { GeoCitiesAppBar, GeoCitiesDialog, GeoCitiesNavigationDrawer, LoadingIndicator, colors } from './components'
 
 // App Display Layer Props 
 type AppDisplayLayerProps = {
@@ -74,6 +74,7 @@ function App_DisplayLayer({
       <NavigationContainer ref={navigationRef as any} onStateChange={onNavigationStateChange}>
         <View onLayout={onLayoutRootView} style={styles.container}>
           <GeoCitiesAppBar navigationRef={navigationRef} openDrawer={openDrawer}/>
+          <GeoCitiesDialog />
           <Drawer.Navigator drawerContent={({ navigation }) => <GeoCitiesNavigationDrawer navigation={navigation} />} screenOptions={{ headerShown: false }}>
             <Drawer.Screen 
               component={SignUpPage}
