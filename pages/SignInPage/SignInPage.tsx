@@ -1,14 +1,23 @@
 import { useState } from 'react';
 import { KeyboardAvoidingView, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import { HelperText, Surface, TextInput } from 'react-native-paper';
-import { GeoCitiesButton, GeoCitiesBodyText, GeoCitiesLogo, colors } from '../../components';
+import { checkValidEmail } from '../../utils/helpers';
+import { postNonBinaryData } from '../../utils/requests';
+import { useUser } from '../../hooks/storage-hooks';
+import { useShowDialog, useShowLoader } from '../../hooks';
+import { GeoCitiesButton, GeoCitiesLogo, colors } from '../../components';
 
 type SignInPageProps = {
     navigation: any;
 };
 
 type SignInPageDisplayLayerProps = {
+    email: string;
+    handleEmailChange: (email: string) => void;
+    handlePasswordChange: (password: string) => void;
     handleSignUpNav: () => void;
+    handleSubmit: () => void;
+    password: string;
 };
 
 export default function SignInPage({ navigation }: SignInPageProps) {
@@ -16,7 +25,12 @@ export default function SignInPage({ navigation }: SignInPageProps) {
 }
 
 function SignInPage_DisplayLayer({
-    handleSignUpNav
+    email,
+    handleEmailChange,
+    handlePasswordChange,
+    handleSignUpNav,
+    handleSubmit,
+    password,
 }: SignInPageDisplayLayerProps) {
     return (
         <View style={styles.container}>
@@ -27,7 +41,7 @@ function SignInPage_DisplayLayer({
                         <ScrollView>
                             <View style={styles.inputHolder}>
                                 <KeyboardAvoidingView behavior="padding">
-                                    <TextInput activeOutlineColor={colors.white} label="Email" mode="outlined" left={<TextInput.Icon icon="mail" />} outlineColor={colors.white} placeholder="Email" />
+                                    <TextInput activeOutlineColor={colors.white} label="Email" mode="outlined" left={<TextInput.Icon icon="mail" />} onChangeText={handleEmailChange} outlineColor={colors.white} placeholder="Email" value={email} />
                                 </KeyboardAvoidingView>
                                 <HelperText type="info">
                                     Required* (Valid Email)
@@ -35,14 +49,14 @@ function SignInPage_DisplayLayer({
                             </View>
                             <View style={styles.inputHolder}>
                                 <KeyboardAvoidingView behavior="padding">
-                                    <TextInput activeOutlineColor={colors.white} label="Password" mode="outlined" left={<TextInput.Icon icon="lock" />} outlineColor={colors.white} placeholder="Password" secureTextEntry />
+                                    <TextInput activeOutlineColor={colors.white} label="Password" mode="outlined" left={<TextInput.Icon icon="lock" />} onChangeText={handlePasswordChange} outlineColor={colors.white} placeholder="Password" value={password} secureTextEntry />
                                 </KeyboardAvoidingView>
                                 <HelperText type="info">
                                     Required*
                                 </HelperText>
                             </View>
                             <View style={styles.loginButtonContainer}>
-                                <GeoCitiesButton buttonColor={colors.geoCitiesGreen} text="Login" textColor={colors.white} />
+                                <GeoCitiesButton buttonColor={colors.geoCitiesGreen} text="Login" onPress={handleSubmit} textColor={colors.white} />
                             </View>
                             <View style={styles.loginButtonContainer}>
                                 <GeoCitiesButton buttonColor={colors.fbBlue} icon="facebook" text="Login With Facebook" textColor={colors.white} />
@@ -62,12 +76,89 @@ function SignInPage_DisplayLayer({
 }
 
 function useDataLayer({ navigation }: SignInPageProps) {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const { setIsLoading } = useShowLoader();
+    const { setUser } = useUser();
+    const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError } = useShowDialog();
 
+    function handleEmailChange(email: string) {
+        setEmail(email);
+    }
+
+    function handlePasswordChange(password: string) {
+        setPassword(password);
+    };
+
+    async function handleSubmit() {
+        setIsLoading(true);
+        
+        if (!checkValidEmail(email)) {
+            setIsLoading(false);
+            setIsError(true);
+            setDialogTitle('Whoops!');
+            setDialogMessage('You must enter a valid email!');
+            handleDialogMessageChange(true);
+            return;
+        }
+
+        if (password.length < 6) {
+            setIsLoading(false);
+            setIsError(true);
+            setDialogTitle('Whoops!');
+            setDialogMessage('You must enter a valid password!');
+            handleDialogMessageChange(true);
+            return;
+        }
+
+        await postNonBinaryData({
+            data: {
+                email, 
+                password,
+                isEmailLogin: true,
+            },
+            uri: 'login',
+        }).then(res => {
+            const { isError, message } = res.data;
+
+            if (isError) {
+                setIsLoading(false);
+                setIsError(true);
+                setDialogTitle('Whoops!');
+                setDialogMessage(message);
+                handleDialogMessageChange(true);
+                return;
+            }
+
+            const { user } = res.data;
+            setIsLoading(false);
+            setIsError(false);
+            setDialogTitle('Success!');
+            setDialogMessage(message);
+            handleDialogMessageChange(true);
+            const newUser = user;
+            newUser.isLoggedIn = true;
+            setUser(newUser);
+        }).catch(err => {
+            console.log('Error logging in a user:', err.message);
+            setIsLoading(false);
+            setIsError(true);
+            setDialogTitle('Whoops!');
+            setDialogMessage('There was an error logging you in. Please try again!');
+            handleDialogMessageChange(true);
+            return;
+        });
+    }
     function handleSignUpNav() {
         navigation.navigate('SignUp');
     }
     return {
+        email,
+        handleEmailChange,
+        handlePasswordChange,
         handleSignUpNav,
+        handleSubmit,
+        password,
     };
 }
 
