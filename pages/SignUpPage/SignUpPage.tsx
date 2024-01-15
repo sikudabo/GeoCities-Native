@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { KeyboardAvoidingView, ScrollView, StyleSheet, View } from 'react-native';
+import axios from 'axios';
 import Dropdown from 'react-native-paper-dropdown';
 import * as AuthSession from 'expo-auth-session';
 import * as Facebook from 'expo-auth-session/providers/facebook';
@@ -25,6 +26,8 @@ export default function SignUpPage() {
     const [birthday, setBirthday] = useState(new Date(2023, 2, 21));
     const [showDropdown, setShowDropdown] = useState(false);
     const [locationState, setLocationState] = useState(states[0]);
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [avatar, setAvatar] = useState<any>();
     const [uri, setUri] = useState<Blob | null>(null);
     const [fileName, setFileName] = useState('');
@@ -67,7 +70,19 @@ export default function SignUpPage() {
         
         if (response.type === 'success') {
             console.log(response?.authentication?.accessToken)
-            const { accessToken } = response?.authentication ? response.authentication : { accessToken: '' }
+            const { accessToken } = response?.authentication ? response.authentication : { accessToken: '' };
+            if (accessToken) {
+                await axios({
+                    method: 'GET',
+                    url: `https://graph.facebook.com/me?fields=id,name,email&access_token=${accessToken}`
+                }).then(res => {
+                    const { name } = res.data;
+                    setFirstName(name.split(' ')[0]);
+                    setLastName(name.split(' ')[1]);
+                }).catch(err => {
+                    console.log('There was an error:', err.message);
+                });
+            }
         }
     }
 
