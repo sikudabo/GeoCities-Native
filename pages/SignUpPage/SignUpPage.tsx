@@ -87,7 +87,6 @@ export default function SignUpPage() {
         const response = await fbPromptAsync();
         
         if (response.type === 'success') {
-            console.log(response?.authentication?.accessToken)
             const { accessToken } = response?.authentication ? response.authentication : { accessToken: '' };
             if (accessToken) {
                 await axios({
@@ -100,7 +99,25 @@ export default function SignUpPage() {
                 }).catch(err => {
                     console.log('There was an error:', err.message);
                 });
+            } else {
+                setIsError(true);
+                setDialogTitle('Whoops!');
+                setDialogMessage('There was an error logging you into your Facebook account. Please try again!');
+                handleDialogMessageChange(true);
+                return;
             }
+        } else if ((response.type === 'cancel' || response.type === 'dismiss') && !firstName && !lastName) {
+            setIsError(true);
+            setDialogTitle('Whoops!');
+            setDialogMessage('You must log in with Facebook in order to verify your account.');
+            handleDialogMessageChange(true);
+            return;
+        } else {
+            setIsError(true);
+            setDialogTitle('Whoops!');
+            setDialogMessage('You must log in with Facebook in order to verify your account.');
+            handleDialogMessageChange(true);
+            return;
         }
     }
 
