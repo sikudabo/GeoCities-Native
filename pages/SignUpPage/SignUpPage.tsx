@@ -28,8 +28,10 @@ export default function SignUpPage() {
     const [avatar, setAvatar] = useState<any>();
     const [uri, setUri] = useState<Blob | null>(null);
     const [fileName, setFileName] = useState('');
+    const redirectUri = AuthSession.makeRedirectUri();
     const [__, _, fbPromptAsync] = Facebook.useAuthRequest({
         clientId: process.env.EXPO_PUBLIC_API_FB_CODE,
+        redirectUri: `fb${process.env.EXPO_PUBLIC_API_FB_CODE}://authorize`,
     });
 
     function handleBirthdayChange(event: DateTimePickerEvent, date: any) {
@@ -68,6 +70,8 @@ export default function SignUpPage() {
             clientId: process.env.EXPO_PUBLIC_API_FB_CODE,
             responseType: AuthSession.ResponseType.Token,
         }); */
+
+        console.log('The app id is:', process.env.EXPO_PUBLIC_API_FB_CODE);
 
         const response = await fbPromptAsync();
         console.log('The response is:', response);
