@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { KeyboardAvoidingView, ScrollView, StyleSheet, View } from 'react-native';
-import axios from 'axios';
+import axios, { GenericFormData } from 'axios';
 import Dropdown from 'react-native-paper-dropdown';
 import * as AuthSession from 'expo-auth-session';
 import * as Facebook from 'expo-auth-session/providers/facebook';
@@ -37,8 +37,9 @@ export default function SignUpPage() {
     const [lastName, setLastName] = useState('');
     const [avatar, setAvatar] = useState<any>();
     const [uri, setUri] = useState<Blob | null>(null);
-    const [name, setFileName] = useState('');
+    const [name, setName] = useState('');
     const redirectUri = AuthSession.makeRedirectUri();
+    const [fileType, setFileType] = useState('');
     const { setUser } = useUser();
     const { setIsLoading } = useShowLoader();
     const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError } = useShowDialog();
@@ -69,8 +70,6 @@ export default function SignUpPage() {
         const result = await ImagePicker.launchCameraAsync({
             allowsEditing: false,
             aspect: [16, 9],
-            cameraType: ImagePicker.CameraType.front,
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
         });
 
         if (result.canceled) {
@@ -81,9 +80,10 @@ export default function SignUpPage() {
         
         const filename = localUri.split('/').pop();
 
+        setFileType(result.assets[0].type as any);
         setAvatar(result as any);
         setUri(localUri as any);
-        setFileName(filename as any);
+        setName(filename as string);
     }
 
     async function facebookConfirmation() {
@@ -101,6 +101,11 @@ export default function SignUpPage() {
                     setFirstName(name.split(' ')[0]);
                     setLastName(name.split(' ')[1]);
                 }).catch(err => {
+                    setIsLoading(false);
+                    setIsError(true);
+                    setDialogTitle('Whoops!');
+                    setDialogMessage(err.message);
+                    handleDialogMessageChange(true);
                     console.log('There was an error:', err.message);
                 });
             } else {
@@ -181,31 +186,43 @@ export default function SignUpPage() {
             return;
         }
 
-        const data = new FormData();
-        data.append('firstName', firstName);
-        data.append('lastName', lastName);
-        data.append('email', email);
-        data.append('password', password); 
-        data.append('dob', String(birthday));
-        data.append('locationCity', city);
-        data.append('locationState', locationState);
-        data.append('avatar', avatar);
+        const fd: GenericFormData = new FormData();
+        fd.append('firstName', firstName);
+        fd.append('lastName', lastName);
+        fd.append('email', email);
+        fd.append('password', password); 
+        fd.append('dob', String(birthday));
+        fd.append('locationCity', city);
+        fd.append('locationState', locationState);
+        fd.append('avatar', { name, uri, type: 'image'});
 
         await putBinaryData({
-            data,
+            data: fd,
             uri: 'user-signup',
         }).then(res => {
             const { isError, user } = res;
             if (!isError) {
                 setIsLoading(false);
+                setIsError(false);
+                setDialogTitle('Success!');
+                setDialogMessage('We have successfully created your GeoCities account.');
+                handleDialogMessageChange(true);
                 const newUser = user;
                 newUser.isLoggedIn = true;
                 setUser(newUser);
                 return;
             } else {
+                setIsLoading(false);
+                setIsLoading(false);
+                setIsError(true);
+                setDialogTitle('Whoops!');
+                setDialogMessage('There was an error creating your GeoCities account. Please try again!');
+                handleDialogMessageChange(true);
                 return;
             }
-        });
+        }).catch(err => {
+            setIsLoading(false);
+        })
     }
 
     return (
