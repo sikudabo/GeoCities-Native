@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useRef } from 'react';
 import { Dimensions, Image, ScrollView, StyleSheet, Text, View} from 'react-native';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { DrawerActions, NavigationContainer, NavigationState } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -10,6 +11,9 @@ import { useShowLoader } from './hooks';
 import { useUser } from './hooks/storage-hooks';
 import { Feed, Profile, SamplePage, LoginCreateStack } from './pages';
 import { GeoCitiesAppBar, GeoCitiesDialog, GeoCitiesNavigationDrawer, LoadingIndicator, colors } from './components'
+
+// Setup the QueryClient 
+const queryClient = new QueryClient();
 
 // App Display Layer Props 
 type AppDisplayLayerProps = {
@@ -73,38 +77,40 @@ function App_DisplayLayer({
   }*/
 
   return (
-    <PaperProvider theme={theme}>
-      <NavigationContainer ref={navigationRef as any} onStateChange={onNavigationStateChange}>
-        <View onLayout={onLayoutRootView} style={styles.container}>
-          <GeoCitiesAppBar navigationRef={navigationRef} openDrawer={openDrawer}/>
-          <GeoCitiesDialog />
-          {isLoading && <LoadingIndicator />}
-          <Drawer.Navigator drawerContent={({ navigation }) => <GeoCitiesNavigationDrawer navigation={navigation} />} screenOptions={{ headerShown: false }}>
-            {!isUserLoggedIn && (
-              <Drawer.Screen 
-                component={LoginCreateStack}
-                name="LoginCreateStack"
-                options={{
-                  title: "Sign Up",
-                }}
-              />
-            )}
-            {isUserLoggedIn && (
-              <>
+    <QueryClientProvider client={queryClient}>
+      <PaperProvider theme={theme}>
+        <NavigationContainer ref={navigationRef as any} onStateChange={onNavigationStateChange}>
+          <View onLayout={onLayoutRootView} style={styles.container}>
+            <GeoCitiesAppBar navigationRef={navigationRef} openDrawer={openDrawer}/>
+            <GeoCitiesDialog />
+            {isLoading && <LoadingIndicator />}
+            <Drawer.Navigator drawerContent={({ navigation }) => <GeoCitiesNavigationDrawer navigation={navigation} />} screenOptions={{ headerShown: false }}>
+              {!isUserLoggedIn && (
                 <Drawer.Screen 
-                  component={Profile}
-                  name="Profile"
+                  component={LoginCreateStack}
+                  name="LoginCreateStack"
+                  options={{
+                    title: "Sign Up",
+                  }}
                 />
-                <Drawer.Screen 
-                  component={Feed}
-                  name="Feed"
-                />
-              </>
-            )}
-          </Drawer.Navigator>
-        </View>
-      </NavigationContainer>
-    </PaperProvider>
+              )}
+              {isUserLoggedIn && (
+                <>
+                  <Drawer.Screen 
+                    component={Profile}
+                    name="Profile"
+                  />
+                  <Drawer.Screen 
+                    component={Feed}
+                    name="Feed"
+                  />
+                </>
+              )}
+            </Drawer.Navigator>
+          </View>
+        </NavigationContainer>
+      </PaperProvider>
+    </QueryClientProvider>
   );
 }
 
