@@ -70,6 +70,8 @@ export default function SignUpPage() {
         const result = await ImagePicker.launchCameraAsync({
             allowsEditing: false,
             aspect: [16, 9],
+            cameraType: ImagePicker.CameraType.front,
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
         });
 
         if (result.canceled) {
