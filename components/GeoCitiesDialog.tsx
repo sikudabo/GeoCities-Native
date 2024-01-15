@@ -49,7 +49,7 @@ function GeoCitiesDialog_DisplayLayer({
                         </ScrollView>
                     </Dialog.ScrollArea>
                     <Dialog.Actions>
-                        <GeoCitiesButton mode="text" onPress={handleDialogClose} text="Close" textColor={isError ? colors.error : colors.eaglesGreen} />
+                        <GeoCitiesButton buttonColor={isError ? colors.error : colors.eaglesGreen} mode="text" onPress={handleDialogClose} text="Close" textColor={isError ? colors.error : colors.eaglesGreen} />
                     </Dialog.Actions>
                 </Dialog>
             </Portal>
