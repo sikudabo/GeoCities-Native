@@ -373,11 +373,10 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
         paddingLeft: 10,
         paddingRight: 10,
-        paddingTop: 75,
+        paddingTop: 20,
         width:'100%',
     },
     logoContainer: {
         paddingBottom: 50,
-        paddingTop: 20,
     },
 });
