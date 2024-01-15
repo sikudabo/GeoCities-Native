@@ -12,7 +12,7 @@ import { useShowDialog, useShowLoader } from '../../hooks';
 import { useUser } from '../../hooks/storage-hooks';
 import { putBinaryData } from '../../utils/requests';
 import { checkValidAge, checkValidEmail, formatUserBirthday } from '../../utils/helpers';
-import { GeoCitiesBodyText, GeoCitiesButton, GeoCitiesLogo, colors } from '../../components';
+import { GeoCitiesButton, GeoCitiesLogo, colors } from '../../components';
 
 type StateObjectType = {
     label: string;
@@ -232,7 +232,6 @@ export default function SignUpPage() {
 
     return (
         <View style={styles.loginContainer}>
-            <GeoCitiesBodyText color={colors.white} text="Sign Up" fontSize={30} fontWeight={900} />
             <View style={styles.logoContainer}>
                 <GeoCitiesLogo color={colors.white} height={40} width={40} />
             </View>
