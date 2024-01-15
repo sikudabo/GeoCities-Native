@@ -112,7 +112,7 @@ export default function SignUpPage() {
             setDialogMessage('You must log in with Facebook in order to verify your account.');
             handleDialogMessageChange(true);
             return;
-        } else {
+        } else if(!firstName && !lastName){
             setIsError(true);
             setDialogTitle('Whoops!');
             setDialogMessage('You must log in with Facebook in order to verify your account.');
