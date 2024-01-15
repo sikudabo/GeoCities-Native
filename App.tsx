@@ -7,7 +7,7 @@ import { useFonts, Montserrat_400Regular } from '@expo-google-fonts/montserrat';
 import { MD3DarkTheme as DefaultTheme, PaperProvider } from 'react-native-paper';
 import * as SplashScreen from 'expo-splash-screen';
 import { useShowLoader } from './hooks';
-import { Feed, Profile, SamplePage, SignUpPage } from './pages';
+import { Feed, Profile, SamplePage, LoginCreateStack } from './pages';
 import { GeoCitiesAppBar, GeoCitiesDialog, GeoCitiesNavigationDrawer, LoadingIndicator, colors } from './components'
 
 // App Display Layer Props 
@@ -78,8 +78,8 @@ function App_DisplayLayer({
           {isLoading && <LoadingIndicator />}
           <Drawer.Navigator drawerContent={({ navigation }) => <GeoCitiesNavigationDrawer navigation={navigation} />} screenOptions={{ headerShown: false }}>
             <Drawer.Screen 
-              component={SignUpPage}
-              name="SignUp"
+              component={LoginCreateStack}
+              name="LoginCreateStack"
               options={{
                 title: "Sign Up",
               }}
