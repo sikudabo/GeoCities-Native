@@ -27,6 +27,8 @@ export default function SignUpPage() {
     const [pickerIsOpen, setPickerIsOpen] = useState(false);
     const [birthday, setBirthday] = useState(new Date(2023, 2, 21));
     const [email, setEmail] = useState('');
+    const [city, setCity] = useState('');
+    const [password, setPassword] = useState('');
     const [showDropdown, setShowDropdown] = useState(false);
     const [locationState, setLocationState] = useState(states[0]);
     const [firstName, setFirstName] = useState('');
@@ -48,6 +50,14 @@ export default function SignUpPage() {
 
     function handleEmailChange(email: string) {
         setEmail(email);
+    }
+
+    function handlePasswordChange(password: string) {
+        setPassword(password);
+    }
+
+    function handleCityChange(city: string) {
+        setCity(city);
     }
 
     async function takePicture() {
@@ -102,6 +112,22 @@ export default function SignUpPage() {
             handleDialogMessageChange(true);
             return;
         }
+
+        if (password.length < 6) {
+            setIsError(true);
+            setDialogTitle('Whoops!');
+            setDialogMessage('You must enter a password that is at least 6 characters long.');
+            handleDialogMessageChange(true);
+            return;
+        }
+
+        if (!city) {
+            setIsError(true);
+            setDialogTitle('Whoops!');
+            setDialogMessage('You must enter the city you currently live in.');
+            handleDialogMessageChange(true);
+            return;
+        }
     }
 
     return (
@@ -113,18 +139,27 @@ export default function SignUpPage() {
             <Surface elevation={4} style={styles.formContainer}>
                 <ScrollView>
                     <View style={styles.inputHolder}>
-                        <KeyboardAvoidingView behavior="padding" style={styles.keyboardContainer}>
-                            <TextInput mode='outlined' onChangeText={handleEmailChange} label="Email" left={<TextInput.Icon icon="mail" />} outlineColor={colors.white} placeholder="Email" activeOutlineColor={colors.white} />
+                        <KeyboardAvoidingView behavior="position" style={styles.keyboardContainer}>
+                            <TextInput mode='outlined' onChangeText={handleEmailChange} label="Email" left={<TextInput.Icon icon="mail" />} outlineColor={colors.white} placeholder="Email" activeOutlineColor={colors.white} value={email} />
+                            <HelperText type="info">
+                                Required 
+                            </HelperText>
                         </KeyboardAvoidingView>
                     </View>
                     <View style={styles.inputHolder}>
                         <KeyboardAvoidingView behavior="padding" style={styles.keyboardContainer}>
-                            <TextInput mode='outlined' label="Password" left={<TextInput.Icon icon="lock" />} outlineColor={colors.white} placeholder="Password" activeOutlineColor={colors.white} secureTextEntry />
+                            <TextInput mode='outlined' onChangeText={handlePasswordChange} label="Password" left={<TextInput.Icon icon="lock" />} outlineColor={colors.white} placeholder="Password" activeOutlineColor={colors.white} value={password} secureTextEntry />
+                            <HelperText type="info">
+                                Required (At least 6 characters)
+                            </HelperText>
                         </KeyboardAvoidingView>
                     </View>
                     <KeyboardAvoidingView behavior="position" style={styles.keyboardContainer}>
                         <View style={styles.inputHolder}>
-                            <TextInput mode='outlined' label="City" left={<TextInput.Icon icon="city" />} outlineColor={colors.white} placeholder="City" activeOutlineColor={colors.white} />
+                            <TextInput mode='outlined' label="City" left={<TextInput.Icon icon="city" />} outlineColor={colors.white} onChangeText={handleCityChange} placeholder="City" activeOutlineColor={colors.white} value={city} />
+                            <HelperText type="info">
+                                Required 
+                            </HelperText>
                         </View>
                     </KeyboardAvoidingView>
                     <View style={styles.inputHolder}>
