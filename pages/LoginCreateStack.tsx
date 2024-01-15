@@ -7,7 +7,7 @@ const Stack = createNativeStackNavigator();
 
 export default function LoginCreateStack() {
     return (
-        <Stack.Navigator initialRouteName="Sign In" screenOptions={{ headerStyle: { backgroundColor: colors.geoCitiesGreen }, headerTintColor: colors.white }}>
+        <Stack.Navigator initialRouteName="Sign In" screenOptions={{ headerStyle: { backgroundColor: colors.nightGray }, headerTintColor: colors.white }}>
             <Stack.Screen 
                 component={SignInPage}
                 name="SignIn"
