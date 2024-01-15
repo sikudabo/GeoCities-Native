@@ -8,6 +8,8 @@ import * as ImagePicker from 'expo-image-picker';
 import { HelperText, Surface, TextInput } from 'react-native-paper';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { states } from '../../utils/constants';
+import { useShowDialog } from '../../hooks';
+import { checkValidEmail } from '../../utils/helpers';
 import { GeoCitiesBodyText, GeoCitiesButton, GeoCitiesLogo, colors } from '../../components';
 
 type StateObjectType = {
@@ -24,6 +26,7 @@ states.forEach(state => {
 export default function SignUpPage() {
     const [pickerIsOpen, setPickerIsOpen] = useState(false);
     const [birthday, setBirthday] = useState(new Date(2023, 2, 21));
+    const [email, setEmail] = useState('');
     const [showDropdown, setShowDropdown] = useState(false);
     const [locationState, setLocationState] = useState(states[0]);
     const [firstName, setFirstName] = useState('');
@@ -32,6 +35,7 @@ export default function SignUpPage() {
     const [uri, setUri] = useState<Blob | null>(null);
     const [fileName, setFileName] = useState('');
     const redirectUri = AuthSession.makeRedirectUri();
+    const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError } = useShowDialog();
     const [__, _, fbPromptAsync] = Facebook.useAuthRequest({
         clientId: process.env.EXPO_PUBLIC_API_FB_CODE,
         redirectUri: `fb${process.env.EXPO_PUBLIC_API_FB_CODE}://authorize`,
@@ -40,6 +44,10 @@ export default function SignUpPage() {
     function handleBirthdayChange(event: DateTimePickerEvent, date: any) {
         const newDate = new Date(date);
         setBirthday(newDate);
+    }
+
+    function handleEmailChange(email: string) {
+        setEmail(email);
     }
 
     async function takePicture() {
@@ -86,6 +94,16 @@ export default function SignUpPage() {
         }
     }
 
+    function handleSubmit() {
+        if (!checkValidEmail(email)) {
+            setIsError(true);
+            setDialogTitle('Whoops!');
+            setDialogMessage('You must enter a valid email address.');
+            handleDialogMessageChange(true);
+            return;
+        }
+    }
+
     return (
         <View style={styles.loginContainer}>
             <GeoCitiesBodyText color={colors.white} text="Sign Up" fontSize={30} fontWeight={900} />
@@ -96,7 +114,7 @@ export default function SignUpPage() {
                 <ScrollView>
                     <View style={styles.inputHolder}>
                         <KeyboardAvoidingView behavior="padding" style={styles.keyboardContainer}>
-                            <TextInput mode='outlined' label="Email" left={<TextInput.Icon icon="mail" />} outlineColor={colors.white} placeholder="Email" activeOutlineColor={colors.white} />
+                            <TextInput mode='outlined' onChangeText={handleEmailChange} label="Email" left={<TextInput.Icon icon="mail" />} outlineColor={colors.white} placeholder="Email" activeOutlineColor={colors.white} />
                         </KeyboardAvoidingView>
                     </View>
                     <View style={styles.inputHolder}>
@@ -180,6 +198,7 @@ export default function SignUpPage() {
                         <View style={styles.bottomButtonContainer}>
                             <GeoCitiesButton
                                 buttonColor={colors.crimson}
+                                onPress={handleSubmit}
                                 text="Submit"
                                 textColor={colors.white}
                             />

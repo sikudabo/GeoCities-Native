@@ -30,7 +30,7 @@ function GeoCitiesDialog_DisplayLayer({
     if(!isOpen) {
         return <></>;
     }
-    
+
     return (
         <View style={styles.container}>
             <Portal>
@@ -80,7 +80,6 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         paddingLeft: 0,
         paddingRight: 0,
-        paddingTop: 200,
         width: width,
     },
     contentContainer: {
