@@ -9,6 +9,8 @@ import { HelperText, Surface, TextInput } from 'react-native-paper';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { states } from '../../utils/constants';
 import { useShowDialog } from '../../hooks';
+import { useUser } from '../../hooks/storage-hooks';
+import { putBinaryData } from '../../utils/requests';
 import { checkValidAge, checkValidEmail, formatUserBirthday } from '../../utils/helpers';
 import { GeoCitiesBodyText, GeoCitiesButton, GeoCitiesLogo, colors } from '../../components';
 
@@ -35,8 +37,9 @@ export default function SignUpPage() {
     const [lastName, setLastName] = useState('');
     const [avatar, setAvatar] = useState<any>();
     const [uri, setUri] = useState<Blob | null>(null);
-    const [fileName, setFileName] = useState('');
+    const [name, setFileName] = useState('');
     const redirectUri = AuthSession.makeRedirectUri();
+    const { setUser } = useUser();
     const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError } = useShowDialog();
     const [__, _, fbPromptAsync] = Facebook.useAuthRequest({
         clientId: process.env.EXPO_PUBLIC_API_FB_CODE,
@@ -79,7 +82,7 @@ export default function SignUpPage() {
 
         setAvatar(result as any);
         setUri(localUri as any);
-        setFileName(filename as string);
+        setFileName(filename as any);
     }
 
     async function facebookConfirmation() {
@@ -121,7 +124,7 @@ export default function SignUpPage() {
         }
     }
 
-    function handleSubmit() {
+    async function handleSubmit() {
         if (!checkValidEmail(email)) {
             setIsError(true);
             setDialogTitle('Whoops!');
@@ -154,7 +157,7 @@ export default function SignUpPage() {
             return;
         }
 
-        if (!avatar || !fileName || !uri) {
+        if (!avatar || !name || !uri) {
             setIsError(true);
             setDialogTitle('Whoops!');
             setDialogMessage('You must enter a picture of yourself. Not adding a selfie will lead to your account being deleted. This helps reduce trolling and makes sure everyone on GeoCities is a real human.');
@@ -169,6 +172,31 @@ export default function SignUpPage() {
             handleDialogMessageChange(true);
             return;
         }
+
+        const data = new FormData();
+        data.append('firstName', firstName);
+        data.append('lastName', lastName);
+        data.append('email', email);
+        data.append('password', password); 
+        data.append('dob', String(birthday));
+        data.append('locationCity', city);
+        data.append('locationState', locationState);
+        data.append('avatar', avatar);
+
+        await putBinaryData({
+            data,
+            uri: 'user-signup',
+        }).then(res => {
+            const { isError, user } = res;
+            if (!isError) {
+                const newUser = user;
+                newUser.isLoggedIn = true;
+                setUser(newUser);
+                return;
+            } else {
+                return;
+            }
+        });
     }
 
     return (

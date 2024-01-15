@@ -11,7 +11,7 @@ export default async function putBinaryData({
     uri,
 }: PutBinaryDataProps) {
     const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError } = useShowDialog();
-    await axios({
+    return await axios({
         data,
         headers: {
             'Content-Type': 'multipart/form-data',
@@ -19,14 +19,19 @@ export default async function putBinaryData({
         method: 'PUT',
         url: `${process.env.EXPO_PUBLIC_API_BASE_URI}${uri}}`,
     }).then(res => {
+        const { isError, message } = res.data;
+        setIsError(isError);
+        setDialogTitle(isError ? 'Error' : 'Success');
+        setDialogMessage(message);
+        handleDialogMessageChange(true);
         return res.data;
     }).catch(err => {
         console.log('There was an error retrieving data', err.message);
-        const { isSuccess, message } = err.response.data;
+        const { isError, message } = err.response.data;
         setIsError(true);
         setDialogTitle('Whoops!');
         setDialogMessage(message);
         handleDialogMessageChange(true)
-        return { isSuccess, message };
+        return { isError, message };
     });
 }
