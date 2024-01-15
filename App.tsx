@@ -61,13 +61,13 @@ function App_DisplayLayer({
     (navigationRef?.current as any)?.dispatch(DrawerActions.openDrawer())
   }
 
-  if (isLoading) {
+  /* if (isLoading) {
     return (
       <PaperProvider theme={theme}>
         <LoadingIndicator />
       </PaperProvider>
     );
-  }
+  }*/
 
   return (
     <PaperProvider theme={theme}>
@@ -75,6 +75,7 @@ function App_DisplayLayer({
         <View onLayout={onLayoutRootView} style={styles.container}>
           <GeoCitiesAppBar navigationRef={navigationRef} openDrawer={openDrawer}/>
           <GeoCitiesDialog />
+          {isLoading && <LoadingIndicator />}
           <Drawer.Navigator drawerContent={({ navigation }) => <GeoCitiesNavigationDrawer navigation={navigation} />} screenOptions={{ headerShown: false }}>
             <Drawer.Screen 
               component={SignUpPage}
