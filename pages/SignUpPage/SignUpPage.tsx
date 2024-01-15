@@ -62,19 +62,13 @@ export default function SignUpPage() {
     }
 
     async function facebookConfirmation() {
-        /* const redirectUri = AuthSession.makeRedirectUri({
-            native: `fb${process.env.EXPO_PUBLIC_API_FB_CODE}://authorize`,
-        });
-
-        const authUrl = Facebook.useAuthRequest({
-            clientId: process.env.EXPO_PUBLIC_API_FB_CODE,
-            responseType: AuthSession.ResponseType.Token,
-        }); */
-
-        console.log('The app id is:', process.env.EXPO_PUBLIC_API_FB_CODE);
 
         const response = await fbPromptAsync();
-        console.log('The response is:', response);
+        
+        if (response.type === 'success') {
+            console.log(response?.authentication?.accessToken)
+            const { accessToken } = response?.authentication ? response.authentication : { accessToken: '' }
+        }
     }
 
     return (
