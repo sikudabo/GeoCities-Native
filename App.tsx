@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { Dimensions, Image, ScrollView, StyleSheet, Text, View} from 'react-native';
 import { DrawerActions, NavigationContainer, NavigationState } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -7,6 +7,7 @@ import { useFonts, Montserrat_400Regular } from '@expo-google-fonts/montserrat';
 import { MD3DarkTheme as DefaultTheme, PaperProvider } from 'react-native-paper';
 import * as SplashScreen from 'expo-splash-screen';
 import { useShowLoader } from './hooks';
+import { useUser } from './hooks/storage-hooks';
 import { Feed, Profile, SamplePage, LoginCreateStack } from './pages';
 import { GeoCitiesAppBar, GeoCitiesDialog, GeoCitiesNavigationDrawer, LoadingIndicator, colors } from './components'
 
@@ -14,6 +15,7 @@ import { GeoCitiesAppBar, GeoCitiesDialog, GeoCitiesNavigationDrawer, LoadingInd
 type AppDisplayLayerProps = {
   fontsLoaded: boolean;
   isLoading: boolean;
+  isUserLoggedIn: boolean;
 };
 
 // Stack navigation
@@ -39,6 +41,7 @@ export default function App() {
 function App_DisplayLayer({
   fontsLoaded,
   isLoading,
+  isUserLoggedIn,
 }: AppDisplayLayerProps) {
 
   const navigationRef = useRef();
@@ -77,28 +80,27 @@ function App_DisplayLayer({
           <GeoCitiesDialog />
           {isLoading && <LoadingIndicator />}
           <Drawer.Navigator drawerContent={({ navigation }) => <GeoCitiesNavigationDrawer navigation={navigation} />} screenOptions={{ headerShown: false }}>
-            <Drawer.Screen 
-              component={LoginCreateStack}
-              name="LoginCreateStack"
-              options={{
-                title: "Sign Up",
-              }}
-            />
-            <Drawer.Screen 
-              component={SamplePage}
-              name="Sample"
-              options={{
-                title: "Hello world",
-              }}
-            />
-            <Drawer.Screen 
-              component={Feed}
-              name="Feed"
-            />
-            <Drawer.Screen 
-              component={Profile}
-              name="Profile"
-            />
+            {!isUserLoggedIn && (
+              <Drawer.Screen 
+                component={LoginCreateStack}
+                name="LoginCreateStack"
+                options={{
+                  title: "Sign Up",
+                }}
+              />
+            )}
+            {isUserLoggedIn && (
+              <>
+                <Drawer.Screen 
+                  component={Profile}
+                  name="Profile"
+                />
+                <Drawer.Screen 
+                  component={Feed}
+                  name="Feed"
+                />
+              </>
+            )}
           </Drawer.Navigator>
         </View>
       </NavigationContainer>
@@ -108,13 +110,23 @@ function App_DisplayLayer({
 
 function useDataLayer() {
   const { isLoading } = useShowLoader();
+  const { user } = useUser();
   const [fontsLoaded] = useFonts({
     Montserrat_400Regular,
   });
 
+  const isUserLoggedIn = useMemo(() => {
+    if (!user) {
+      return false;
+    }
+
+    return true;
+  }, [user])
+
   return {
     fontsLoaded,
     isLoading,
+    isUserLoggedIn,
   };
 }
 

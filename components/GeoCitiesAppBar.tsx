@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Appbar } from "react-native-paper";
 import GeoCitiesLogo from './GeoCitiesLogo';
 import { colors } from './colors';
@@ -23,6 +23,14 @@ export default function GeoCitiesAppBar({
         },
     });
 
+    const isUserLoggedIn = useMemo(() => {
+        if (typeof user === 'undefined') {
+            return false;
+        } else {
+            return true;
+        }
+    }, [user])
+
     useEffect(() => {
         if (typeof navigationRef.current.getRootState() !== 'undefined' && typeof navigationRef.current.getState() !== 'undefined') {
             console.log(navigationRef.current.getRootState().index);
@@ -31,7 +39,7 @@ export default function GeoCitiesAppBar({
     }, [navigationRef.current]);
 
     return (
-        !isLoggedIn ? (
+        isUserLoggedIn ? (
             <Appbar.Header style={styles.appBarStyle} elevated>
                 <Appbar.Action icon="menu" onPress={openDrawer} />
                 <Appbar.Content title={<GeoCitiesLogo height={40} width={40} color={colors.white} />} />
