@@ -38,6 +38,7 @@ export default function SignUpPage() {
     const [avatar, setAvatar] = useState<any>();
     const [uri, setUri] = useState<Blob | null>(null);
     const [name, setName] = useState('');
+    const [fbId, setFbId] = useState('');
     const redirectUri = AuthSession.makeRedirectUri();
     const [fileType, setFileType] = useState('');
     const { setUser } = useUser();
@@ -99,9 +100,10 @@ export default function SignUpPage() {
                     method: 'GET',
                     url: `https://graph.facebook.com/me?fields=id,name,email&access_token=${accessToken}`
                 }).then(res => {
-                    const { name } = res.data;
+                    const { id, name } = res.data;
                     setFirstName(name.split(' ')[0]);
                     setLastName(name.split(' ')[1]);
+                    setFbId(id);
                 }).catch(err => {
                     setIsLoading(false);
                     setIsError(true);
@@ -196,13 +198,14 @@ export default function SignUpPage() {
         fd.append('dob', String(birthday));
         fd.append('locationCity', city);
         fd.append('locationState', locationState);
+        fd.append('fbId', fbId);
         fd.append('avatar', { name, uri, type: 'image'});
 
         await putBinaryData({
             data: fd,
             uri: 'user-signup',
         }).then(res => {
-            const { isError, user } = res;
+            const { isError, message, user } = res;
             if (!isError) {
                 setIsLoading(false);
                 setIsError(false);
@@ -218,13 +221,13 @@ export default function SignUpPage() {
                 setIsLoading(false);
                 setIsError(true);
                 setDialogTitle('Whoops!');
-                setDialogMessage('There was an error creating your GeoCities account. Please try again!');
+                setDialogMessage(message);
                 handleDialogMessageChange(true);
                 return;
             }
         }).catch(err => {
             setIsLoading(false);
-        })
+        });
     }
 
     return (
