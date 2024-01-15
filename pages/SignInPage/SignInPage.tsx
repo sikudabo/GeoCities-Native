@@ -119,7 +119,7 @@ function useDataLayer({ navigation }: SignInPageProps) {
             },
             uri: 'login',
         }).then(res => {
-            const { isError, message } = res.data;
+            const { isError, message } = res;
 
             if (isError) {
                 setIsLoading(false);
@@ -130,7 +130,7 @@ function useDataLayer({ navigation }: SignInPageProps) {
                 return;
             }
 
-            const { user } = res.data;
+            const { user } = res;
             setIsLoading(false);
             setIsError(false);
             setDialogTitle('Success!');
