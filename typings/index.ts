@@ -1,7 +1,8 @@
-import { PostType } from "./postType";
+import { CommentType, PostType } from "./postType";
 import { UserType } from "./userType";
 
 export {
+    CommentType,
     PostType,
     UserType,
 };
