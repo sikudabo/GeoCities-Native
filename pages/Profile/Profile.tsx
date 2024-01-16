@@ -76,7 +76,7 @@ function Profile_DisplayLayer({
                         </View>
                     </View>
                     <View style={styles.locationSection}>
-                        <GeoCitiesMarkerIcon height={30} width={30} />
+                        <GeoCitiesMarkerIcon color={colors.error} height={30} width={30} />
                         <GeoCitiesBodyText color={colors.white} text={truncate(userLocation, { length: 40 })} />
                     </View>
                     <View style={styles.tabsSectionContainer}>

@@ -31,6 +31,7 @@ export enum colors {
     primary = '#0080C6',
     salmonPink = '#FF91A4',
     success = '#1b5e20',
+    tonalPink = '#c51f5d',
     warning = '#ff9800',
     white = '#ffffff',
     wolfGray = '#A5ACAF',
