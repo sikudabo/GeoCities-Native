@@ -90,7 +90,7 @@ function App_DisplayLayer({
             <GeoCitiesAppBar navigationRef={navigationRef} openDrawer={openDrawer}/>
             <GeoCitiesDialog />
             {isLoading && <LoadingIndicator />}
-            <Drawer.Navigator drawerContent={({ navigation }) => <GeoCitiesNavigationDrawer navigation={navigation} />} screenOptions={{ headerShown: false }}>
+            <Drawer.Navigator drawerContent={({ navigation }) => <GeoCitiesNavigationDrawer navigation={navigation} />} screenOptions={{ headerShown: false, unmountOnBlur: true }}>
               {!isUserLoggedIn && (
                 <Drawer.Screen 
                   component={LoginCreateStack}
