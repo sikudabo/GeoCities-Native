@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 import { TextInput } from 'react-native-paper';
-import { GeoCitiesButton, colors } from "../../components";
+import { GeoCitiesButton, GeoCitiesLinkIcon, colors } from "../../components";
 
 type CreatePostsProps = {
     navigation: any;
@@ -26,6 +26,9 @@ function CreatePostScreen_DisplayLayer({
             <View style={styles.inputBoxContainer}>
                 <TextInput activeOutlineColor={colors.salmonPink} label="Text" mode="outlined" numberOfLines={5} outlineColor={colors.white} placeholder="Text..." style={styles.captionInput} multiline />
             </View>
+            <View style={styles.attachmentsSection}>
+                <GeoCitiesLinkIcon color={colors.white} height={20} width={20} />
+            </View>
             <View style={styles.cancelConfirmButtonsContainer}>
                 <GeoCitiesButton buttonColor={colors.white} icon="cancel" onPress={handleCancel} text="Cancel" />
                 <GeoCitiesButton buttonColor={colors.salmonPink} icon="upload-network" text="Upload" />
@@ -46,6 +49,12 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
 }
 
 const styles = StyleSheet.create({
+    attachmentsSection: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingTop: 75,
+    },
     container: {
         backgroundColor: colors.nightGray,
         height: '100%',
