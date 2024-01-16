@@ -1,15 +1,24 @@
 import { View, StyleSheet } from 'react-native';
 import { GeoCitiesBodyText, GeoCitiesButton, colors } from '../../../components';
 
-export default function ProfilePostsTab() {
-    return <ProfilePostsTab_DisplayLayer {...useDataLayer()} />;
+
+type ProfilePostsTabProps = {
+    createButtonNavigator: () => void;
+};
+
+export default function ProfilePostsTab({
+    createButtonNavigator,
+}: ProfilePostsTabProps) {
+    return <ProfilePostsTab_DisplayLayer createButtonNavigator={createButtonNavigator} {...useDataLayer()} />;
 }
 
-function ProfilePostsTab_DisplayLayer() {
+function ProfilePostsTab_DisplayLayer({
+    createButtonNavigator,
+}: ProfilePostsTabProps) {
     return (
         <View style={styles.container}>
             <View style={styles.createPostButtonContainer}>
-                <GeoCitiesButton buttonColor={colors.error} icon="pencil" text="Create" textColor={colors.black} />
+                <GeoCitiesButton buttonColor={colors.error} icon="pencil" onPress={createButtonNavigator} text="Create" textColor={colors.black} />
             </View>
         </View>
     );

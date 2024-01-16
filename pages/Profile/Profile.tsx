@@ -24,6 +24,7 @@ type ProfileProps = {
 
 type ProfileDisplayLayerProps = {
     avatar: string;
+    createPostNavigation: () => void;
     currentIndex: number;
     followerCount: number;
     followingCount: number;
@@ -46,6 +47,7 @@ export default function Profile({ navigation }: ProfileProps) {
 
 function Profile_DisplayLayer({
     avatar,
+    createPostNavigation,
     currentIndex,
     followerCount,
     followingCount,
@@ -98,7 +100,7 @@ function Profile_DisplayLayer({
                     </View>
                     <View>
                        {currentIndex === 0 ? (
-                            <ProfilePostsTab />
+                            <ProfilePostsTab createButtonNavigator={createPostNavigation} />
                        ): currentIndex === 1 ? (
                             <ProfileAboutTabs />
                        ): null}
@@ -138,8 +140,13 @@ function useDataLayer({ navigation }: ProfileProps) {
         setCurrentIndex(index);
     }
 
+    function createPostNavigation() {
+        navigation.navigate('CreatePost');
+    }
+
     return {
         avatar,
+        createPostNavigation,
         currentIndex,
         followerCount,
         followingCount,

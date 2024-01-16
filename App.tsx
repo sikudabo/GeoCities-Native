@@ -9,7 +9,13 @@ import { MD3DarkTheme as DefaultTheme, PaperProvider } from 'react-native-paper'
 import * as SplashScreen from 'expo-splash-screen';
 import { useShowLoader } from './hooks';
 import { useUser } from './hooks/storage-hooks';
-import { Feed, Profile, SamplePage, LoginCreateStack } from './pages';
+import {
+  CreatePostScreen,
+  Feed,
+  LoginCreateStack,
+  Profile,
+  SamplePage,
+} from './pages';
 import { GeoCitiesAppBar, GeoCitiesDialog, GeoCitiesNavigationDrawer, LoadingIndicator, colors } from './components'
 
 // Setup the QueryClient 
@@ -103,6 +109,10 @@ function App_DisplayLayer({
                   <Drawer.Screen 
                     component={Feed}
                     name="Feed"
+                  />
+                  <Drawer.Screen 
+                    component={CreatePostScreen}
+                    name="CreatePost" 
                   />
                 </>
               )}
