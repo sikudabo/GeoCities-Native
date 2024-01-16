@@ -14,6 +14,7 @@ import GeoCitiesNavigationDrawer from "./GeoCitiesNavigationDrawer";
 import GeoCitiesLongTextAlert from "./GeoCitiesLongTextAlert";
 import GeoCitiesPhotoIcon from "./GeoCitiesPhotoIcon";
 import GeoCitiesRadioGroup from './GeoCitiesRadioGroup';
+import GeoCitiesVideoIcon from "./GeoCitiesVideoIcon";
 import LoadingIndicator from "./LoadingIndicator";
 
 export {
@@ -33,5 +34,6 @@ export {
     GeoCitiesNavigationDrawer,
     GeoCitiesPhotoIcon,
     GeoCitiesRadioGroup,
+    GeoCitiesVideoIcon,
     LoadingIndicator,
 };

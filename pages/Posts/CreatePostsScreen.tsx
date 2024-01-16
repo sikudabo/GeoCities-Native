@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 import { TextInput } from 'react-native-paper';
-import { GeoCitiesButton, GeoCitiesLinkIcon, colors } from "../../components";
+import { GeoCitiesButton, GeoCitiesLinkIcon, GeoCitiesPhotoIcon, GeoCitiesVideoIcon, colors } from "../../components";
 
 type CreatePostsProps = {
     navigation: any;
@@ -27,7 +27,9 @@ function CreatePostScreen_DisplayLayer({
                 <TextInput activeOutlineColor={colors.salmonPink} label="Text" mode="outlined" numberOfLines={5} outlineColor={colors.white} placeholder="Text..." style={styles.captionInput} multiline />
             </View>
             <View style={styles.attachmentsSection}>
+                <GeoCitiesPhotoIcon color={colors.white} height={20} width={20} />
                 <GeoCitiesLinkIcon color={colors.white} height={20} width={20} />
+                <GeoCitiesVideoIcon color={colors.white} height={20} width={20} />
             </View>
             <View style={styles.cancelConfirmButtonsContainer}>
                 <GeoCitiesButton buttonColor={colors.white} icon="cancel" onPress={handleCancel} text="Cancel" />
