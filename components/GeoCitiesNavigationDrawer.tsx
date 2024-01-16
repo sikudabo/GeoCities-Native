@@ -6,9 +6,12 @@ import { DrawerItem, DrawerContentScrollView } from '@react-navigation/drawer';
 import GeoCitiesAvatar from './GeoCitiesAvatar';
 import GeoCitiesBodyText from './GeoCitiesBodyText';
 import { colors } from './colors';
+import { useUser } from '../hooks/storage-hooks';
 const SimeonAvatar = require('../assets/static-images/simeon_profile.jpeg');
 
 export default function GeoCitiesNavigationDrawer({ navigation }: { navigation: any }) {
+    const { user } = useUser();
+    const { avatar } = user;
     const styles = StyleSheet.create({
         container: {
             backgroundColor: colors.white,
@@ -39,7 +42,7 @@ export default function GeoCitiesNavigationDrawer({ navigation }: { navigation: 
             <View style={styles.drawerContent}>
                 <View style={styles.profileInfo}>
                     <View>
-                        <GeoCitiesAvatar src={SimeonAvatar} size={50} />
+                    <GeoCitiesAvatar src={`${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo/${avatar}`} size={50} />
                     </View>
                     <View style={styles.drawerTitle}>
                         <GeoCitiesBodyText fontSize={20} fontWeight='900' text="Simeon Ikudabo" />
