@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import truncate from 'lodash/truncate';
 import { StyleSheet, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Drawer, Title } from 'react-native-paper';
@@ -7,11 +8,11 @@ import GeoCitiesAvatar from './GeoCitiesAvatar';
 import GeoCitiesBodyText from './GeoCitiesBodyText';
 import { colors } from './colors';
 import { useUser } from '../hooks/storage-hooks';
-const SimeonAvatar = require('../assets/static-images/simeon_profile.jpeg');
 
 export default function GeoCitiesNavigationDrawer({ navigation }: { navigation: any }) {
     const { user } = useUser();
-    const { avatar } = user;
+    const { avatar, geoScore, firstName, lastName } = user;
+    const fullName = `${firstName} ${lastName}`;
     const styles = StyleSheet.create({
         container: {
             backgroundColor: colors.white,
@@ -45,13 +46,10 @@ export default function GeoCitiesNavigationDrawer({ navigation }: { navigation: 
                     <GeoCitiesAvatar src={`${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo/${avatar}`} size={50} />
                     </View>
                     <View style={styles.drawerTitle}>
-                        <GeoCitiesBodyText fontSize={20} fontWeight='900' text="Simeon Ikudabo" />
-                    </View>
-                    <View style={styles.drawerUsername}>
-                        <GeoCitiesBodyText color={colors.wolfGray} fontSize={15} fontWeight="normal" text="@simspeeeed" />
+                        <GeoCitiesBodyText fontSize={20} fontWeight='900' text={truncate(fullName, { length: 40 })}/>
                     </View>
                     <View style={styles.geoScore}>
-                        <GeoCitiesBodyText fontSize={15} fontWeight="normal" text="GeoScore 50" />
+                        <GeoCitiesBodyText fontSize={15} fontWeight="normal" text={`GeoScore: ${geoScore}`} />
                     </View>
                 </View>
                 <Drawer.Section showDivider={false}>
