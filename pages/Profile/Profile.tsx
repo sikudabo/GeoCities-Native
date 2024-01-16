@@ -1,8 +1,17 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import millify from 'millify';
 import truncate from 'lodash/truncate';
 import { useNavigation } from '@react-navigation/native';
+import {
+    Tabs,
+    TabsProvider,
+    TabScreen,
+    useTabIndex,
+    useTabNavigation,
+} from 'react-native-paper-tabs';
+import ProfileAboutTabs from './tabs/ProfileAboutTab';
+import ProfilePostsTab from './tabs/ProfilePostsTab';
 import { GeoCitiesAvatar, GeoCitiesBodyText, GeoCitiesMarkerIcon, colors } from '../../components';
 import { useUser } from '../../hooks/storage-hooks';
 import { useFetchUserData } from '../../hooks/fetch-hooks';
@@ -14,9 +23,11 @@ type ProfileProps = {
 
 type ProfileDisplayLayerProps = {
     avatar: string;
+    currentIndex: number;
     followerCount: number;
     followingCount: number;
     fullName: string;
+    handleChangeIndex: (index: number) => void;
     handleNavigation: () => void;
     user: UserType;
     userLocation: string;
@@ -34,9 +45,11 @@ export default function Profile({ navigation }: ProfileProps) {
 
 function Profile_DisplayLayer({
     avatar,
+    currentIndex,
     followerCount,
     followingCount,
     fullName,
+    handleChangeIndex,
     handleNavigation,
     user,
     userLocation,
@@ -65,6 +78,27 @@ function Profile_DisplayLayer({
                         <GeoCitiesMarkerIcon height={30} width={30} />
                         <GeoCitiesBodyText color={colors.white} text={truncate(userLocation, { length: 40 })} />
                     </View>
+                    <View style={styles.tabsSectionContainer}>
+                        <TabsProvider defaultIndex={0} onChangeIndex={handleChangeIndex}>
+                            <Tabs style={styles.tabsStyle} tabLabelStyle={styles.tabLabel} disableSwipe>
+                                <TabScreen label="Posts">
+                                    <View style={{ alignItems: 'center',  flex: 1, height: 500, paddingTop: 300 }}>
+                                        <GeoCitiesBodyText color={colors.white} fontSize={44} text="Posts" />
+                                    </View>
+                                </TabScreen>
+                                <TabScreen label="About">
+                                    <ProfileAboutTabs />
+                                </TabScreen>
+                            </Tabs>
+                        </TabsProvider>
+                    </View>
+                    <View>
+                       {currentIndex === 0 ? (
+                            <ProfilePostsTab />
+                       ): (
+                            <ProfileAboutTabs />
+                       )}
+                    </View>
                 </ScrollView>
             </SafeAreaView>
         </View>
@@ -77,6 +111,7 @@ function useDataLayer({ navigation }: ProfileProps) {
     const { data, isLoading } = useFetchUserData({ _id });
     const { user: currentUser } = typeof data !== 'undefined' && !isLoading ? data : { user: undefined };
     const { avatar, firstName, followers, following, lastName, locationCity, locationState } = user;
+    const [currentIndex, setCurrentIndex] = useState(0);
     const followerCount = followers.length;
     const followingCount = following.length;
     const userLocation = `${locationCity}, ${locationState}`;
@@ -95,11 +130,17 @@ function useDataLayer({ navigation }: ProfileProps) {
         navigation.navigate('Feed');
     }
 
+    function handleChangeIndex(index: number) {
+        setCurrentIndex(index);
+    }
+
     return {
         avatar,
+        currentIndex,
         followerCount,
         followingCount,
         fullName: `${firstName} ${lastName}`,
+        handleChangeIndex,
         handleNavigation,
         user,
         userLocation,
@@ -158,6 +199,17 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
+        width: '100%',
+    },
+    tabLabel: {
+        color: colors.white,
+        fontFamily: 'Montserrat_400Regular',
+    },
+    tabsSectionContainer: {
+        paddingTop: 30,
+    },
+    tabsStyle: {
+        color: colors.white,
         width: '100%',
     },
 });
