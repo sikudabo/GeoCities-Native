@@ -47,8 +47,9 @@ function useDataLayer({ navigation }: ProfileProps) {
         if (!currentUser) {
             return;
         }
-
-        setUser(currentUser);
+        let updatedUser = currentUser;
+        updatedUser.isLoggedIn = true;
+        setUser(updatedUser);
     }, [currentUser]);
 
 
