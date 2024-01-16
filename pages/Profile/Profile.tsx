@@ -90,6 +90,9 @@ function Profile_DisplayLayer({
                                 <TabScreen icon="information" label="About">
                                     <ProfileAboutTabs />
                                 </TabScreen>
+                                <TabScreen icon="calendar" label="Events">
+                                    <ProfileAboutTabs />
+                                </TabScreen>
                             </Tabs>
                         </TabsProvider>
                     </View>
