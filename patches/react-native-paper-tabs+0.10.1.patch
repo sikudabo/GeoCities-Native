@@ -1,0 +1,12 @@
+diff --git a/node_modules/react-native-paper-tabs/src/internal.native.ts b/node_modules/react-native-paper-tabs/src/internal.native.ts
+index bab8358..f22650a 100644
+--- a/node_modules/react-native-paper-tabs/src/internal.native.ts
++++ b/node_modules/react-native-paper-tabs/src/internal.native.ts
+@@ -53,6 +53,7 @@ export function useIndicator({
+     const positionWithOffset = Animated.add(position!, offset!);
+     return position && tabsLayout && layouts.current
+       ? {
++          backgroundColor: '#ffffff',
+           transform: [
+             {
+               scaleX: positionWithOffset.interpolate({

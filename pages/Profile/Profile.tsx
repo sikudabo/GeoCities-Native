@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import millify from 'millify';
 import truncate from 'lodash/truncate';
+import { Divider } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import {
     Tabs,
@@ -81,12 +82,12 @@ function Profile_DisplayLayer({
                     <View style={styles.tabsSectionContainer}>
                         <TabsProvider defaultIndex={0} onChangeIndex={handleChangeIndex}>
                             <Tabs style={styles.tabsStyle} tabLabelStyle={styles.tabLabel} disableSwipe>
-                                <TabScreen label="Posts">
+                                <TabScreen icon="mail" label="Posts">
                                     <View style={{ alignItems: 'center',  flex: 1, height: 500, paddingTop: 300 }}>
                                         <GeoCitiesBodyText color={colors.white} fontSize={44} text="Posts" />
                                     </View>
                                 </TabScreen>
-                                <TabScreen label="About">
+                                <TabScreen icon="information" label="About">
                                     <ProfileAboutTabs />
                                 </TabScreen>
                             </Tabs>
@@ -162,6 +163,9 @@ const styles = StyleSheet.create({
         height: '100%',
         flexDirection: 'column',
         paddingTop: 10,
+    },
+    divider: {
+        color: colors.white,
     },
     followerStatSection: {
         display: 'flex',
