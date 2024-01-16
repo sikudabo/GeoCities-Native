@@ -2,7 +2,7 @@ import Svg, { Path } from 'react-native-svg';
 import { colors } from './colors';
 import { GeoCitiesLogoProps } from './GeoCitiesLogo';
 
-export default function GeopCitiesMarkerIcon({
+export default function GeoCitiesMarkerIcon({
     color = colors.white,
     height = 100,
     onPress = () => {},
