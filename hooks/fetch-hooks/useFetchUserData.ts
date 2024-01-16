@@ -7,9 +7,10 @@ type UseFetchUserDataProps = {
 };
 
 export function useFetchUserData({ _id }: UseFetchUserDataProps) {
+    console.log('The id is:', _id);
     const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError } = useShowDialog();
 
-    return useQuery(['fetchUserData'], async () => {
+    return useQuery(['fetchUser'], async () => {
         const userData = await getData({
             uri: `get-user/${_id}`,
         }).then(res => {

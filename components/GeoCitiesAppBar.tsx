@@ -24,7 +24,7 @@ export default function GeoCitiesAppBar({
     });
 
     const isUserLoggedIn = useMemo(() => {
-        if (typeof user === 'undefined') {
+        if (typeof user === 'undefined' || !user.isLoggedIn) {
             return false;
         } else {
             return true;

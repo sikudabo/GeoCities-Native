@@ -122,7 +122,7 @@ function useDataLayer() {
   });
 
   const isUserLoggedIn = useMemo(() => {
-    if (!user) {
+    if (!user || !user.isLoggedIn) {
       return false;
     }
 

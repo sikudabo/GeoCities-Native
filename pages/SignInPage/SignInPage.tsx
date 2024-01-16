@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
     },
     formContainer: {
         borderRadius: 20,
-        height: '75%',
+        height: '85%',
         marginTop: 20,
         paddingBottom: 50,
         paddingLeft: 10,
