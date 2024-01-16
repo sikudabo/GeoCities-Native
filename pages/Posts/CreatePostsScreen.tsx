@@ -24,7 +24,7 @@ function CreatePostScreen_DisplayLayer({
     return (
         <View style={styles.container}>
             <View style={styles.inputBoxContainer}>
-                <TextInput numberOfLines={5} multiline />
+                <TextInput activeOutlineColor={colors.salmonPink} label="Text" mode="outlined" numberOfLines={5} outlineColor={colors.white} placeholder="Text..." style={styles.captionInput} multiline />
             </View>
             <View style={styles.cancelConfirmButtonsContainer}>
                 <GeoCitiesButton buttonColor={colors.white} mode="text" onPress={handleCancel} text="Cancel" />
@@ -46,17 +46,24 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
 
 const styles = StyleSheet.create({
     container: {
+        backgroundColor: colors.nightGray,
         height: '100%',
         paddingLeft: 10,
         paddingRight: 10,
         width: '100%',
     },
     cancelConfirmButtonsContainer: {
+        paddingTop: 30,
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
+    captionInput: {
+        height: 100,
+        paddingBottom: 5,
+    },
     inputBoxContainer: {
+        height: 100,
         paddingTop: 20,
     }
 });
