@@ -99,9 +99,9 @@ function Profile_DisplayLayer({
                     <View>
                        {currentIndex === 0 ? (
                             <ProfilePostsTab />
-                       ): (
+                       ): currentIndex === 1 ? (
                             <ProfileAboutTabs />
-                       )}
+                       ): null}
                     </View>
                 </ScrollView>
             </SafeAreaView>
