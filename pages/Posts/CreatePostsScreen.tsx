@@ -27,7 +27,8 @@ function CreatePostScreen_DisplayLayer({
                 <TextInput activeOutlineColor={colors.salmonPink} label="Text" mode="outlined" numberOfLines={5} outlineColor={colors.white} placeholder="Text..." style={styles.captionInput} multiline />
             </View>
             <View style={styles.cancelConfirmButtonsContainer}>
-                <GeoCitiesButton buttonColor={colors.white} mode="text" onPress={handleCancel} text="Cancel" />
+                <GeoCitiesButton buttonColor={colors.white} icon="cancel" onPress={handleCancel} text="Cancel" />
+                <GeoCitiesButton buttonColor={colors.salmonPink} icon="upload-network" text="Upload" />
             </View>
         </View>
     );
@@ -53,7 +54,7 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     cancelConfirmButtonsContainer: {
-        paddingTop: 30,
+        paddingTop: 50,
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',

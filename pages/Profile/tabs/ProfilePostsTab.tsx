@@ -18,7 +18,7 @@ function ProfilePostsTab_DisplayLayer({
     return (
         <View style={styles.container}>
             <View style={styles.createPostButtonContainer}>
-                <GeoCitiesButton buttonColor={colors.error} icon="pencil" onPress={createButtonNavigator} text="Create" textColor={colors.black} />
+                <GeoCitiesButton buttonColor={colors.salmonPink} icon="pencil" onPress={createButtonNavigator} text="Create" textColor={colors.black} />
             </View>
         </View>
     );
