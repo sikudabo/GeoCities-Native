@@ -27,6 +27,7 @@ export enum colors {
     mistyBlue = '#81ABBC',
     navyBlue = '#313E61',
     nightGray = '#141d26',
+    nightLight = '#243447',
     primary = '#0080C6',
     salmonPink = '#FF91A4',
     success = '#1b5e20',

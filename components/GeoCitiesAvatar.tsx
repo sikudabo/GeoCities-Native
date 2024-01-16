@@ -10,6 +10,6 @@ export default function GeoCitiesAvatar({
     size = 20,
 }: GeoCitiesAvatarProps) {
     return (
-        <Avatar.Image source={src} size={size} />
+        <Avatar.Image source={{ uri: src }} size={size} />
     );
 }
