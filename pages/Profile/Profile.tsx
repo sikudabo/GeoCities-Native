@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
-import { Button, StyleSheet, View } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
+import millify from 'millify';
 import truncate from 'lodash/truncate';
 import { useNavigation } from '@react-navigation/native';
-import { GeoCitiesAvatar, GeoCitiesBodyText, colors } from '../../components';
+import { GeoCitiesAvatar, GeoCitiesBodyText, GeoCitiesMarkerIcon, colors } from '../../components';
 import { useUser } from '../../hooks/storage-hooks';
 import { useFetchUserData } from '../../hooks/fetch-hooks';
 import { UserType } from '../../typings';
@@ -18,6 +19,7 @@ type ProfileDisplayLayerProps = {
     fullName: string;
     handleNavigation: () => void;
     user: UserType;
+    userLocation: string;
 };
 
 type NavigationProps = {
@@ -37,25 +39,34 @@ function Profile_DisplayLayer({
     fullName,
     handleNavigation,
     user,
+    userLocation,
 }: ProfileDisplayLayerProps) {
     return (
         <View style={styles.container}>
-            <View style={styles.avatarContainer}>
-                <GeoCitiesAvatar src={`${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo/${avatar}`} size={120} />
-            </View>
-            <View style={styles.nameContainer}>
-                <GeoCitiesBodyText color={colors.white} fontSize={24} fontWeight={900} text={truncate(fullName, { length: 40 })} />
-            </View>
-            <View style={styles.profileStatsSection}>
-                <View style={styles.followerStatSection}>
-                    <GeoCitiesBodyText color={colors.white} text={followerCount.toString()} textAlign='center'/>
-                    <GeoCitiesBodyText color={colors.white} text={followerCount === 1 ? 'Follower' : 'Followers' } />
-                </View>
-                <View style={styles.followerStatSection}>
-                    <GeoCitiesBodyText color={colors.white} text={followingCount.toString()} textAlign='center'/>
-                    <GeoCitiesBodyText color={colors.white} text={'Following'} />
-                </View>
-            </View>
+            <SafeAreaView style={styles.safeAreaContainer}>
+                <ScrollView>
+                    <View style={styles.avatarContainer}>
+                        <GeoCitiesAvatar src={`${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo/${avatar}`} size={120} />
+                    </View>
+                    <View style={styles.nameContainer}>
+                        <GeoCitiesBodyText color={colors.white} fontSize={24} fontWeight={900} text={truncate(fullName, { length: 40 })} />
+                    </View>
+                    <View style={styles.profileStatsSection}>
+                        <View style={styles.followerStatSection}>
+                            <GeoCitiesBodyText color={colors.white} text={millify(followerCount)} textAlign='center'/>
+                            <GeoCitiesBodyText color={colors.white} text={followerCount === 1 ? 'Follower' : 'Followers' } />
+                        </View>
+                        <View style={styles.followerStatSection}>
+                            <GeoCitiesBodyText color={colors.white} text={'Following'} />
+                            <GeoCitiesBodyText color={colors.white} text={millify(followingCount)} textAlign='center'/>
+                        </View>
+                    </View>
+                    <View style={styles.locationSection}>
+                        <GeoCitiesMarkerIcon height={30} width={30} />
+                        <GeoCitiesBodyText color={colors.white} text={truncate(userLocation, { length: 40 })} />
+                    </View>
+                </ScrollView>
+            </SafeAreaView>
         </View>
     );
 }
@@ -65,9 +76,10 @@ function useDataLayer({ navigation }: ProfileProps) {
     const { _id } = user;
     const { data, isLoading } = useFetchUserData({ _id });
     const { user: currentUser } = typeof data !== 'undefined' && !isLoading ? data : { user: undefined };
-    const { avatar, firstName, followers, following, lastName } = user;
+    const { avatar, firstName, followers, following, lastName, locationCity, locationState } = user;
     const followerCount = followers.length;
     const followingCount = following.length;
+    const userLocation = `${locationCity}, ${locationState}`;
 
     useEffect(() => {
         if (!currentUser) {
@@ -90,12 +102,17 @@ function useDataLayer({ navigation }: ProfileProps) {
         fullName: `${firstName} ${lastName}`,
         handleNavigation,
         user,
+        userLocation,
     };
 }
 
 const styles = StyleSheet.create({
     avatarContainer: {
+        alignItems: 'center',
+        display: 'flex',
+        justifyContent: 'center',
         paddingTop: 20,
+        width: '100%',
     },
     container: {
         alignItems: 'center',
@@ -110,7 +127,21 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         rowGap: 2,
     },
+    locationSection: {
+        columnGap: 10,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        lineHeight: 'normal',
+        paddingLeft: 20,
+        paddingRight: 20,
+        paddingTop: 40,
+        width: '100%',
+    },
     nameContainer: {
+        alignItems: 'center',
+        display: 'flex',
+        justifyContent: 'center',
         paddingTop: 10,
     },
     profileStatsSection: {
@@ -121,6 +152,12 @@ const styles = StyleSheet.create({
         paddingLeft: 20,
         paddingRight: 10,
         paddingTop: 30,
+        width: '100%',
+    },
+    safeAreaContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
         width: '100%',
     },
 });

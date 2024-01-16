@@ -1,7 +1,7 @@
 import Svg, { G, Path } from 'react-native-svg';
 import { colors } from './colors';
 
-type GeoCitiesLogoProps = {
+export type GeoCitiesLogoProps = {
     color?: string;
     height?: number;
     onPress?: () => void;
