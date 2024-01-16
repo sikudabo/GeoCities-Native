@@ -19,7 +19,7 @@ export default function GeoCitiesAppBar({
     const { isLoggedIn } = user;
     const styles = StyleSheet.create({
         appBarStyle: {
-            backgroundColor: colors.geoCitiesGreen,
+            backgroundColor: colors.nightGray
         },
     });
 
