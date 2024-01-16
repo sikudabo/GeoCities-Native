@@ -29,7 +29,7 @@ export default function GeoCitiesButton({
         }
     })
     return (
-        <Button elevation={0} mode={mode} rippleColor='rgba(255, 255, 255, 0.0)' style={styles.buttonStyles} textColor={mode === 'outlined' || mode === 'text' ? buttonColor : colors.white} uppercase={false} {...props}>
+        <Button elevation={0} mode={mode} rippleColor='rgba(255, 255, 255, 0.0)' style={styles.buttonStyles} textColor={mode === 'outlined' || mode === 'text' ? buttonColor : buttonColor === colors.white || buttonColor === colors.cream ? colors.black : colors.white} uppercase={false} {...props}>
             {text}
         </Button>
     );
