@@ -27,5 +27,6 @@ export function useFetchUserData({ _id }: UseFetchUserDataProps) {
         return userData;
     }, {
         refetchInterval: 20000,
+        refetchOnMount: true,
     });
 }
