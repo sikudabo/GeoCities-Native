@@ -195,7 +195,7 @@ export default function SignUpPage() {
         fd.append('locationCity', city);
         fd.append('locationState', locationState);
         fd.append('fbId', fbId);
-        fd.append('avatar', { name, uri, type: 'image'});
+        fd.append('avatar', { name, uri, type: 'image' });
 
         await putBinaryData({
             data: fd,

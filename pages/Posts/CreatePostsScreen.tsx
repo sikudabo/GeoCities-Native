@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { GeoCitiesButton, GeoCitiesLinkIcon, GeoCitiesPhotoIcon, GeoCitiesVideoIcon, colors } from "../../components";
@@ -40,6 +41,12 @@ function CreatePostScreen_DisplayLayer({
 }
 
 function useDataLayer({ navigation, route }: CreatePostsProps) {
+    const [caption, setCaption] = useState('');
+    const [link, setLink] = useState('');
+    const [photoName, setPhotoName] = useState('');
+    const [photoUri, setPhotoUri] = useState<Blob | null>(null);
+    const [videoName, setVideoName] = useState('');
+    const [videoUri, setVideoUri] = useState<Blob | null>(null);
     
     function handleCancel() {
         navigation.goBack();
