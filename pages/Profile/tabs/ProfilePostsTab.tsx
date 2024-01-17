@@ -1,9 +1,17 @@
 import { View, StyleSheet } from 'react-native';
-import { GeoCitiesBodyText, GeoCitiesButton, colors } from '../../../components';
+import { PostType } from '../../../typings';
+import { useFetchUserProfilePosts } from '../../../hooks/fetch-hooks';
+import { useUser } from '../../../hooks/storage-hooks';
+import { GeoCitiesBodyText, GeoCitiesButton, LoadingIndicator, PostCard, colors } from '../../../components';
 
 
 type ProfilePostsTabProps = {
     createButtonNavigator: () => void;
+};
+
+type ProfilePostsTabDisplayLayerProps = ProfilePostsTabProps & {
+    isLoading: boolean;
+    posts: Array<PostType>;
 };
 
 export default function ProfilePostsTab({
@@ -14,20 +22,39 @@ export default function ProfilePostsTab({
 
 function ProfilePostsTab_DisplayLayer({
     createButtonNavigator,
-}: ProfilePostsTabProps) {
+    isLoading,
+    posts,
+}: ProfilePostsTabDisplayLayerProps) {
+    if (isLoading) {
+        return <LoadingIndicator />;
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.createPostButtonContainer}>
                 <GeoCitiesButton buttonColor={colors.salmonPink} icon="pencil" onPress={createButtonNavigator} text="Create" textColor={colors.black} />
+            </View>
+            <View style={styles.postsSection}>
+                {posts.map((post, index) => (
+                    <PostCard 
+                        key={index}
+                        post={post}
+                    />
+                ))}
             </View>
         </View>
     );
 }
 
 function useDataLayer() {
+    const { user } = useUser();
+    const { _id } = user;
+    const { data: posts, isLoading } = useFetchUserProfilePosts({ _id });
+    
     return {
-
-    }
+        isLoading,
+        posts,
+    };
 };
 
 const styles = StyleSheet.create({
@@ -38,5 +65,10 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         paddingRight: 10,
         width: '100%',
+    },
+    postsSection: {
+        paddingLeft: 10,
+        paddingRight: 10,
+        paddingTop: 20,
     },
 });

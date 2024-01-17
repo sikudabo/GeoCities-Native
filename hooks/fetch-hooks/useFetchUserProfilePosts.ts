@@ -10,7 +10,8 @@ export default function useFetchUserProfilePosts({ _id }: UseFetchUserProfilePos
         const posts = await getData({
             uri: `get-profile-posts/${_id}`,
         }).then(res => {
-            return res.data;
+            const { posts } = res;
+            return posts;
         }).catch(err => {
             const { message } = err.response.data;
             return { isError: true, message };

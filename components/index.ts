@@ -16,6 +16,7 @@ import GeoCitiesPhotoIcon from "./GeoCitiesPhotoIcon";
 import GeoCitiesRadioGroup from './GeoCitiesRadioGroup';
 import GeoCitiesVideoIcon from "./GeoCitiesVideoIcon";
 import LoadingIndicator from "./LoadingIndicator";
+import PostCard from "./PostCard/PostCard";
 
 export {
     colors,
@@ -36,4 +37,5 @@ export {
     GeoCitiesRadioGroup,
     GeoCitiesVideoIcon,
     LoadingIndicator,
+    PostCard,
 };
