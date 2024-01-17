@@ -228,6 +228,7 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
                 setIsError(false);
                 setDialogTitle('Success');
                 setDialogMessage(message);
+                handleDialogMessageChange(true);
                 navigation.navigate('Profile');
                 return;
             }).catch(err => {
@@ -275,6 +276,7 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
             setIsError(false);
             setDialogTitle('Success');
             setDialogMessage(message);
+            handleDialogMessageChange(true);
             navigation.navigate('Profile');
             return;
         }).catch(err => {
