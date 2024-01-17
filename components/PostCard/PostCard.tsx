@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import truncate from 'lodash/truncate';
 import { Surface } from "react-native-paper";
 import GeoCitiesAvatar from '../GeoCitiesAvatar';
@@ -41,6 +41,15 @@ function PostCard_DisplayLayer({
                     <GeoCitiesBodyText color={colors.white} fontSize={14} text={postTimeDifference(createdAt)} />
                 </View>
             </View>
+            {caption && (
+                <View style={styles.captionSection}>
+                    <SafeAreaView>
+                        <ScrollView>
+                            <GeoCitiesBodyText color={colors.white} fontSize={12} fontWeight={500} text={caption} />
+                        </ScrollView>
+                    </SafeAreaView>
+                </View>
+            )}
         </Surface>
     );
 }
@@ -57,6 +66,10 @@ function useDataLayer({ post }: DataLayerProps) {
 }
 
 const styles = StyleSheet.create({
+    captionSection: {
+        height: 100,
+        paddingTop: 20,
+    },
     cardContainer: {
         boarderRadius: 5,
         marginBottom: 20,
