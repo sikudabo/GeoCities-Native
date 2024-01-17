@@ -20,6 +20,7 @@ type CreatePostsDisplayLayerProps = {
     isLinkDialogOpen: boolean;
     isUploadButtonDisabled: boolean;
     launchPhotoPicker: () => void;
+    launchVideoPicker: () => void;
     link: string;
     toggleLinkDialog: () => void;
 };
@@ -40,6 +41,7 @@ function CreatePostScreen_DisplayLayer({
     isLinkDialogOpen,
     isUploadButtonDisabled,
     launchPhotoPicker,
+    launchVideoPicker,
     link,
     toggleLinkDialog,
 }: CreatePostsDisplayLayerProps) {
@@ -71,7 +73,7 @@ function CreatePostScreen_DisplayLayer({
                 <TouchableOpacity onPress={toggleLinkDialog} style={styles.actionIconContainer}>
                     <GeoCitiesLinkIcon color={colors.white} height={20} width={20} />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.actionIconContainer}>
+                <TouchableOpacity onPress={launchVideoPicker} style={styles.actionIconContainer}>
                     <GeoCitiesVideoIcon color={colors.white} height={20} width={20} />
                 </TouchableOpacity>
             </View>
@@ -129,6 +131,29 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
         setPhotoName(filename as string);
     }
 
+    async function launchVideoPicker() {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            allowsEditing: true,
+            aspect: [1, 1],
+            mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+            quality: 1,
+        });
+
+        if (result.canceled) {
+            return;
+        }
+
+        setPhotoName('');
+        setPhotoUri(null);
+
+        const localUri = result.assets[0].uri;
+        
+        const filename = localUri.split('/').pop();
+
+        setVideoUri(localUri as any);
+        setVideoName(filename as string);
+    }
+
     function checkBlankInfo() {
         if (!caption.trim() && !link.trim() && !photoName && !videoName) {
             return true;
@@ -176,6 +201,7 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
         isLinkDialogOpen,
         isUploadButtonDisabled,
         launchPhotoPicker,
+        launchVideoPicker,
         link,
         toggleLinkDialog,
     };
