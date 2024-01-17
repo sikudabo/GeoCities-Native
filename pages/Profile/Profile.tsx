@@ -78,7 +78,6 @@ function Profile_DisplayLayer({
                         </View>
                     </View>
                     <View style={styles.locationSection}>
-                        <GeoCitiesMarkerIcon color={colors.salmonPink} height={30} width={30} />
                         <GeoCitiesBodyText color={colors.white} text={truncate(userLocation, { length: 40 })} />
                     </View>
                     <View style={styles.tabsSectionContainer}>
@@ -141,7 +140,7 @@ function useDataLayer({ navigation }: ProfileProps) {
     }
 
     function createPostNavigation() {
-        navigation.navigate('CreatePost');
+        navigation.navigate('CreatePost', { isCommunity: false});
     }
 
     return {

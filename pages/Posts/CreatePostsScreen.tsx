@@ -1,10 +1,13 @@
 import { useState } from 'react';
-import { KeyboardAvoidingView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Keyboard, KeyboardAvoidingView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Dialog, Portal, TextInput } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
-import { useShowDialog } from '../../hooks';
+import { useShowDialog, useShowLoader } from '../../hooks';
+import { useUser } from '../../hooks/storage-hooks';
 import { checkValidUrl } from '../../utils/helpers';
+import { putBinaryData, putNonBinaryData } from '../../utils/requests';
 import { GeoCitiesBodyText, GeoCitiesButton, GeoCitiesLinkIcon, GeoCitiesPhotoIcon, GeoCitiesVideoIcon, colors } from "../../components";
+import { GenericFormData } from 'axios';
 
 type CreatePostsProps = {
     navigation: any;
@@ -88,6 +91,7 @@ function CreatePostScreen_DisplayLayer({
 }
 
 function useDataLayer({ navigation, route }: CreatePostsProps) {
+    const { isCommunity, communityName } = route.params;
     const [caption, setCaption] = useState('');
     const [link, setLink] = useState('');
     const [photoName, setPhotoName] = useState('');
@@ -96,7 +100,11 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
     const [videoUri, setVideoUri] = useState<Blob | null>(null);
     const [isLinkDialogOpen, setIsLinkDialogOpen] = useState(false);
     let uploadPostType = '';
+    let isBinaryPost = false;
     const isUploadButtonDisabled = checkBlankInfo();
+    const { user } = useUser();
+    const { firstName, _id, lastName } = user;
+    const { setIsLoading } = useShowLoader();
     const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError } = useShowDialog();
     
     function handleCancel() {
@@ -166,15 +174,120 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
     }
 
     async function uploadPost() {
+        Keyboard.dismiss();
+        setIsLoading(true);
         if (photoName) {
+            isBinaryPost = true;
             uploadPostType = 'photo';
         } else if (videoName) {
+            isBinaryPost = true;
             uploadPostType = 'video';
         } else if (!photoName && !videoName && link) {
+            isBinaryPost = false;
             uploadPostType = 'link';
         } else {
+            isBinaryPost = false;
             uploadPostType = 'text';
         }
+
+        const fd: GenericFormData = new FormData();
+        const createdAt = new Date().getTime();
+        const userName = `${firstName} ${lastName}`;
+        fd.append('authorId', String(_id));
+        fd.append('userName', userName);
+        fd.append('caption', String(caption.trim()));
+        fd.append('createdAt', String(createdAt));
+        fd.append('link', String(link.trim()));
+        fd.append('postType', uploadPostType);
+        fd.append('postOriginType', isCommunity ? 'community' : 'profile');
+        if (isCommunity) {
+            fd.append('community', communityName);
+        }
+
+        if (isBinaryPost) {
+            if (uploadPostType === 'video') {
+                fd.append('postMedia', { name: videoName, uri: videoUri, type: 'video '});
+            } else {
+                fd.append('postMedia', { name: photoName, uri: photoUri, type: 'image' });
+            }
+            await putBinaryData({
+                data: fd,
+                uri: 'upload-video-photo',
+            }).then(res => {
+                const { isError, message } = res;
+                if (isError) {
+                    setIsLoading(false);
+                    setIsError(true);
+                    setDialogTitle('Uh Oh!');
+                    setDialogMessage(message);
+                    handleDialogMessageChange(true);
+                    return;
+                }
+
+                setIsLoading(false);
+                setIsError(false);
+                setDialogTitle('Success');
+                setDialogMessage(message);
+                navigation.navigate('Profile');
+                return;
+            }).catch(err => {
+                console.log(`There was an error uploading a post ${err.message}`);
+                setIsLoading(false);
+                setIsError(true);
+                setDialogTitle('Uh Oh!');
+                setDialogMessage('There was an error uploading that post. Please try again!');
+                handleDialogMessageChange(true);
+                return;
+            });
+
+            return 
+        }
+
+        let sendData: any = {
+            authorId: _id,
+            userName,
+            caption,
+            createdAt,
+            link,
+            postType: uploadPostType,
+            postOriginType: isCommunity ? 'community' : 'profile',
+        };
+
+        if (isCommunity) {
+            sendData.communityName = communityName;
+        }
+
+        await putNonBinaryData({
+            data: sendData,
+            uri: 'upload-link-text',
+        }).then(res => {
+            const { isError, message } = res;
+            if (isError) {
+                setIsLoading(false);
+                setIsError(true);
+                setDialogTitle('Uh Oh!');
+                setDialogMessage(message);
+                handleDialogMessageChange(true);
+                return;
+            }
+
+            setIsLoading(false);
+            setIsError(false);
+            setDialogTitle('Success');
+            setDialogMessage(message);
+            navigation.navigate('Profile');
+            return;
+        }).catch(err => {
+            console.log(`There was an error uploading a post ${err.message}`);
+            setIsLoading(false);
+            setIsError(true);
+            setDialogTitle('Uh Oh!');
+            setDialogMessage('There was an error uploading that post. Please try again!');
+            handleDialogMessageChange(true);
+            return;
+        });
+
+        return;
     }
 
     function confirmValidLink() {

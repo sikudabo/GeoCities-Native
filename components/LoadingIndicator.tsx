@@ -5,7 +5,7 @@ import { colors } from './colors';
 export default function LoadingIndicator() {
     return (
         <View style={styles.loaderContainer}>
-            <ActivityIndicator animating={true} color={colors.coolBlue} />
+            <ActivityIndicator animating={true} color={colors.white} />
         </View>
     );
 }
@@ -13,6 +13,7 @@ export default function LoadingIndicator() {
 const styles = StyleSheet.create({
     loaderContainer: {
         alignItems: 'center',
+        backgroundColor: colors.nightGray,
         display: 'flex',
         height: '100%',
         justifyContent: 'center',
