@@ -95,7 +95,6 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
     const [videoName, setVideoName] = useState('');
     const [videoUri, setVideoUri] = useState<Blob | null>(null);
     const [isLinkDialogOpen, setIsLinkDialogOpen] = useState(false);
-    const [postType, setPostType] = useState('');
     let uploadPostType = '';
     const isUploadButtonDisabled = checkBlankInfo();
     const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError } = useShowDialog();
@@ -168,20 +167,14 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
 
     async function uploadPost() {
         if (photoName) {
-            setPostType('photo');
             uploadPostType = 'photo';
         } else if (videoName) {
             uploadPostType = 'video';
-            setPostType('video');
         } else if (!photoName && !videoName && link) {
             uploadPostType = 'link';
-            setPostType('link');
         } else {
             uploadPostType = 'text';
-            setPostType('text');
         }
-
-        console.log(`The post type is ${uploadPostType}.`);
     }
 
     function confirmValidLink() {
@@ -194,7 +187,7 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
             setLink('');
             return;
         }
-        if (!checkValidUrl(link)) {
+        if (!checkValidUrl(link.trim())) {
             setIsLinkDialogOpen(false);
             setIsError(true);
             setDialogTitle('Whoops!');
