@@ -15,7 +15,7 @@ export default async function putBinaryData({
             'Content-Type': 'multipart/form-data',
         },
         method: 'PUT',
-        url: `http://192.168.1.215:2000/api/user-signup`,
+        url: `${process.env.EXPO_PUBLIC_API_BASE_URI}${uri}`,
     }).then(res => {
         return res.data;
     }).catch(err => {
