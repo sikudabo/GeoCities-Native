@@ -23,6 +23,7 @@ type CreatePostsDisplayLayerProps = {
     launchVideoPicker: () => void;
     link: string;
     toggleLinkDialog: () => void;
+    uploadPost: () => void;
 };
 
 export default function CreatePostScreen({
@@ -44,6 +45,7 @@ function CreatePostScreen_DisplayLayer({
     launchVideoPicker,
     link,
     toggleLinkDialog,
+    uploadPost,
 }: CreatePostsDisplayLayerProps) {
     return (
         <View style={styles.container}>
@@ -79,7 +81,7 @@ function CreatePostScreen_DisplayLayer({
             </View>
             <View style={styles.cancelConfirmButtonsContainer}>
                 <GeoCitiesButton buttonColor={colors.white} icon="cancel" onPress={handleCancel} text="Cancel" />
-                <GeoCitiesButton buttonColor={colors.salmonPink} disabled={isUploadButtonDisabled} icon="upload-network" text="Upload" />
+                <GeoCitiesButton buttonColor={colors.salmonPink} disabled={isUploadButtonDisabled} icon="upload-network" onPress={uploadPost} text="Upload" />
             </View>
         </View>
     );
@@ -93,6 +95,8 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
     const [videoName, setVideoName] = useState('');
     const [videoUri, setVideoUri] = useState<Blob | null>(null);
     const [isLinkDialogOpen, setIsLinkDialogOpen] = useState(false);
+    const [postType, setPostType] = useState('');
+    let uploadPostType = '';
     const isUploadButtonDisabled = checkBlankInfo();
     const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError } = useShowDialog();
     
@@ -162,6 +166,24 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
         return false;
     }
 
+    async function uploadPost() {
+        if (photoName) {
+            setPostType('photo');
+            uploadPostType = 'photo';
+        } else if (videoName) {
+            uploadPostType = 'video';
+            setPostType('video');
+        } else if (!photoName && !videoName && link) {
+            uploadPostType = 'link';
+            setPostType('link');
+        } else {
+            uploadPostType = 'text';
+            setPostType('text');
+        }
+
+        console.log(`The post type is ${uploadPostType}.`);
+    }
+
     function confirmValidLink() {
         if (!link.trim()) {
             setIsLinkDialogOpen(false);
@@ -204,6 +226,7 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
         launchVideoPicker,
         link,
         toggleLinkDialog,
+        uploadPost,
     };
 }
 
