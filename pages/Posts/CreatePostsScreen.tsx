@@ -1,11 +1,9 @@
 import { useState } from 'react';
-import { Dimensions, KeyboardAvoidingView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Dialog, Portal, TextInput } from 'react-native-paper';
 import { useShowDialog } from '../../hooks';
 import { checkValidUrl } from '../../utils/helpers';
 import { GeoCitiesBodyText, GeoCitiesButton, GeoCitiesLinkIcon, GeoCitiesPhotoIcon, GeoCitiesVideoIcon, colors } from "../../components";
-
-const { height } = Dimensions.get('window');
 
 type CreatePostsProps = {
     navigation: any;
