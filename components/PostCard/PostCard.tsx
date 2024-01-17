@@ -31,7 +31,7 @@ function PostCard_DisplayLayer({
     userName,
 }: PostCardDisplayLayerProps) {
     return (
-        <Surface style={styles.cardContainer}>
+        <Surface elevation={4} style={styles.cardContainer}>
             <View style={styles.topCardSection}>
                 <GeoCitiesAvatar size={50} src={`${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo-by-user-id/${authorId}`} />
                 <View style={styles.topSectionNameContainer}>
@@ -42,7 +42,7 @@ function PostCard_DisplayLayer({
                 </View>
             </View>
         </Surface>
-    )
+    );
 }
 
 function useDataLayer({ post }: DataLayerProps) {
