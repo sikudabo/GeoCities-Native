@@ -5,6 +5,7 @@ import GeoCitiesAvatar from '../GeoCitiesAvatar';
 import GeoCitiesBodyText from '../GeoCitiesBodyText';
 import { colors } from '../colors';
 import { PostType } from '../../typings';
+import { postTimeDifference } from '../../utils/helpers';
 
 type DataLayerProps = {
     post: PostType;
@@ -13,6 +14,7 @@ type DataLayerProps = {
 type PostCardDisplayLayerProps = {
     authorId: string;
     caption: string | undefined;
+    createdAt: number;
     userName: string;
 };
 
@@ -25,6 +27,7 @@ export default function PostCard({ post }: { post: PostType}) {
 function PostCard_DisplayLayer({
     authorId,
     caption,
+    createdAt,
     userName,
 }: PostCardDisplayLayerProps) {
     return (
@@ -34,17 +37,21 @@ function PostCard_DisplayLayer({
                 <View style={styles.topSectionNameContainer}>
                     <GeoCitiesBodyText color={colors.white} fontSize={14} fontWeight={900} text={userName} />
                 </View>
+                <View style={styles.topSectionDateContainer}>
+                    <GeoCitiesBodyText color={colors.white} fontSize={14} text={postTimeDifference(createdAt)} />
+                </View>
             </View>
         </Surface>
     )
 }
 
 function useDataLayer({ post }: DataLayerProps) {
-    const { authorId, caption, userName } = post;
+    const { authorId, caption, createdAt, userName } = post;
     
     return {
         authorId,
         caption,
+        createdAt,
         userName: truncate(userName, { length: 30 }),
     };
 }
@@ -53,15 +60,20 @@ const styles = StyleSheet.create({
     cardContainer: {
         boarderRadius: 5,
         marginBottom: 20,
+        paddingLeft: 10,
+        paddingRight: 10,
     },
     topCardSection: {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'flex-start',
         lineHeight: '1',
-        paddingLeft: 5,
         paddingTop: 10,
         width: '100%',
+    },
+    topSectionDateContainer: {
+        marginLeft: 'auto',
+        paddingTop: 10,
     },
     topSectionNameContainer: {
         paddingLeft: 10,

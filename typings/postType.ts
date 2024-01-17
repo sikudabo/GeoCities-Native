@@ -2,7 +2,7 @@ export type PostType = {
     authorId: string;
     userName: string;
     postOriginType: string;
-    createdAt: Date;
+    createdAt: number;
     postType: string;
     communityName?: string;
     caption?: string;
