@@ -9,7 +9,9 @@ type CreatePostsProps = {
 };
 
 type CreatePostsDisplayLayerProps = {
+    caption: string;
     handleCancel: () => void;
+    handleCaptionChange: (caption: string) => void;
     isUploadButtonDisabled: boolean;
 };
 
@@ -21,13 +23,15 @@ export default function CreatePostScreen({
 }
 
 function CreatePostScreen_DisplayLayer({
+    caption,
     handleCancel,
+    handleCaptionChange,
     isUploadButtonDisabled,
 }: CreatePostsDisplayLayerProps) {
     return (
         <View style={styles.container}>
             <View style={styles.inputBoxContainer}>
-                <TextInput activeOutlineColor={colors.salmonPink} label="Text" mode="outlined" numberOfLines={5} outlineColor={colors.white} placeholder="Text..." style={styles.captionInput} multiline />
+                <TextInput activeOutlineColor={colors.salmonPink} label="Text" mode="outlined" numberOfLines={5} onChangeText={handleCaptionChange} outlineColor={colors.white} placeholder="Text..." style={styles.captionInput} value={caption} multiline />
             </View>
             <View style={styles.attachmentsSection}>
                 <GeoCitiesPhotoIcon color={colors.white} height={20} width={20} />
@@ -55,6 +59,10 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
         navigation.goBack();
     }
 
+    function handleCaptionChange(caption: string) {
+        setCaption(caption);
+    }
+
     function checkBlankInfo() {
         if (!caption.trim() && !link.trim() && !photoName && !videoName) {
             return true;
@@ -64,7 +72,9 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
     }
 
     return {
+        caption,
         handleCancel,
+        handleCaptionChange,
         isUploadButtonDisabled,
     };
 }
