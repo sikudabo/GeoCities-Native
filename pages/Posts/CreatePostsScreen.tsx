@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { KeyboardAvoidingView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Dialog, Portal, TextInput } from 'react-native-paper';
+import * as ImagePicker from 'expo-image-picker';
 import { useShowDialog } from '../../hooks';
 import { checkValidUrl } from '../../utils/helpers';
 import { GeoCitiesBodyText, GeoCitiesButton, GeoCitiesLinkIcon, GeoCitiesPhotoIcon, GeoCitiesVideoIcon, colors } from "../../components";
@@ -18,6 +19,7 @@ type CreatePostsDisplayLayerProps = {
     handleLinkChange: (link: string) => void;
     isLinkDialogOpen: boolean;
     isUploadButtonDisabled: boolean;
+    launchPhotoPicker: () => void;
     link: string;
     toggleLinkDialog: () => void;
 };
@@ -37,6 +39,7 @@ function CreatePostScreen_DisplayLayer({
     handleLinkChange,
     isLinkDialogOpen,
     isUploadButtonDisabled,
+    launchPhotoPicker,
     link,
     toggleLinkDialog,
 }: CreatePostsDisplayLayerProps) {
@@ -62,7 +65,7 @@ function CreatePostScreen_DisplayLayer({
                 <TextInput activeOutlineColor={colors.salmonPink} label="Text" mode="outlined" numberOfLines={5} onChangeText={handleCaptionChange} outlineColor={colors.white} placeholder="Text..." style={styles.captionInput} value={caption} multiline />
             </View>
             <View style={styles.attachmentsSection}>
-                <TouchableOpacity style={styles.actionIconContainer}>
+                <TouchableOpacity onPress={launchPhotoPicker} style={styles.actionIconContainer}>
                     <GeoCitiesPhotoIcon color={colors.white} height={20} width={20} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={toggleLinkDialog} style={styles.actionIconContainer}>
@@ -101,6 +104,29 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
 
     function handleLinkChange(link: string) {
         setLink(link);
+    }
+
+    async function launchPhotoPicker() {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            allowsEditing: true,
+            aspect: [1, 1],
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            quality: 1,
+        });
+
+        if (result.canceled) {
+            return;
+        }
+
+        setVideoName('');
+        setVideoUri(null);
+
+        const localUri = result.assets[0].uri;
+        
+        const filename = localUri.split('/').pop();
+
+        setPhotoUri(localUri as any);
+        setPhotoName(filename as string);
     }
 
     function checkBlankInfo() {
@@ -149,6 +175,7 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
         handleLinkChange,
         isLinkDialogOpen,
         isUploadButtonDisabled,
+        launchPhotoPicker,
         link,
         toggleLinkDialog,
     };
