@@ -10,6 +10,7 @@ type CreatePostsProps = {
 
 type CreatePostsDisplayLayerProps = {
     handleCancel: () => void;
+    isUploadButtonDisabled: boolean;
 };
 
 export default function CreatePostScreen({
@@ -20,7 +21,8 @@ export default function CreatePostScreen({
 }
 
 function CreatePostScreen_DisplayLayer({
-    handleCancel
+    handleCancel,
+    isUploadButtonDisabled,
 }: CreatePostsDisplayLayerProps) {
     return (
         <View style={styles.container}>
@@ -34,7 +36,7 @@ function CreatePostScreen_DisplayLayer({
             </View>
             <View style={styles.cancelConfirmButtonsContainer}>
                 <GeoCitiesButton buttonColor={colors.white} icon="cancel" onPress={handleCancel} text="Cancel" />
-                <GeoCitiesButton buttonColor={colors.salmonPink} icon="upload-network" text="Upload" />
+                <GeoCitiesButton buttonColor={colors.salmonPink} disabled={isUploadButtonDisabled} icon="upload-network" text="Upload" />
             </View>
         </View>
     );
@@ -47,13 +49,23 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
     const [photoUri, setPhotoUri] = useState<Blob | null>(null);
     const [videoName, setVideoName] = useState('');
     const [videoUri, setVideoUri] = useState<Blob | null>(null);
+    const isUploadButtonDisabled = checkBlankInfo();
     
     function handleCancel() {
         navigation.goBack();
     }
 
+    function checkBlankInfo() {
+        if (!caption.trim() && !link.trim() && !photoName && !videoName) {
+            return true;
+        }
+
+        return false;
+    }
+
     return {
         handleCancel,
+        isUploadButtonDisabled,
     };
 }
 
