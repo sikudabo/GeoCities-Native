@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { Image, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import VideoPlayer from 'expo-video-player';
 import truncate from 'lodash/truncate';
 import millify from 'millify';
 import { Surface } from "react-native-paper";
@@ -123,6 +124,8 @@ function PostCard_DisplayLayer({
                         source={{ uri: `${process.env.EXPO_PUBLIC_API_BASE_URI}get-video/${postMediaId}` }}
                         style={styles.videoPlayer}
                         isLooping
+                        isMuted
+                        shouldPlay
                         useNativeControls
                     />
                 </View>
