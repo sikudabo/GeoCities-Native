@@ -2,7 +2,7 @@ import Svg, { Path } from 'react-native-svg';
 import { colors } from './colors';
 import { GeoCitiesLogoProps } from './GeoCitiesLogo';
 
-export default function GeoCitiesLikeIconOutlined({
+export default function GeoCitiesLikeIconFilled({
     height = 100,
     onPress = () => {},
     width = 100,
@@ -15,8 +15,8 @@ export default function GeoCitiesLikeIconOutlined({
             viewBox="0 0 48 48"
         >
             <Path
-                fill="none"
-                stroke={colors.white} 
+                fill={colors.salmonPink}
+                stroke={colors.salmonPink}
                 stroke-linecap="round" 
                 stroke-linejoin="round" 
                 stroke-width="4" 

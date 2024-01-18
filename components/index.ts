@@ -8,6 +8,7 @@ import GeoCitiesCheckbox from "./GeoCitiesCheckbox";
 import GeoCitiesDialog from "./GeoCitiesDialog";
 import GeoCitiesFAB from "./GeoCitiesFAB";
 import GeoCitiesIconButton from "./GeoCitiesIconButton";
+import GeoCitiesLikeIconFilled from "./GeoCitiesLikeIconFilled";
 import GeoCitiesLikeIconOutlined from "./GeoCitiesLikeIconOutlined";
 import GeoCitiesLinkIcon from "./GeoCitiesLinkIcon";
 import GeoCitiesLogo from "./GeoCitiesLogo";
@@ -31,6 +32,7 @@ export {
     GeoCitiesDialog,
     GeoCitiesFAB,
     GeoCitiesIconButton,
+    GeoCitiesLikeIconFilled,
     GeoCitiesLikeIconOutlined,
     GeoCitiesLinkIcon,
     GeoCitiesLogo,
