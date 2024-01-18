@@ -5,6 +5,8 @@ import { Surface } from "react-native-paper";
 import GeoCitiesAvatar from '../GeoCitiesAvatar';
 import GeoCitiesBodyText from '../GeoCitiesBodyText';
 import GeoCitiesCaptionText from '../GeoCitiesCaptionText';
+import GeoCitiesCommentIconFilled from '../GeoCitiesCommentIconFilled';
+import GeoCitiesCommentIconOutlined from '../GeoCitiesCommentIconOutlined';
 import GeoCitiesLikeIconFilled from '../GeoCitiesLikeIconFilled';
 import GeoCitiesLikeIconOutlined from '../GeoCitiesLikeIconOutlined';
 import { useUser } from '../../hooks/storage-hooks';
@@ -21,7 +23,9 @@ type PostCardDisplayLayerProps = {
     caption: string | undefined;
     createdAt: number;
     hashTags: Array<string> | undefined;
+    hasCommented: boolean;
     hasLikedPost: boolean;
+    numberOfComments: number;
     numberOfLikes: number;
     userName: string;
 };
@@ -35,7 +39,9 @@ function PostCard_DisplayLayer({
     caption,
     createdAt,
     hashTags,
+    hasCommented,
     hasLikedPost,
+    numberOfComments,
     numberOfLikes,
     userName,
 }: PostCardDisplayLayerProps) {
@@ -68,15 +74,28 @@ function PostCard_DisplayLayer({
                         <GeoCitiesBodyText color={colors.white} fontSize={14} fontWeight={900} text={millify(numberOfLikes)} />
                     </View>
                 </TouchableOpacity>
+                <TouchableOpacity style={styles.buttonsTouchContainer}>
+                    {!hasCommented ? (
+                        <GeoCitiesCommentIconOutlined height={20} width={20} />
+                    ): (
+                        <GeoCitiesCommentIconFilled color={colors.salmonPink} height={20} width={20} />
+                    )}
+                    <View style={styles.actionNumberIndicatorContainer}>
+                        <GeoCitiesBodyText color={colors.white} fontSize={14} fontWeight={900} text={millify(numberOfComments)} />
+                    </View>
+                </TouchableOpacity>
             </View>
         </Surface>
     );
 }
 
 function useDataLayer({ post }: DataLayerProps) {
-    const { authorId, caption, createdAt, hashTags, likes, userName } = post;
+    const { authorId, caption, comments, createdAt, hashTags, likes, userName } = post;
     const { user } = useUser();
     const { _id } = user;
+    const commentUser = comments.find((user) => user.authorId === _id);
+    const hasCommented = commentUser ? true : false;
+    const numberOfComments = comments.length;
     const numberOfLikes = likes.length;
 
     function hasLikedPost() {
@@ -95,7 +114,9 @@ function useDataLayer({ post }: DataLayerProps) {
         caption,
         createdAt,
         hashTags,
+        hasCommented,
         hasLikedPost: hasLikedPost(),
+        numberOfComments,
         numberOfLikes,
         userName: truncate(userName, { length: 30 }),
     };
