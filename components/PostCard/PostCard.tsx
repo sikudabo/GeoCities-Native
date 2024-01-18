@@ -2,6 +2,7 @@ import { SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View } from 're
 import truncate from 'lodash/truncate';
 import millify from 'millify';
 import { Surface } from "react-native-paper";
+import { LinkPreview } from '@flyerhq/react-native-link-preview';
 import GeoCitiesAvatar from '../GeoCitiesAvatar';
 import GeoCitiesBodyText from '../GeoCitiesBodyText';
 import GeoCitiesCaptionText from '../GeoCitiesCaptionText';
@@ -27,8 +28,10 @@ type PostCardDisplayLayerProps = {
     hasCommented: boolean;
     hasLikedPost: boolean;
     isPostAuthor: boolean;
+    link?: string;
     numberOfComments: number;
     numberOfLikes: number;
+    postType: 'video' | 'photo' | 'link' | 'text';
     userName: string;
 };
 
@@ -44,8 +47,10 @@ function PostCard_DisplayLayer({
     hasCommented,
     hasLikedPost,
     isPostAuthor,
+    link,
     numberOfComments,
     numberOfLikes,
+    postType,
     userName,
 }: PostCardDisplayLayerProps) {
     return (
@@ -66,6 +71,30 @@ function PostCard_DisplayLayer({
                             <GeoCitiesCaptionText hashTags={hashTags as Array<string>} text={caption} />
                         </ScrollView>
                     </SafeAreaView>
+                </View>
+            )}
+            {postType === 'link' && link && (
+                <View style={styles.linkPreviewContainer}>
+                    <LinkPreview 
+                        containerStyle={{  width: '100%', padding: 0 }}
+                        renderHeader={(text) => (
+                            <View style={styles.linkPreviewTextContainer}>
+                                <GeoCitiesCaptionText hashTags={[]} text={text} />
+                            </View>
+                        )}
+                        renderDescription={(text) => (
+                            <View style={styles.linkPreviewTextContainer}>
+                                <GeoCitiesCaptionText hashTags={[]} text={text} />
+                            </View>
+                        )}
+                        renderText={(text) => (
+                            <View style={styles.linkPreviewTextContainer}>
+                                <GeoCitiesCaptionText hashTags={[]} text={text} />
+                            </View>
+                        )}
+                        text={link}
+                        textContainerStyle={{ padding: 0 }}
+                     />
                 </View>
             )}
             <View style={styles.actionButtonsSection}>
@@ -98,7 +127,7 @@ function PostCard_DisplayLayer({
 }
 
 function useDataLayer({ post }: DataLayerProps) {
-    const { authorId, caption, comments, createdAt, hashTags, likes, userName } = post;
+    const { authorId, caption, comments, createdAt, hashTags, likes, link, postType, userName } = post;
     const { user } = useUser();
     const { _id } = user;
     const commentUser = comments.find((user) => user.authorId === _id);
@@ -126,8 +155,10 @@ function useDataLayer({ post }: DataLayerProps) {
         hasCommented,
         hasLikedPost: hasLikedPost(),
         isPostAuthor,
+        link,
         numberOfComments,
         numberOfLikes,
+        postType,
         userName: truncate(userName, { length: 30 }),
     };
 }
@@ -158,6 +189,12 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         paddingLeft: 10,
         paddingRight: 10,
+    },
+    linkPreviewContainer: {
+        paddingBottom: 10,
+    },
+    linkPreviewTextContainer: {
+        width: '100%',
     },
     topCardSection: {
         display: 'flex',

@@ -1,9 +1,9 @@
 export type PostType = {
     authorId: string;
     userName: string;
-    postOriginType: string;
+    postOriginType: 'community' | 'profile';
     createdAt: number;
-    postType: string;
+    postType: 'video' | 'photo' | 'link' | 'text';
     communityName?: string;
     caption?: string;
     likes: Array<string>;
