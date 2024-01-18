@@ -19,7 +19,7 @@ import { useUser } from '../../hooks/storage-hooks';
 import { colors } from '../colors';
 import { PostType } from '../../typings';
 import { postTimeDifference } from '../../utils/helpers';
-import { postNonBinaryData } from '../../utils/requests';
+import { deleteData, postNonBinaryData } from '../../utils/requests';
 import { useShowDialog, useShowLoader } from '../../hooks';
 
 type DataLayerProps = {
@@ -30,6 +30,7 @@ type PostCardDisplayLayerProps = {
     authorId: string;
     caption: string | undefined;
     createdAt: number;
+    deletePost: () => void;
     handleLikeButtonPress: () => void;
     hashTags: Array<string> | undefined;
     hasCommented: boolean;
@@ -53,6 +54,7 @@ function PostCard_DisplayLayer({
     authorId,
     caption,
     createdAt,
+    deletePost,
     handleLikeButtonPress,
     hashTags,
     hasCommented,
@@ -154,7 +156,7 @@ function PostCard_DisplayLayer({
                     </View>
                 </TouchableOpacity>
                 {isPostAuthor && (
-                    <TouchableOpacity style={styles.buttonsTouchContainer}>
+                    <TouchableOpacity onPress={deletePost} style={styles.buttonsTouchContainer}>
                         <GeoCitiesDeleteIcon color={colors.salmonPink} height={20} width={20} />
                     </TouchableOpacity>
                 )}
@@ -176,6 +178,42 @@ function useDataLayer({ post }: DataLayerProps) {
     const videoRef: any = useRef(null);
     const { setIsLoading } = useShowLoader();
     const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError } = useShowDialog();
+
+    async function deletePost() {
+        setIsLoading(true);
+        if (postType === 'video' || postType === 'photo') {
+            setIsLoading(false);
+            return;
+        }
+
+        await deleteData({
+            data: {
+                postId,
+            },
+            uri: 'delete-nonbinary-post',
+        }).then(res => {
+            const { isError, message } = res;
+
+            if (isError) {
+                setIsLoading(false);
+                setIsError(true);
+                setDialogTitle('Whoops');
+                setDialogMessage(message);
+                handleDialogMessageChange(true);
+            }
+
+            setIsLoading(false);
+            queryClient.invalidateQueries(['fetchProfilePosts']);
+        }).catch(err => {
+            console.log(`There was an error deleting a non-binary post: ${err.message}`);
+            setIsLoading(false);
+            setIsLoading(false);
+            setIsError(true);
+            setDialogTitle('Whoops');
+            setDialogMessage(`There was an error deleting this post. Please try again!`);
+            handleDialogMessageChange(true);
+        });
+    }
 
     function hasLikedPost() {
         if (typeof likes !== 'undefined' && likes.length > 0) {
@@ -234,6 +272,7 @@ function useDataLayer({ post }: DataLayerProps) {
         authorId,
         caption,
         createdAt,
+        deletePost,
         handleLikeButtonPress,
         hashTags,
         hasCommented,
