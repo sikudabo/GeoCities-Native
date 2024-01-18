@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { Image, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import truncate from 'lodash/truncate';
 import millify from 'millify';
+import { useQueryClient } from '@tanstack/react-query';
 import { Surface } from "react-native-paper";
 import { LinkPreview } from '@flyerhq/react-native-link-preview';
 import { Video } from 'expo-av';
@@ -163,6 +164,7 @@ function PostCard_DisplayLayer({
 }
 
 function useDataLayer({ post }: DataLayerProps) {
+    const queryClient = useQueryClient();
     const { authorId, caption, comments, createdAt, hashTags, _id: postId, likes, link, postMediaId, postType, userName } = post;
     const { user } = useUser();
     const { _id } = user;
@@ -214,7 +216,8 @@ function useDataLayer({ post }: DataLayerProps) {
                 setDialogMessage(message);
                 handleDialogMessageChange(true);
             }
-
+            queryClient.invalidateQueries(['fetchUser']);
+            queryClient.invalidateQueries(['fetchProfilePosts']);
             setIsLoading(false);
         }).catch(err => {
             console.log(`There was an error ${alreadyLiked ? 'unliking' : 'liking'} a post: ${err.message}`);
