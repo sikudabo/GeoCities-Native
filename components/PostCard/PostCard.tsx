@@ -1,9 +1,10 @@
-import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import truncate from 'lodash/truncate';
 import { Surface } from "react-native-paper";
 import GeoCitiesAvatar from '../GeoCitiesAvatar';
 import GeoCitiesBodyText from '../GeoCitiesBodyText';
 import GeoCitiesCaptionText from '../GeoCitiesCaptionText';
+import GeoCitiesLikeIconOutlined from '../GeoCitiesLikeIconOutlined';
 import { colors } from '../colors';
 import { PostType } from '../../typings';
 import { captionHashtagFormatter, postTimeDifference } from '../../utils/helpers';
@@ -46,12 +47,16 @@ function PostCard_DisplayLayer({
                 <View style={styles.captionSection}>
                     <SafeAreaView>
                         <ScrollView>
-                            {/* <GeoCitiesBodyText color={colors.white} fontSize={12} fontWeight={500} text={caption} /> */}
                             <GeoCitiesCaptionText hashTags={hashTags as Array<string>} text={caption} />
                         </ScrollView>
                     </SafeAreaView>
                 </View>
             )}
+            <View style={styles.actionButtonsSection}>
+                <TouchableOpacity style={styles.buttonsTouchContainer}>
+                    <GeoCitiesLikeIconOutlined height={20} width={20} />
+                </TouchableOpacity>
+            </View>
         </Surface>
     );
 }
@@ -69,6 +74,16 @@ function useDataLayer({ post }: DataLayerProps) {
 }
 
 const styles = StyleSheet.create({
+    actionButtonsSection: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+    },
+    buttonsTouchContainer: {
+        height: 30,
+        width: 50,
+    },
     captionSection: {
         height: 100,
         paddingTop: 20,
