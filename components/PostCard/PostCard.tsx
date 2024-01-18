@@ -77,11 +77,6 @@ function PostCard_DisplayLayer({
                 <View style={styles.linkPreviewContainer}>
                     <LinkPreview 
                         containerStyle={{  width: '100%', padding: 0 }}
-                        renderHeader={(text) => (
-                            <View style={styles.linkPreviewTextContainer}>
-                                <GeoCitiesCaptionText hashTags={[]} text={text} />
-                            </View>
-                        )}
                         renderDescription={(text) => (
                             <View style={styles.linkPreviewTextContainer}>
                                 <GeoCitiesCaptionText hashTags={[]} text={text} />
@@ -89,6 +84,11 @@ function PostCard_DisplayLayer({
                         )}
                         renderText={(text) => (
                             <View style={styles.linkPreviewTextContainer}>
+                                <GeoCitiesCaptionText hashTags={[]} text={text} />
+                            </View>
+                        )}
+                        renderTitle={(text) => (
+                            <View style={[styles.linkPreviewTextContainer, styles.linkPreviewTitle]}>
                                 <GeoCitiesCaptionText hashTags={[]} text={text} />
                             </View>
                         )}
@@ -195,6 +195,9 @@ const styles = StyleSheet.create({
     },
     linkPreviewTextContainer: {
         width: '100%',
+    },
+    linkPreviewTitle: {
+        paddingBottom: 20,
     },
     topCardSection: {
         display: 'flex',
