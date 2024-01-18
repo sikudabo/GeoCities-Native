@@ -7,6 +7,7 @@ import GeoCitiesBodyText from '../GeoCitiesBodyText';
 import GeoCitiesCaptionText from '../GeoCitiesCaptionText';
 import GeoCitiesCommentIconFilled from '../GeoCitiesCommentIconFilled';
 import GeoCitiesCommentIconOutlined from '../GeoCitiesCommentIconOutlined';
+import GeoCitiesDeleteIcon from '../GeoCitiesDeleteIcon';
 import GeoCitiesLikeIconFilled from '../GeoCitiesLikeIconFilled';
 import GeoCitiesLikeIconOutlined from '../GeoCitiesLikeIconOutlined';
 import { useUser } from '../../hooks/storage-hooks';
@@ -25,6 +26,7 @@ type PostCardDisplayLayerProps = {
     hashTags: Array<string> | undefined;
     hasCommented: boolean;
     hasLikedPost: boolean;
+    isPostAuthor: boolean;
     numberOfComments: number;
     numberOfLikes: number;
     userName: string;
@@ -41,6 +43,7 @@ function PostCard_DisplayLayer({
     hashTags,
     hasCommented,
     hasLikedPost,
+    isPostAuthor,
     numberOfComments,
     numberOfLikes,
     userName,
@@ -84,6 +87,11 @@ function PostCard_DisplayLayer({
                         <GeoCitiesBodyText color={colors.white} fontSize={14} fontWeight={900} text={millify(numberOfComments)} />
                     </View>
                 </TouchableOpacity>
+                {isPostAuthor && (
+                    <TouchableOpacity style={styles.buttonsTouchContainer}>
+                        <GeoCitiesDeleteIcon color={colors.salmonPink} height={20} width={20} />
+                    </TouchableOpacity>
+                )}
             </View>
         </Surface>
     );
@@ -95,6 +103,7 @@ function useDataLayer({ post }: DataLayerProps) {
     const { _id } = user;
     const commentUser = comments.find((user) => user.authorId === _id);
     const hasCommented = commentUser ? true : false;
+    const isPostAuthor = authorId === _id ? true : false;
     const numberOfComments = comments.length;
     const numberOfLikes = likes.length;
 
@@ -116,6 +125,7 @@ function useDataLayer({ post }: DataLayerProps) {
         hashTags,
         hasCommented,
         hasLikedPost: hasLikedPost(),
+        isPostAuthor,
         numberOfComments,
         numberOfLikes,
         userName: truncate(userName, { length: 30 }),
@@ -166,4 +176,3 @@ const styles = StyleSheet.create({
         paddingTop: 10,
     },
 });
-
