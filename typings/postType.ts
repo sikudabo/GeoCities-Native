@@ -9,7 +9,7 @@ export type PostType = {
     likes: Array<string>;
     postMediaId?: string;
     link?: string;
-    hashtags: Array<string>;
+    hashTags: Array<string>;
     comments: Array<CommentType>;
     _id: string;
 };

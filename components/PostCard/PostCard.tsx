@@ -1,11 +1,12 @@
-import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import truncate from 'lodash/truncate';
 import { Surface } from "react-native-paper";
 import GeoCitiesAvatar from '../GeoCitiesAvatar';
 import GeoCitiesBodyText from '../GeoCitiesBodyText';
+import GeoCitiesCaptionText from '../GeoCitiesCaptionText';
 import { colors } from '../colors';
 import { PostType } from '../../typings';
-import { postTimeDifference } from '../../utils/helpers';
+import { captionHashtagFormatter, postTimeDifference } from '../../utils/helpers';
 
 type DataLayerProps = {
     post: PostType;
@@ -15,12 +16,11 @@ type PostCardDisplayLayerProps = {
     authorId: string;
     caption: string | undefined;
     createdAt: number;
+    hashTags: Array<string> | undefined;
     userName: string;
 };
 
 export default function PostCard({ post }: { post: PostType}) {
-    const { caption } = post;
-    console.log('The caption is:', caption);
     return <PostCard_DisplayLayer {...useDataLayer({ post })} />;
 }
 
@@ -28,6 +28,7 @@ function PostCard_DisplayLayer({
     authorId,
     caption,
     createdAt,
+    hashTags,
     userName,
 }: PostCardDisplayLayerProps) {
     return (
@@ -45,7 +46,8 @@ function PostCard_DisplayLayer({
                 <View style={styles.captionSection}>
                     <SafeAreaView>
                         <ScrollView>
-                            <GeoCitiesBodyText color={colors.white} fontSize={12} fontWeight={500} text={caption} />
+                            {/* <GeoCitiesBodyText color={colors.white} fontSize={12} fontWeight={500} text={caption} /> */}
+                            <GeoCitiesCaptionText hashTags={hashTags as Array<string>} text={caption} />
                         </ScrollView>
                     </SafeAreaView>
                 </View>
@@ -55,12 +57,13 @@ function PostCard_DisplayLayer({
 }
 
 function useDataLayer({ post }: DataLayerProps) {
-    const { authorId, caption, createdAt, userName } = post;
+    const { authorId, caption, createdAt, hashTags, userName } = post;
     
     return {
         authorId,
         caption,
         createdAt,
+        hashTags,
         userName: truncate(userName, { length: 30 }),
     };
 }
