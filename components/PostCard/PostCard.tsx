@@ -1,11 +1,10 @@
 import { useRef } from 'react';
 import { Image, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import VideoPlayer from 'expo-video-player';
 import truncate from 'lodash/truncate';
 import millify from 'millify';
 import { Surface } from "react-native-paper";
 import { LinkPreview } from '@flyerhq/react-native-link-preview';
-import { ResizeMode, Video } from 'expo-av';
+import { Video } from 'expo-av';
 import * as Linking from 'expo-linking';
 import GeoCitiesAvatar from '../GeoCitiesAvatar';
 import GeoCitiesBodyText from '../GeoCitiesBodyText';
@@ -19,6 +18,8 @@ import { useUser } from '../../hooks/storage-hooks';
 import { colors } from '../colors';
 import { PostType } from '../../typings';
 import { postTimeDifference } from '../../utils/helpers';
+import { postNonBinaryData } from '../../utils/requests';
+import { useShowDialog, useShowLoader } from '../../hooks';
 
 type DataLayerProps = {
     post: PostType;
@@ -28,6 +29,7 @@ type PostCardDisplayLayerProps = {
     authorId: string;
     caption: string | undefined;
     createdAt: number;
+    handleLikeButtonPress: () => void;
     hashTags: Array<string> | undefined;
     hasCommented: boolean;
     hasLikedPost: boolean;
@@ -50,6 +52,7 @@ function PostCard_DisplayLayer({
     authorId,
     caption,
     createdAt,
+    handleLikeButtonPress,
     hashTags,
     hasCommented,
     hasLikedPost,
@@ -131,7 +134,7 @@ function PostCard_DisplayLayer({
                 </View>
             )}
             <View style={styles.actionButtonsSection}>
-                <TouchableOpacity style={styles.buttonsTouchContainer}>
+                <TouchableOpacity onPress={handleLikeButtonPress} style={styles.buttonsTouchContainer}>
                     {!hasLikedPost ? (
                         <GeoCitiesLikeIconOutlined height={20} width={20} />
                     ): <GeoCitiesLikeIconFilled height={20} width={20} />}
@@ -160,7 +163,7 @@ function PostCard_DisplayLayer({
 }
 
 function useDataLayer({ post }: DataLayerProps) {
-    const { authorId, caption, comments, createdAt, hashTags, likes, link, postMediaId, postType, userName } = post;
+    const { authorId, caption, comments, createdAt, hashTags, _id: postId, likes, link, postMediaId, postType, userName } = post;
     const { user } = useUser();
     const { _id } = user;
     const commentUser = comments.find((user) => user.authorId === _id);
@@ -169,6 +172,8 @@ function useDataLayer({ post }: DataLayerProps) {
     const numberOfComments = comments.length;
     const numberOfLikes = likes.length;
     const videoRef: any = useRef(null);
+    const { setIsLoading } = useShowLoader();
+    const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError } = useShowDialog();
 
     function hasLikedPost() {
         if (typeof likes !== 'undefined' && likes.length > 0) {
@@ -186,11 +191,47 @@ function useDataLayer({ post }: DataLayerProps) {
             Linking.openURL(link);
         }
     }
+
+    async function handleLikeButtonPress() {
+        setIsLoading(true);
+        const alreadyLiked = hasLikedPost();
+
+        await postNonBinaryData({
+            data: {
+                actionType: alreadyLiked ? 'unlike' : 'like',
+                authorId,
+                likerId: _id,
+                postId,
+            },
+            uri: 'add-subtract-like',
+        }).then(res => {
+            const { isError, message } = res;
+
+            if (isError) {
+                setIsLoading(false);
+                setIsError(true);
+                setDialogTitle('Whoops');
+                setDialogMessage(message);
+                handleDialogMessageChange(true);
+            }
+
+            setIsLoading(false);
+        }).catch(err => {
+            console.log(`There was an error ${alreadyLiked ? 'unliking' : 'liking'} a post: ${err.message}`);
+            setIsLoading(false);
+            setIsLoading(false);
+            setIsError(true);
+            setDialogTitle('Whoops');
+            setDialogMessage(`There was an error ${alreadyLiked ? 'unliking' : 'liking'} a post. Please try again!`);
+            handleDialogMessageChange(true);
+        });
+    }
     
     return {
         authorId,
         caption,
         createdAt,
+        handleLikeButtonPress,
         hashTags,
         hasCommented,
         hasLikedPost: hasLikedPost(),
