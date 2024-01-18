@@ -1,8 +1,9 @@
-import { SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Image, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import truncate from 'lodash/truncate';
 import millify from 'millify';
 import { Surface } from "react-native-paper";
 import { LinkPreview } from '@flyerhq/react-native-link-preview';
+import * as Linking from 'expo-linking';
 import GeoCitiesAvatar from '../GeoCitiesAvatar';
 import GeoCitiesBodyText from '../GeoCitiesBodyText';
 import GeoCitiesCaptionText from '../GeoCitiesCaptionText';
@@ -31,6 +32,8 @@ type PostCardDisplayLayerProps = {
     link?: string;
     numberOfComments: number;
     numberOfLikes: number;
+    openUrl: () => void;
+    postMediaId: string | undefined;
     postType: 'video' | 'photo' | 'link' | 'text';
     userName: string;
 };
@@ -50,6 +53,8 @@ function PostCard_DisplayLayer({
     link,
     numberOfComments,
     numberOfLikes,
+    openUrl,
+    postMediaId,
     postType,
     userName,
 }: PostCardDisplayLayerProps) {
@@ -97,6 +102,16 @@ function PostCard_DisplayLayer({
                      />
                 </View>
             )}
+            {(postType === 'photo' || postType === 'video') && link && (
+                <TouchableOpacity onPress={openUrl} style={styles.mediaPostLinkSection}>
+                    <GeoCitiesCaptionText hashTags={[]} text={link} />
+                </TouchableOpacity>
+            )}
+            {postType === 'photo' && postMediaId && (
+                <View style={styles.imageContainer}>
+                    <Image source={{ uri: `${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo/${postMediaId}`}} style={styles.img} />
+                </View>
+            )}
             <View style={styles.actionButtonsSection}>
                 <TouchableOpacity style={styles.buttonsTouchContainer}>
                     {!hasLikedPost ? (
@@ -127,7 +142,7 @@ function PostCard_DisplayLayer({
 }
 
 function useDataLayer({ post }: DataLayerProps) {
-    const { authorId, caption, comments, createdAt, hashTags, likes, link, postType, userName } = post;
+    const { authorId, caption, comments, createdAt, hashTags, likes, link, postMediaId, postType, userName } = post;
     const { user } = useUser();
     const { _id } = user;
     const commentUser = comments.find((user) => user.authorId === _id);
@@ -146,6 +161,12 @@ function useDataLayer({ post }: DataLayerProps) {
 
         return false;
     }
+
+    function openUrl() {
+        if(link) {
+            Linking.openURL(link);
+        }
+    }
     
     return {
         authorId,
@@ -158,6 +179,8 @@ function useDataLayer({ post }: DataLayerProps) {
         link,
         numberOfComments,
         numberOfLikes,
+        openUrl,
+        postMediaId,
         postType,
         userName: truncate(userName, { length: 30 }),
     };
@@ -190,6 +213,14 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         paddingRight: 10,
     },
+    imageContainer: {
+        paddingTop: 20,
+        paddingBottom: 20,
+    },
+    img: {
+        height: 400,
+        width: '100%',
+    },
     linkPreviewContainer: {
         paddingBottom: 10,
     },
@@ -198,6 +229,11 @@ const styles = StyleSheet.create({
     },
     linkPreviewTitle: {
         paddingBottom: 20,
+    },
+    mediaPostLinkSection: {
+        paddingTop: 10,
+        paddingBottom: 10,
+        width: '100%',
     },
     topCardSection: {
         display: 'flex',

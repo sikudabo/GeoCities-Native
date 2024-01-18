@@ -197,7 +197,7 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
         fd.append('userName', userName);
         fd.append('caption', String(caption.trim()));
         fd.append('createdAt', String(createdAt));
-        fd.append('link', String(link.trim()));
+        fd.append('link', link);
         fd.append('postType', uploadPostType);
         fd.append('postOriginType', isCommunity ? 'community' : 'profile');
         if (isCommunity) {
