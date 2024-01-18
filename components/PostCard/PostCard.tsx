@@ -182,8 +182,34 @@ function useDataLayer({ post }: DataLayerProps) {
     async function deletePost() {
         setIsLoading(true);
         if (postType === 'video' || postType === 'photo') {
-            setIsLoading(false);
-            return;
+            await deleteData({
+                data: {
+                    postId,
+                    fileId: postMediaId,
+                },
+                uri: 'delete-binary-post',
+            }).then(res => {
+                const { isError, message } = res;
+
+                if (isError) {
+                    setIsLoading(false);
+                    setIsError(true);
+                    setDialogTitle('Whoops');
+                    setDialogMessage(message);
+                    handleDialogMessageChange(true);
+                }
+    
+                setIsLoading(false);
+                queryClient.invalidateQueries(['fetchProfilePosts']);
+            }).catch(err => {
+                console.log(`There was an error deleting a binary post: ${err.message}`);
+                setIsLoading(false);
+                setIsLoading(false);
+                setIsError(true);
+                setDialogTitle('Whoops');
+                setDialogMessage(`There was an error deleting this post. Please try again!`);
+                handleDialogMessageChange(true);
+            });
         }
 
         await deleteData({
