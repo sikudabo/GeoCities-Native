@@ -1,5 +1,6 @@
 import { SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import truncate from 'lodash/truncate';
+import millify from 'millify';
 import { Surface } from "react-native-paper";
 import GeoCitiesAvatar from '../GeoCitiesAvatar';
 import GeoCitiesBodyText from '../GeoCitiesBodyText';
@@ -21,6 +22,7 @@ type PostCardDisplayLayerProps = {
     createdAt: number;
     hashTags: Array<string> | undefined;
     hasLikedPost: boolean;
+    numberOfLikes: number;
     userName: string;
 };
 
@@ -34,6 +36,7 @@ function PostCard_DisplayLayer({
     createdAt,
     hashTags,
     hasLikedPost,
+    numberOfLikes,
     userName,
 }: PostCardDisplayLayerProps) {
     return (
@@ -61,6 +64,9 @@ function PostCard_DisplayLayer({
                     {!hasLikedPost ? (
                         <GeoCitiesLikeIconOutlined height={20} width={20} />
                     ): <GeoCitiesLikeIconFilled height={20} width={20} />}
+                    <View style={styles.actionNumberIndicatorContainer}>
+                        <GeoCitiesBodyText color={colors.white} fontSize={14} fontWeight={900} text={millify(numberOfLikes)} />
+                    </View>
                 </TouchableOpacity>
             </View>
         </Surface>
@@ -71,6 +77,7 @@ function useDataLayer({ post }: DataLayerProps) {
     const { authorId, caption, createdAt, hashTags, likes, userName } = post;
     const { user } = useUser();
     const { _id } = user;
+    const numberOfLikes = likes.length;
 
     function hasLikedPost() {
         if (typeof likes !== 'undefined' && likes.length > 0) {
@@ -89,6 +96,7 @@ function useDataLayer({ post }: DataLayerProps) {
         createdAt,
         hashTags,
         hasLikedPost: hasLikedPost(),
+        numberOfLikes,
         userName: truncate(userName, { length: 30 }),
     };
 }
@@ -100,7 +108,11 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         width: '100%',
     },
+    actionNumberIndicatorContainer: {
+        paddingTop: 2,
+    },
     buttonsTouchContainer: {
+        columnGap: 5,
         display: 'flex',
         flexDirection: 'row',
         height: 30,
