@@ -1,8 +1,10 @@
+import { useRef } from 'react';
 import { Image, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import truncate from 'lodash/truncate';
 import millify from 'millify';
 import { Surface } from "react-native-paper";
 import { LinkPreview } from '@flyerhq/react-native-link-preview';
+import { ResizeMode, Video } from 'expo-av';
 import * as Linking from 'expo-linking';
 import GeoCitiesAvatar from '../GeoCitiesAvatar';
 import GeoCitiesBodyText from '../GeoCitiesBodyText';
@@ -36,6 +38,7 @@ type PostCardDisplayLayerProps = {
     postMediaId: string | undefined;
     postType: 'video' | 'photo' | 'link' | 'text';
     userName: string;
+    videoRef: any;
 };
 
 export default function PostCard({ post }: { post: PostType}) {
@@ -57,6 +60,7 @@ function PostCard_DisplayLayer({
     postMediaId,
     postType,
     userName,
+    videoRef,
 }: PostCardDisplayLayerProps) {
     return (
         <Surface elevation={4} style={styles.cardContainer}>
@@ -112,6 +116,17 @@ function PostCard_DisplayLayer({
                     <Image source={{ uri: `${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo/${postMediaId}`}} style={styles.img} />
                 </View>
             )}
+            {postType === 'video' && postMediaId && (
+                <View style={styles.videoContainer}>
+                    <Video 
+                        ref={videoRef}
+                        source={{ uri: `${process.env.EXPO_PUBLIC_API_BASE_URI}get-video/${postMediaId}` }}
+                        style={styles.videoPlayer}
+                        isLooping
+                        useNativeControls
+                    />
+                </View>
+            )}
             <View style={styles.actionButtonsSection}>
                 <TouchableOpacity style={styles.buttonsTouchContainer}>
                     {!hasLikedPost ? (
@@ -150,6 +165,7 @@ function useDataLayer({ post }: DataLayerProps) {
     const isPostAuthor = authorId === _id ? true : false;
     const numberOfComments = comments.length;
     const numberOfLikes = likes.length;
+    const videoRef: any = useRef(null);
 
     function hasLikedPost() {
         if (typeof likes !== 'undefined' && likes.length > 0) {
@@ -183,6 +199,7 @@ function useDataLayer({ post }: DataLayerProps) {
         postMediaId,
         postType,
         userName: truncate(userName, { length: 30 }),
+        videoRef,
     };
 }
 
@@ -250,5 +267,15 @@ const styles = StyleSheet.create({
     topSectionNameContainer: {
         paddingLeft: 10,
         paddingTop: 10,
+    },
+    videoContainer: {
+        paddingBottom: 20,
+        paddingTop: 10,
+        height: 350,
+        width: '100%',
+    },
+    videoPlayer: {
+        height: '100%',
+        width: '100%',
     },
 });
