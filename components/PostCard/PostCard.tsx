@@ -4,10 +4,12 @@ import { Surface } from "react-native-paper";
 import GeoCitiesAvatar from '../GeoCitiesAvatar';
 import GeoCitiesBodyText from '../GeoCitiesBodyText';
 import GeoCitiesCaptionText from '../GeoCitiesCaptionText';
+import GeoCitiesLikeIconFilled from '../GeoCitiesLikeIconFilled';
 import GeoCitiesLikeIconOutlined from '../GeoCitiesLikeIconOutlined';
+import { useUser } from '../../hooks/storage-hooks';
 import { colors } from '../colors';
 import { PostType } from '../../typings';
-import { captionHashtagFormatter, postTimeDifference } from '../../utils/helpers';
+import { postTimeDifference } from '../../utils/helpers';
 
 type DataLayerProps = {
     post: PostType;
@@ -18,6 +20,7 @@ type PostCardDisplayLayerProps = {
     caption: string | undefined;
     createdAt: number;
     hashTags: Array<string> | undefined;
+    hasLikedPost: boolean;
     userName: string;
 };
 
@@ -30,6 +33,7 @@ function PostCard_DisplayLayer({
     caption,
     createdAt,
     hashTags,
+    hasLikedPost,
     userName,
 }: PostCardDisplayLayerProps) {
     return (
@@ -54,7 +58,9 @@ function PostCard_DisplayLayer({
             )}
             <View style={styles.actionButtonsSection}>
                 <TouchableOpacity style={styles.buttonsTouchContainer}>
-                    <GeoCitiesLikeIconOutlined height={20} width={20} />
+                    {!hasLikedPost ? (
+                        <GeoCitiesLikeIconOutlined height={20} width={20} />
+                    ): <GeoCitiesLikeIconFilled height={20} width={20} />}
                 </TouchableOpacity>
             </View>
         </Surface>
@@ -62,13 +68,27 @@ function PostCard_DisplayLayer({
 }
 
 function useDataLayer({ post }: DataLayerProps) {
-    const { authorId, caption, createdAt, hashTags, userName } = post;
+    const { authorId, caption, createdAt, hashTags, likes, userName } = post;
+    const { user } = useUser();
+    const { _id } = user;
+
+    function hasLikedPost() {
+        if (typeof likes !== 'undefined' && likes.length > 0) {
+            if (likes.includes(_id)) {
+                return true;
+            }
+            return false;
+        }
+
+        return false;
+    }
     
     return {
         authorId,
         caption,
         createdAt,
         hashTags,
+        hasLikedPost: hasLikedPost(),
         userName: truncate(userName, { length: 30 }),
     };
 }
@@ -81,6 +101,8 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     buttonsTouchContainer: {
+        display: 'flex',
+        flexDirection: 'row',
         height: 30,
         width: 50,
     },
