@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "geogroups",
-    "slug": "geogroups",
+    "name": "GeoGroups",
+    "slug": "GeoGroups",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -15,7 +15,7 @@
       "**/*"
     ],
     "ios": {
-      "bundleIdentifier": "com.sikudabo.geogroups",
+      "bundleIdentifier": "com.sikudabo.GeoGroups",
       "supportsTablet": true,
       "infoPlist": {
         "NSUserTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you.",
