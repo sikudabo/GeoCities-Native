@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { Image, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import truncate from 'lodash/truncate';
 import millify from 'millify';
+import { useNavigation } from '@react-navigation/native';
 import { useQueryClient } from '@tanstack/react-query';
 import { Surface } from "react-native-paper";
 import { LinkPreview } from '@flyerhq/react-native-link-preview';
@@ -32,6 +33,7 @@ type PostCardDisplayLayerProps = {
     createdAt: number;
     deletePost: () => void;
     handleLikeButtonPress: () => void;
+    handleCommentButtonClick: () => void;
     hashTags: Array<string> | undefined;
     hasCommented: boolean;
     hasLikedPost: boolean;
@@ -46,7 +48,7 @@ type PostCardDisplayLayerProps = {
     videoRef: any;
 };
 
-export default function PostCard({ post }: { post: PostType}) {
+export default function PostCard({ post }: { post: PostType }) {
     return <PostCard_DisplayLayer {...useDataLayer({ post })} />;
 }
 
@@ -56,6 +58,7 @@ function PostCard_DisplayLayer({
     createdAt,
     deletePost,
     handleLikeButtonPress,
+    handleCommentButtonClick,
     hashTags,
     hasCommented,
     hasLikedPost,
@@ -145,7 +148,7 @@ function PostCard_DisplayLayer({
                         <GeoCitiesBodyText color={colors.white} fontSize={14} fontWeight={900} text={millify(numberOfLikes)} />
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.buttonsTouchContainer}>
+                <TouchableOpacity onPress={handleCommentButtonClick} style={styles.buttonsTouchContainer}>
                     {!hasCommented ? (
                         <GeoCitiesCommentIconOutlined height={20} width={20} />
                     ): (
@@ -167,6 +170,7 @@ function PostCard_DisplayLayer({
 
 function useDataLayer({ post }: DataLayerProps) {
     const queryClient = useQueryClient();
+    const navigation = useNavigation();
     const { authorId, caption, comments, createdAt, hashTags, _id: postId, likes, link, postMediaId, postType, userName } = post;
     const { user } = useUser();
     const { _id } = user;
@@ -241,6 +245,10 @@ function useDataLayer({ post }: DataLayerProps) {
         });
     }
 
+    function handleCommentButtonClick() {
+        navigation.navigate('PostComments' as never)
+    }
+
     function hasLikedPost() {
         if (typeof likes !== 'undefined' && likes.length > 0) {
             if (likes.includes(_id)) {
@@ -300,6 +308,7 @@ function useDataLayer({ post }: DataLayerProps) {
         createdAt,
         deletePost,
         handleLikeButtonPress,
+        handleCommentButtonClick,
         hashTags,
         hasCommented,
         hasLikedPost: hasLikedPost(),

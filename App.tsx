@@ -13,6 +13,7 @@ import {
   CreatePostScreen,
   Feed,
   LoginCreateStack,
+  PostComments,
   Profile,
   SamplePage,
 } from './pages';
@@ -113,6 +114,10 @@ function App_DisplayLayer({
                   <Drawer.Screen 
                     component={CreatePostScreen}
                     name="CreatePost" 
+                  />
+                  <Drawer.Screen 
+                    component={PostComments}
+                    name="PostComments"
                   />
                 </>
               )}

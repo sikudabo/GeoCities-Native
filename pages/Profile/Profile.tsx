@@ -69,7 +69,7 @@ function Profile_DisplayLayer({
                         <RefreshControl 
                             onRefresh={onRefresh}
                             refreshing={refreshing}
-                            style={styles.refreshControl}
+                            tintColor={colors.white}
                         />
                     }
                 >
@@ -229,9 +229,6 @@ const styles = StyleSheet.create({
         paddingRight: 10,
         paddingTop: 30,
         width: '100%',
-    },
-    refreshControl: {
-        backgroundColor: colors.white,
     },
     safeAreaContainer: {
         display: 'flex',

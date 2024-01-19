@@ -1,6 +1,7 @@
 import { colors } from "./colors";
 import GeoCitiesAppBar from "./GeoCitiesAppBar";
 import GeoCitiesAvatar from "./GeoCitiesAvatar";
+import GeoCitiesBackArrowIcon from "./GeoCitiesBackArrowIcon";
 import GeoCitiesBodyText from "./GeoCitiesBodyText";
 import GeoCitiesButton from "./GeoCitiesButton";
 import GeoCitiesCaptionText from "./GeoCitiesCaptionText";
@@ -28,6 +29,7 @@ export {
     colors,
     GeoCitiesAppBar,
     GeoCitiesAvatar,
+    GeoCitiesBackArrowIcon,
     GeoCitiesBodyText,
     GeoCitiesButton,
     GeoCitiesCaptionText,
