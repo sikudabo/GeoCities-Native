@@ -1,5 +1,5 @@
 export default function postTimeDifference(date_1: number) {
-    const months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const firstDate = new Date(date_1);
     const monthIndex = firstDate.getMonth();
     const month = months[monthIndex];
