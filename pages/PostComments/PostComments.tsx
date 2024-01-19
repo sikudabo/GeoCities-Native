@@ -58,7 +58,7 @@ function useDataLayer({ route }: PostCommentsProps) {
     const navigation = useNavigation();
     const { _id } = route.params;
     const { data, isLoading } = useFetchPost({ _id });
-    const { isPostDeleted, post } = data;
+    const { isPostDeleted, post } = typeof data !== 'undefined' && !isLoading ? data : { isPostDeleted: false, post: {} };
 
     console.log(`Is post deleted is: ${isPostDeleted}`);
 

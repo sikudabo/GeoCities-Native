@@ -19,7 +19,7 @@ export default function GeoCitiesBodyText({
     const styles = StyleSheet.create({
         textStyles: {
             color,
-            fontFamily: 'Montserrat_700Bold',
+            fontFamily: 'Montserrat_600SemiBold',
             fontSize,
             fontWeight: fontWeight.toString() as any,
             textAlign,
