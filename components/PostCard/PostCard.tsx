@@ -246,7 +246,7 @@ function useDataLayer({ post }: DataLayerProps) {
     }
 
     function handleCommentButtonClick() {
-        navigation.navigate('PostComments', { post });
+        navigation.navigate('PostComments', { _id: postId });
     }
 
     function hasLikedPost() {

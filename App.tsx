@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { DrawerActions, NavigationContainer, NavigationState } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { useFonts, Montserrat_400Regular } from '@expo-google-fonts/montserrat';
+import { useFonts, Montserrat_400Regular, Montserrat_700Bold } from '@expo-google-fonts/montserrat';
 import { MD3DarkTheme as DefaultTheme, PaperProvider } from 'react-native-paper';
 import * as SplashScreen from 'expo-splash-screen';
 import { useShowLoader } from './hooks';
@@ -134,6 +134,7 @@ function useDataLayer() {
   const { user } = useUser();
   const [fontsLoaded] = useFonts({
     Montserrat_400Regular,
+    Montserrat_700Bold,
   });
 
   const isUserLoggedIn = useMemo(() => {

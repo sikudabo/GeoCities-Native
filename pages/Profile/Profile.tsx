@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
     },
     tabLabel: {
         color: colors.white,
-        fontFamily: 'Montserrat_400Regular',
+        fontFamily: 'Montserrat_700Bold',
     },
     tabsSectionContainer: {
         paddingTop: 30,

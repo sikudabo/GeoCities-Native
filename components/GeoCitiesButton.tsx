@@ -23,7 +23,7 @@ export default function GeoCitiesButton({
             borderColor: mode === 'outlined' || mode ==='contained' ? buttonColor : 'rgba(255, 255, 255, 0)',
             borderWidth: mode === 'outlined' ? 2 : 0,
             borderRadius: 5,
-            fontFamily: 'Montserrat_400Regular',
+            fontFamily: 'Montserrat_700Bold',
             fontWeight: fontWeight ? fontWeight : 'normal',
             ...customStyle,
         }
