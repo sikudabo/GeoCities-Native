@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
+import { useCallback, useEffect, useState } from 'react';
+import { RefreshControl, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import millify from 'millify';
 import truncate from 'lodash/truncate';
 import { Divider } from 'react-native-paper';
@@ -31,6 +31,8 @@ type ProfileDisplayLayerProps = {
     fullName: string;
     handleChangeIndex: (index: number) => void;
     handleNavigation: () => void;
+    onRefresh: () => void;
+    refreshing: boolean;
     user: UserType;
     userLocation: string;
 };
@@ -54,13 +56,23 @@ function Profile_DisplayLayer({
     fullName,
     handleChangeIndex,
     handleNavigation,
+    onRefresh,
+    refreshing,
     user,
     userLocation,
 }: ProfileDisplayLayerProps) {
     return (
         <View style={styles.container}>
             <SafeAreaView style={styles.safeAreaContainer}>
-                <ScrollView>
+                <ScrollView
+                    refreshControl={
+                        <RefreshControl 
+                            onRefresh={onRefresh}
+                            refreshing={refreshing}
+                            style={styles.refreshControl}
+                        />
+                    }
+                >
                     <View style={styles.avatarContainer}>
                         <GeoCitiesAvatar src={`${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo/${avatar}`} size={120} />
                     </View>
@@ -117,9 +129,17 @@ function useDataLayer({ navigation }: ProfileProps) {
     const { user: currentUser } = typeof data !== 'undefined' && !isLoading ? data : { user: undefined };
     const { avatar, firstName, followers, following, lastName, locationCity, locationState } = user;
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [refreshing, setRefreshing] = useState(false);
     const followerCount = followers.length;
     const followingCount = following.length;
     const userLocation = `${locationCity}, ${locationState}`;
+
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 2000);
+    }, []);
 
     useEffect(() => {
         if (!currentUser) {
@@ -152,6 +172,8 @@ function useDataLayer({ navigation }: ProfileProps) {
         fullName: `${firstName} ${lastName}`,
         handleChangeIndex,
         handleNavigation,
+        onRefresh,
+        refreshing,
         user,
         userLocation,
     };
@@ -207,6 +229,9 @@ const styles = StyleSheet.create({
         paddingRight: 10,
         paddingTop: 30,
         width: '100%',
+    },
+    refreshControl: {
+        backgroundColor: colors.white,
     },
     safeAreaContainer: {
         display: 'flex',
