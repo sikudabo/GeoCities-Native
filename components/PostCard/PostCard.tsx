@@ -170,7 +170,7 @@ function PostCard_DisplayLayer({
 
 function useDataLayer({ post }: DataLayerProps) {
     const queryClient = useQueryClient();
-    const navigation = useNavigation();
+    const navigation: any = useNavigation();
     const { authorId, caption, comments, createdAt, hashTags, _id: postId, likes, link, postMediaId, postType, userName } = post;
     const { user } = useUser();
     const { _id } = user;
@@ -246,7 +246,7 @@ function useDataLayer({ post }: DataLayerProps) {
     }
 
     function handleCommentButtonClick() {
-        navigation.navigate('PostComments' as never)
+        navigation.navigate('PostComments', { post });
     }
 
     function hasLikedPost() {

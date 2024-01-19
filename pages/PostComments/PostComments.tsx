@@ -2,12 +2,16 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { GeoCitiesBackArrowIcon, GeoCitiesBodyText, colors } from '../../components';
 
+type PostCommentsProps = { 
+    route: any;
+};
+
 type PostCommentsDisplayLayerProps = {
     handleBackPress: () => void;
 };
 
-export default function PostComments() {
-    return <PostComments_DisplayLayer {...useDataLayer()} />;
+export default function PostComments({ route }: PostCommentsProps) {
+    return <PostComments_DisplayLayer {...useDataLayer({ route })} />;
 }
 
 
@@ -25,7 +29,7 @@ function PostComments_DisplayLayer({
     );
 }
 
-function useDataLayer() {
+function useDataLayer({ route }: PostCommentsProps) {
     const navigation = useNavigation();
 
     function handleBackPress() {
