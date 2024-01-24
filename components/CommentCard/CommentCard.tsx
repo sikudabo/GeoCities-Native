@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { Image, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import millify from 'millify';
 import { useQueryClient } from '@tanstack/react-query';
 import { Surface } from 'react-native-paper';
 import { LinkPreview } from '@flyerhq/react-native-link-preview';
@@ -32,6 +33,7 @@ type CommentCardDisplayLayerProps = {
     hashTags?: Array<string>;
     hasLikedComment: boolean;
     link?: string;
+    numberOfLikes: number;
     openUrl: () => void;
     postMediaId?: string;
     userName: string;
@@ -51,6 +53,7 @@ function CommentCard_DisplayLayer({
     hashTags = [],
     hasLikedComment,
     link,
+    numberOfLikes,
     openUrl,
     postMediaId,
     userName,
@@ -130,6 +133,9 @@ function CommentCard_DisplayLayer({
                     ): (
                         <GeoCitiesLikeIconOutlined height={20} width={20} />
                     )}
+                     <View style={styles.actionNumberIndicatorContainer}>
+                        <GeoCitiesBodyText color={colors.white} fontSize={14} fontWeight={900} text={millify(numberOfLikes)} />
+                    </View>
                 </TouchableOpacity>
             </View>
         </Surface>
@@ -144,14 +150,26 @@ function useDataLayer({ comment }: DataLayerProps) {
     const { _id } = user;
     const { authorId, caption, commentType, createdAt, hashTags, _id: commentId, likes, link, postId, postMediaId, userName } = comment;
     const avatarUri = `${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo-by-user-id/${authorId}`;
-    const hasLikedComment = typeof likes !== 'undefined' && likes.length > 1 && likes.includes(_id) ? true : false;
+    const numberOfLikes = typeof likes !== 'undefined' ? likes.length : 0;
     const videoRef: any = useRef(null);
+
+    function hasLikedComment() {
+        if (typeof likes !== 'undefined' && likes.length > 0) {
+            if (likes.includes(_id)) {
+                return true;
+            }
+            return false;
+        }
+
+        return false;
+    }
 
     async function handleLikeButtonPress() {
         setIsLoading(true);
+        const isLiked = hasLikedComment();
         await postNonBinaryData({
             data: {
-                actionType: hasLikedComment ? 'unlike' : 'like',
+                actionType: isLiked ? 'unlike' : 'like',
                 authorId,
                 commentId,
                 likerId: _id,
@@ -173,11 +191,11 @@ function useDataLayer({ comment }: DataLayerProps) {
             queryClient.invalidateQueries(['fetchPost']);
             setIsLoading(false);
         }).catch(err => {
-            console.log(`There was an error ${hasLikedComment ? 'unliking' : 'liking'} a comment: ${err.message}`);
+            console.log(`There was an error ${isLiked ? 'unliking' : 'liking'} a comment: ${err.message}`);
             setIsLoading(false);
             setIsError(true);
             setDialogTitle('Whoops');
-            setDialogMessage(`There was an error ${hasLikedComment ? 'unliking' : 'liking'} a comment. Please try again!`);
+            setDialogMessage(`There was an error ${isLiked ? 'unliking' : 'liking'} a comment. Please try again!`);
             handleDialogMessageChange(true);
         });
     }
@@ -195,8 +213,9 @@ function useDataLayer({ comment }: DataLayerProps) {
       createdAt,
       handleLikeButtonPress,
       hashTags,
-      hasLikedComment,
+      hasLikedComment: hasLikedComment(),
       link,
+      numberOfLikes,
       openUrl,
       postMediaId,
       userName,
