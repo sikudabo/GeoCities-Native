@@ -7,9 +7,12 @@ import * as Linking from 'expo-linking';
 import GeoCitiesAvatar from '../GeoCitiesAvatar';
 import GeoCitiesBodyText from '../GeoCitiesBodyText';
 import GeoCitiesCaptionText from '../GeoCitiesCaptionText';
+import GeoCitiesLikeIconFilled from '../GeoCitiesLikeIconFilled';
+import GeoCitiesLikeIconOutlined from '../GeoCitiesLikeIconOutlined';
 import { colors } from '../colors';
 import { CommentType } from '../../typings';
 import { postTimeDifference } from '../../utils/helpers';
+import { useUser } from '../../hooks/storage-hooks';
 
 type CommentCardProps = {
     comment: CommentType;
@@ -23,6 +26,7 @@ type CommentCardDisplayLayerProps = {
     commentType: 'video' | 'photo' | 'link' | 'text';
     createdAt: number;
     hashTags?: Array<string>;
+    hasLikedComment: boolean;
     link?: string;
     openUrl: () => void;
     postMediaId?: string;
@@ -40,6 +44,7 @@ function CommentCard_DisplayLayer({
     commentType,
     createdAt,
     hashTags = [],
+    hasLikedComment,
     link,
     openUrl,
     postMediaId,
@@ -113,13 +118,25 @@ function CommentCard_DisplayLayer({
                     />
                 </View>
             )}
+            <View style={styles.actionButtonsSection}>
+                <TouchableOpacity style={styles.buttonsTouchContainer}>
+                    {hasLikedComment ? (
+                        <GeoCitiesLikeIconFilled height={20} width={20} />
+                    ): (
+                        <GeoCitiesLikeIconOutlined height={20} width={20} />
+                    )}
+                </TouchableOpacity>
+            </View>
         </Surface>
     );
 }
 
 function useDataLayer({ comment }: DataLayerProps) {
-    const { authorId, caption, commentType, createdAt, hashTags, link, postMediaId, userName } = comment;
+    const { user } = useUser();
+    const { _id } = user;
+    const { authorId, caption, commentType, createdAt, hashTags, likes, link, postMediaId, userName } = comment;
     const avatarUri = `${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo-by-user-id/${authorId}`;
+    const hasLikedComment = typeof likes !== 'undefined' && likes.length > 1 && likes.includes(_id) ? true : false;
     const videoRef: any = useRef(null);
 
     function openUrl() {
@@ -134,6 +151,7 @@ function useDataLayer({ comment }: DataLayerProps) {
       commentType,
       createdAt,
       hashTags,
+      hasLikedComment,
       link,
       openUrl,
       postMediaId,
@@ -143,6 +161,22 @@ function useDataLayer({ comment }: DataLayerProps) {
 }
 
 const styles = StyleSheet.create({
+    actionButtonsSection: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+    },
+    actionNumberIndicatorContainer: {
+        paddingTop: 2,
+    },
+    buttonsTouchContainer: {
+        columnGap: 5,
+        display: 'flex',
+        flexDirection: 'row',
+        height: 30,
+        width: 50,
+    },
     captionSection: {
         height: 100,
         paddingTop: 20,
