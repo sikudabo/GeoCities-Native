@@ -26,4 +26,5 @@ export type CommentType = {
     likes: Array<string>;
     postMediaId?: string;
     link?: string;
+    _id: string;
 };

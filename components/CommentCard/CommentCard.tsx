@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { Image, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useQueryClient } from '@tanstack/react-query';
 import { Surface } from 'react-native-paper';
 import { LinkPreview } from '@flyerhq/react-native-link-preview';
 import { Video } from 'expo-av';
@@ -13,6 +14,8 @@ import { colors } from '../colors';
 import { CommentType } from '../../typings';
 import { postTimeDifference } from '../../utils/helpers';
 import { useUser } from '../../hooks/storage-hooks';
+import { useShowDialog, useShowLoader } from '../../hooks';
+import { postNonBinaryData } from '../../utils/requests';
 
 type CommentCardProps = {
     comment: CommentType;
@@ -25,6 +28,7 @@ type CommentCardDisplayLayerProps = {
     caption?: string;
     commentType: 'video' | 'photo' | 'link' | 'text';
     createdAt: number;
+    handleLikeButtonPress: () => void;
     hashTags?: Array<string>;
     hasLikedComment: boolean;
     link?: string;
@@ -43,6 +47,7 @@ function CommentCard_DisplayLayer({
     caption,
     commentType,
     createdAt,
+    handleLikeButtonPress,
     hashTags = [],
     hasLikedComment,
     link,
@@ -119,7 +124,7 @@ function CommentCard_DisplayLayer({
                 </View>
             )}
             <View style={styles.actionButtonsSection}>
-                <TouchableOpacity style={styles.buttonsTouchContainer}>
+                <TouchableOpacity onPress={handleLikeButtonPress} style={styles.buttonsTouchContainer}>
                     {hasLikedComment ? (
                         <GeoCitiesLikeIconFilled height={20} width={20} />
                     ): (
@@ -132,12 +137,50 @@ function CommentCard_DisplayLayer({
 }
 
 function useDataLayer({ comment }: DataLayerProps) {
+    const queryClient = useQueryClient();
+    const { setIsLoading } = useShowLoader();
+    const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError } = useShowDialog();
     const { user } = useUser();
     const { _id } = user;
-    const { authorId, caption, commentType, createdAt, hashTags, likes, link, postMediaId, userName } = comment;
+    const { authorId, caption, commentType, createdAt, hashTags, _id: commentId, likes, link, postId, postMediaId, userName } = comment;
     const avatarUri = `${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo-by-user-id/${authorId}`;
     const hasLikedComment = typeof likes !== 'undefined' && likes.length > 1 && likes.includes(_id) ? true : false;
     const videoRef: any = useRef(null);
+
+    async function handleLikeButtonPress() {
+        setIsLoading(true);
+        await postNonBinaryData({
+            data: {
+                actionType: hasLikedComment ? 'unlike' : 'like',
+                authorId,
+                commentId,
+                likerId: _id,
+                postId,
+            },
+            uri: 'add-subtract-like-comment',
+        }).then(res => {
+            const { isError, message } = res;
+
+            if (isError) {
+                setIsLoading(false);
+                setIsError(true);
+                setDialogTitle('Whoops');
+                setDialogMessage(message);
+                handleDialogMessageChange(true);
+            }
+            queryClient.invalidateQueries(['fetchUser']);
+            queryClient.invalidateQueries(['fetchProfilePosts']);
+            queryClient.invalidateQueries(['fetchPost']);
+            setIsLoading(false);
+        }).catch(err => {
+            console.log(`There was an error ${hasLikedComment ? 'unliking' : 'liking'} a comment: ${err.message}`);
+            setIsLoading(false);
+            setIsError(true);
+            setDialogTitle('Whoops');
+            setDialogMessage(`There was an error ${hasLikedComment ? 'unliking' : 'liking'} a comment. Please try again!`);
+            handleDialogMessageChange(true);
+        });
+    }
 
     function openUrl() {
         if(link) {
@@ -150,6 +193,7 @@ function useDataLayer({ comment }: DataLayerProps) {
       caption,
       commentType,
       createdAt,
+      handleLikeButtonPress,
       hashTags,
       hasLikedComment,
       link,

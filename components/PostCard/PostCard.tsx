@@ -382,7 +382,6 @@ function useDataLayer({ post }: DataLayerProps) {
         }).catch(err => {
             console.log(`There was an error ${alreadyLiked ? 'unliking' : 'liking'} a post: ${err.message}`);
             setIsLoading(false);
-            setIsLoading(false);
             setIsError(true);
             setDialogTitle('Whoops');
             setDialogMessage(`There was an error ${alreadyLiked ? 'unliking' : 'liking'} a post. Please try again!`);
