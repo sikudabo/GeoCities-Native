@@ -2,7 +2,7 @@ import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } fr
 import { useNavigation } from '@react-navigation/native';
 import { useFetchPost } from '../../hooks/fetch-hooks';
 import { CommentType, PostType } from '../../typings';
-import { GeoCitiesBackArrowIcon, GeoCitiesBodyText, LoadingIndicator, PostCard, colors } from '../../components';
+import { CommentCard, GeoCitiesBackArrowIcon, GeoCitiesBodyText, LoadingIndicator, PostCard, colors } from '../../components';
 
 type PostCommentsProps = { 
     route: any;
@@ -66,7 +66,16 @@ function PostComments_DisplayLayer({
                                 <View style={styles.noCommentsMessageContainer}>
                                     <GeoCitiesBodyText color={colors.white} text="No Comments" />
                                 </View>
-                            ): <></>}
+                            ): (
+                                <>
+                                    {comments.map((comment, index) => (
+                                        <CommentCard 
+                                            comment={comment}
+                                            key={index} 
+                                        />
+                                    ))}
+                                </>
+                            )}
                         </View>
                     </View>
                 </ScrollView>
