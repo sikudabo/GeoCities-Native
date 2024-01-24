@@ -20,12 +20,14 @@ type CreatePostsDisplayLayerProps = {
     handleCancel: () => void;
     handleCaptionChange: (caption: string) => void;
     handleLinkChange: (link: string) => void;
+    isCommentsScreen?: boolean;
     isLinkDialogOpen: boolean;
     isUploadButtonDisabled: boolean;
     launchPhotoPicker: () => void;
     launchVideoPicker: () => void;
     link: string;
     toggleLinkDialog: () => void;
+    uploadComment: () => void;
     uploadPost: () => void;
 };
 
@@ -42,12 +44,14 @@ function CreatePostScreen_DisplayLayer({
     handleCancel,
     handleCaptionChange,
     handleLinkChange,
+    isCommentsScreen = false,
     isLinkDialogOpen,
     isUploadButtonDisabled,
     launchPhotoPicker,
     launchVideoPicker,
     link,
     toggleLinkDialog,
+    uploadComment,
     uploadPost,
 }: CreatePostsDisplayLayerProps) {
     return (
@@ -84,7 +88,7 @@ function CreatePostScreen_DisplayLayer({
             </View>
             <View style={styles.cancelConfirmButtonsContainer}>
                 <GeoCitiesButton buttonColor={colors.white} icon="cancel" onPress={handleCancel} text="Cancel" />
-                <GeoCitiesButton buttonColor={colors.salmonPink} disabled={isUploadButtonDisabled} icon="upload-network" onPress={uploadPost} text="Upload" />
+                <GeoCitiesButton buttonColor={colors.salmonPink} disabled={isUploadButtonDisabled} icon="upload-network" onPress={isCommentsScreen ? uploadComment: uploadPost} text="Upload" />
             </View>
         </View>
     );
@@ -179,6 +183,67 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
         return false;
     }
 
+    async function uploadComment() {
+        Keyboard.dismiss();
+        setIsLoading(true);
+
+        const createdAt = new Date().getTime();
+        const userName = `${firstName} ${lastName}`;
+
+        if (photoName) {
+            uploadPostType = 'photo';
+        } else if (videoName) {
+            uploadPostType = 'video';
+        } else if (!photoName && !videoName && link) {
+            uploadPostType = 'link';
+        } else {
+            uploadPostType = 'text';
+        }
+
+        let sendData  = {
+            authorId: _id,
+            userName,
+            caption,
+            commentType: uploadPostType,
+            createdAt,
+            link,
+            postId: post._id,
+            postAuthorId: post.authorId,
+        };
+
+        await putNonBinaryData({
+            data: sendData,
+            uri: 'upload-link-text-comment',
+        }).then(res => {
+            const { isError, message } = res;
+
+            if (isError) {
+                    setIsLoading(false);
+                    setIsError(true);
+                    setDialogTitle('Uh Oh!');
+                    setDialogMessage(message);
+                    handleDialogMessageChange(true);
+                    return;
+                }
+
+                setIsLoading(false);
+                setIsError(false);
+                setDialogTitle('Success');
+                setDialogMessage(message);
+                handleDialogMessageChange(true);
+                navigation.navigate('PostComments', { _id: post._id });
+                return;
+        }).catch(err => {
+            console.log(`There was an error uploading a post comment ${err.message}`);
+            setIsLoading(false);
+            setIsError(true);
+            setDialogTitle('Uh Oh!');
+            setDialogMessage('There was an error uploading that comment. Please try again!');
+            handleDialogMessageChange(true);
+            return;
+        });
+
+    }
     async function uploadPost() {
         Keyboard.dismiss();
         setIsLoading(true);
@@ -334,12 +399,14 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
         handleCancel,
         handleCaptionChange,
         handleLinkChange,
+        isCommentsScreen,
         isLinkDialogOpen,
         isUploadButtonDisabled,
         launchPhotoPicker,
         launchVideoPicker,
         link,
         toggleLinkDialog,
+        uploadComment,
         uploadPost,
     };
 }
