@@ -96,6 +96,7 @@ function CreatePostScreen_DisplayLayer({
 
 function useDataLayer({ navigation, route }: CreatePostsProps) {
     const { communityName, isCommentsScreen, isCommunity, post } = route.params;
+    const { authorId: postAuthorId, __id: postId} = post;
     const [caption, setCaption] = useState('');
     const [link, setLink] = useState('');
     const [photoName, setPhotoName] = useState('');
@@ -198,6 +199,58 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
             uploadPostType = 'link';
         } else {
             uploadPostType = 'text';
+        }
+
+        if (uploadPostType === 'video' || uploadPostType === 'photo') {
+            const fd: GenericFormData = new FormData();
+            const createdAt = new Date().getTime();
+            const userName = `${firstName} ${lastName}`;
+            fd.append('authorId', String(_id));
+            fd.append('userName', userName);
+            fd.append('caption', String(caption.trim()));
+            fd.append('createdAt', String(createdAt));
+            fd.append('link', link);
+            fd.append('commentType', uploadPostType);
+            fd.append('postId', postId);
+            fd.append('postAuthorId', postAuthorId);
+
+            if (uploadPostType === 'video') {
+                fd.append('postMedia', { name: videoName, uri: videoUri, type: 'video '});
+            } else {
+                fd.append('postMedia', { name: photoName, uri: photoUri, type: 'image' });
+            }
+
+            await putBinaryData({
+                data: fd,
+                uri: 'upload-video-photo-comment',
+            }).then(res => {
+                const { isError, message } = res;
+                if (isError) {
+                    setIsLoading(false);
+                    setIsError(true);
+                    setDialogTitle('Uh Oh!');
+                    setDialogMessage(message);
+                    handleDialogMessageChange(true);
+                    return;
+                }
+
+                setIsLoading(false);
+                setIsError(false);
+                setDialogTitle('Success');
+                setDialogMessage(message);
+                handleDialogMessageChange(true);
+                navigation.navigate('PostComments', { _id: post._id });
+                return;
+            }).catch(err => {
+                console.log(`There was an error uploading a comment with media ${err.message}.`);
+                console.log(`There was an error uploading a post comment ${err.message}`);
+                setIsLoading(false);
+                setIsError(true);
+                setDialogTitle('Uh Oh!');
+                setDialogMessage('There was an error uploading that comment. Please try again!');
+                handleDialogMessageChange(true);
+                return;
+            });
         }
 
         let sendData  = {
