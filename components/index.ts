@@ -1,4 +1,5 @@
 import { colors } from "./colors";
+import CommentCard from "./CommentCard/CommentCard";
 import GeoCitiesAppBar from "./GeoCitiesAppBar";
 import GeoCitiesAvatar from "./GeoCitiesAvatar";
 import GeoCitiesBackArrowIcon from "./GeoCitiesBackArrowIcon";
@@ -27,6 +28,7 @@ import PostCard from "./PostCard/PostCard";
 
 export {
     colors,
+    CommentCard,
     GeoCitiesAppBar,
     GeoCitiesAvatar,
     GeoCitiesBackArrowIcon,
