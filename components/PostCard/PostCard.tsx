@@ -37,6 +37,7 @@ type PostCardDisplayLayerProps = {
     hashTags: Array<string> | undefined;
     hasCommented: boolean;
     hasLikedPost: boolean;
+    isCommentsScreen?: boolean;
     isPostAuthor: boolean;
     link?: string;
     numberOfComments: number;
@@ -48,8 +49,8 @@ type PostCardDisplayLayerProps = {
     videoRef: any;
 };
 
-export default function PostCard({ post }: { post: PostType }) {
-    return <PostCard_DisplayLayer {...useDataLayer({ post })} />;
+export default function PostCard({ post, isCommentsScreen = false }: { post: PostType; isCommentsScreen?: boolean }) {
+    return <PostCard_DisplayLayer isCommentsScreen={isCommentsScreen} {...useDataLayer({ post })} />;
 }
 
 function PostCard_DisplayLayer({
@@ -62,6 +63,7 @@ function PostCard_DisplayLayer({
     hashTags,
     hasCommented,
     hasLikedPost,
+    isCommentsScreen = false,
     isPostAuthor,
     link,
     numberOfComments,
@@ -72,6 +74,83 @@ function PostCard_DisplayLayer({
     userName,
     videoRef,
 }: PostCardDisplayLayerProps) {
+
+    const styles = StyleSheet.create({
+        actionButtonsSection: {
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            width: '100%',
+        },
+        actionNumberIndicatorContainer: {
+            paddingTop: 2,
+        },
+        buttonsTouchContainer: {
+            columnGap: 5,
+            display: 'flex',
+            flexDirection: 'row',
+            height: 30,
+            width: 50,
+        },
+        captionSection: {
+            height: 100,
+            paddingTop: 20,
+        },
+        cardContainer: {
+            boarderRadius: 5,
+            marginBottom: isCommentsScreen ? 0 : 20,
+            paddingLeft: 10,
+            paddingRight: 10,
+        },
+        imageContainer: {
+            paddingTop: 20,
+            paddingBottom: 20,
+        },
+        img: {
+            height: 400,
+            width: '100%',
+        },
+        linkPreviewContainer: {
+            paddingBottom: 10,
+        },
+        linkPreviewTextContainer: {
+            width: '100%',
+        },
+        linkPreviewTitle: {
+            paddingBottom: 20,
+        },
+        mediaPostLinkSection: {
+            paddingTop: 10,
+            paddingBottom: 10,
+            width: '100%',
+        },
+        topCardSection: {
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
+            lineHeight: '1',
+            paddingTop: 10,
+            width: '100%',
+        },
+        topSectionDateContainer: {
+            marginLeft: 'auto',
+            paddingTop: 10,
+        },
+        topSectionNameContainer: {
+            paddingLeft: 10,
+            paddingTop: 10,
+        },
+        videoContainer: {
+            paddingBottom: 20,
+            paddingTop: 10,
+            height: 350,
+            width: '100%',
+        },
+        videoPlayer: {
+            height: '100%',
+            width: '100%',
+        },
+    });
     return (
         <Surface elevation={4} style={styles.cardContainer}>
             <View style={styles.topCardSection}>
@@ -205,6 +284,7 @@ function useDataLayer({ post }: DataLayerProps) {
     
                 setIsLoading(false);
                 queryClient.invalidateQueries(['fetchProfilePosts']);
+                queryClient.invalidateQueries(['fetchPost']);
             }).catch(err => {
                 console.log(`There was an error deleting a binary post: ${err.message}`);
                 setIsLoading(false);
@@ -234,6 +314,7 @@ function useDataLayer({ post }: DataLayerProps) {
 
             setIsLoading(false);
             queryClient.invalidateQueries(['fetchProfilePosts']);
+            queryClient.invalidateQueries(['fetchPost']);
         }).catch(err => {
             console.log(`There was an error deleting a non-binary post: ${err.message}`);
             setIsLoading(false);
@@ -290,6 +371,7 @@ function useDataLayer({ post }: DataLayerProps) {
             }
             queryClient.invalidateQueries(['fetchUser']);
             queryClient.invalidateQueries(['fetchProfilePosts']);
+            queryClient.invalidateQueries(['fetchPost']);
             setIsLoading(false);
         }).catch(err => {
             console.log(`There was an error ${alreadyLiked ? 'unliking' : 'liking'} a post: ${err.message}`);
@@ -323,80 +405,3 @@ function useDataLayer({ post }: DataLayerProps) {
         videoRef,
     };
 }
-
-const styles = StyleSheet.create({
-    actionButtonsSection: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: '100%',
-    },
-    actionNumberIndicatorContainer: {
-        paddingTop: 2,
-    },
-    buttonsTouchContainer: {
-        columnGap: 5,
-        display: 'flex',
-        flexDirection: 'row',
-        height: 30,
-        width: 50,
-    },
-    captionSection: {
-        height: 100,
-        paddingTop: 20,
-    },
-    cardContainer: {
-        boarderRadius: 5,
-        marginBottom: 20,
-        paddingLeft: 10,
-        paddingRight: 10,
-    },
-    imageContainer: {
-        paddingTop: 20,
-        paddingBottom: 20,
-    },
-    img: {
-        height: 400,
-        width: '100%',
-    },
-    linkPreviewContainer: {
-        paddingBottom: 10,
-    },
-    linkPreviewTextContainer: {
-        width: '100%',
-    },
-    linkPreviewTitle: {
-        paddingBottom: 20,
-    },
-    mediaPostLinkSection: {
-        paddingTop: 10,
-        paddingBottom: 10,
-        width: '100%',
-    },
-    topCardSection: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        lineHeight: '1',
-        paddingTop: 10,
-        width: '100%',
-    },
-    topSectionDateContainer: {
-        marginLeft: 'auto',
-        paddingTop: 10,
-    },
-    topSectionNameContainer: {
-        paddingLeft: 10,
-        paddingTop: 10,
-    },
-    videoContainer: {
-        paddingBottom: 20,
-        paddingTop: 10,
-        height: 350,
-        width: '100%',
-    },
-    videoPlayer: {
-        height: '100%',
-        width: '100%',
-    },
-});

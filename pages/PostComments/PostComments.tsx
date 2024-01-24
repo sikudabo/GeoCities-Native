@@ -47,20 +47,21 @@ function PostComments_DisplayLayer({
 
     return (
         <View style={styles.container}>
-            <View style={styles.backButtonSection}>
-                <TouchableOpacity onPress={handleBackPress} style={styles.backButtonContainer}>
-                    <GeoCitiesBackArrowIcon height={30} width={30} />
-                </TouchableOpacity>
-            </View>
-            <View style={styles.screenBodyContainer}>
-                <SafeAreaView>
-                    <ScrollView>
+            <SafeAreaView>
+                <ScrollView>
+                    <View style={styles.backButtonSection}>
+                        <TouchableOpacity onPress={handleBackPress} style={styles.backButtonContainer}>
+                            <GeoCitiesBackArrowIcon height={30} width={30} />
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.screenBodyContainer}>
                         <PostCard 
                             post={post}
+                            isCommentsScreen
                         />
-                    </ScrollView>
-                </SafeAreaView>
-            </View>
+                    </View>
+                </ScrollView>
+            </SafeAreaView>
         </View>
     );
 }
