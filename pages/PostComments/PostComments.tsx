@@ -1,7 +1,7 @@
 import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useFetchPost } from '../../hooks/fetch-hooks';
-import { PostType } from '../../typings';
+import { CommentType, PostType } from '../../typings';
 import { GeoCitiesBackArrowIcon, GeoCitiesBodyText, LoadingIndicator, PostCard, colors } from '../../components';
 
 type PostCommentsProps = { 
@@ -9,6 +9,7 @@ type PostCommentsProps = {
 };
 
 type PostCommentsDisplayLayerProps = {
+    comments: Array<CommentType>;
     handleBackPress: () => void;
     isLoading: boolean;
     isPostDeleted: boolean;
@@ -21,6 +22,7 @@ export default function PostComments({ route }: PostCommentsProps) {
 
 
 function PostComments_DisplayLayer({
+    comments,
     handleBackPress,
     isLoading,
     isPostDeleted,
@@ -59,6 +61,13 @@ function PostComments_DisplayLayer({
                             post={post}
                             isCommentsScreen
                         />
+                        <View style={styles.postCommentsSection}>
+                            {typeof comments !== 'undefined' && comments.length === 0 ? (
+                                <View style={styles.noCommentsMessageContainer}>
+                                    <GeoCitiesBodyText color={colors.white} text="No Comments" />
+                                </View>
+                            ): <></>}
+                        </View>
                     </View>
                 </ScrollView>
             </SafeAreaView>
@@ -71,12 +80,14 @@ function useDataLayer({ route }: PostCommentsProps) {
     const { _id } = route.params;
     const { data, isLoading } = useFetchPost({ _id });
     const { isPostDeleted, post } = typeof data !== 'undefined' && !isLoading ? data : { isPostDeleted: false, post: {} };
+    const { comments } = !isLoading && post ? post : [];
 
     function handleBackPress() {
         navigation.goBack();
     }
 
     return {
+        comments,
         handleBackPress,
         isLoading,
         isPostDeleted,
@@ -107,6 +118,14 @@ const styles =  StyleSheet.create({
         color: colors.white,
         fontSize: 32,
         fontWeight: '900',
+    },
+    noCommentsMessageContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingTop: 20,
+    },
+    postCommentsSection: {
+
     },
     screenBodyContainer: {
         height: '100%',
