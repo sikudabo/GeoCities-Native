@@ -28,7 +28,7 @@ function PostComments_DisplayLayer({
         return <LoadingIndicator />;
     }
 
-    if (!isPostDeleted) {
+    if (isPostDeleted) {
         return (
             <View style={styles.container}>
                 <View style={styles.backButtonSection}>
@@ -59,8 +59,6 @@ function useDataLayer({ route }: PostCommentsProps) {
     const { _id } = route.params;
     const { data, isLoading } = useFetchPost({ _id });
     const { isPostDeleted, post } = typeof data !== 'undefined' && !isLoading ? data : { isPostDeleted: false, post: {} };
-
-    console.log(`Is post deleted is: ${isPostDeleted}`);
 
     function handleBackPress() {
         navigation.goBack();
