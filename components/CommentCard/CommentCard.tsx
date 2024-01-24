@@ -1,6 +1,8 @@
+import { useRef } from 'react';
 import { Image, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Surface } from 'react-native-paper';
 import { LinkPreview } from '@flyerhq/react-native-link-preview';
+import { Video } from 'expo-av';
 import * as Linking from 'expo-linking';
 import GeoCitiesAvatar from '../GeoCitiesAvatar';
 import GeoCitiesBodyText from '../GeoCitiesBodyText';
@@ -25,6 +27,7 @@ type CommentCardDisplayLayerProps = {
     openUrl: () => void;
     postMediaId?: string;
     userName: string;
+    videoRef: any;
 }
 
 export default function CommentCard({ comment }: CommentCardProps) {
@@ -41,6 +44,7 @@ function CommentCard_DisplayLayer({
     openUrl,
     postMediaId,
     userName,
+    videoRef,
 }: CommentCardDisplayLayerProps) {
     return (
         <Surface elevation={4} style={styles.cardContainer}>
@@ -96,6 +100,19 @@ function CommentCard_DisplayLayer({
                     <Image source={{ uri: `${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo/${postMediaId}`}} style={styles.img} />
                 </View>
             )}
+            {commentType === 'video' && postMediaId && (
+                <View style={styles.videoContainer}>
+                    <Video 
+                        ref={videoRef}
+                        source={{ uri: `${process.env.EXPO_PUBLIC_API_BASE_URI}get-video/${postMediaId}` }}
+                        style={styles.videoPlayer}
+                        isLooping
+                        isMuted
+                        shouldPlay
+                        useNativeControls
+                    />
+                </View>
+            )}
         </Surface>
     );
 }
@@ -103,6 +120,7 @@ function CommentCard_DisplayLayer({
 function useDataLayer({ comment }: DataLayerProps) {
     const { authorId, caption, commentType, createdAt, hashTags, link, postMediaId, userName } = comment;
     const avatarUri = `${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo-by-user-id/${authorId}`;
+    const videoRef: any = useRef(null);
 
     function openUrl() {
         if(link) {
@@ -120,6 +138,7 @@ function useDataLayer({ comment }: DataLayerProps) {
       openUrl,
       postMediaId,
       userName,
+      videoRef,
     };
 }
 
@@ -172,5 +191,15 @@ const styles = StyleSheet.create({
     topSectionNameContainer: {
         paddingLeft: 10,
         paddingTop: 10,
+    },
+    videoContainer: {
+        paddingBottom: 20,
+        paddingTop: 10,
+        height: 350,
+        width: '100%',
+    },
+    videoPlayer: {
+        height: '100%',
+        width: '100%',
     },
 });
