@@ -333,7 +333,7 @@ function useDataLayer({ post }: DataLayerProps) {
     }
 
     function handleAddCommentButtonClick() {
-        navigation.navigate('CreatePost', { isCommunity: postOriginType === 'community' ? true : false });
+        navigation.navigate('CreatePost', { isCommunity: postOriginType === 'community' ? true : false, isCommentsScreen: true, post });
     }
 
     function hasLikedPost() {

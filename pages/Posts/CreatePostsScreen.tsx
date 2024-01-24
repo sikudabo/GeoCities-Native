@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Keyboard, KeyboardAvoidingView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { Dialog, Portal, TextInput } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import { useShowDialog, useShowLoader } from '../../hooks';
@@ -91,7 +92,7 @@ function CreatePostScreen_DisplayLayer({
 }
 
 function useDataLayer({ navigation, route }: CreatePostsProps) {
-    const { isCommunity, communityName } = route.params;
+    const { communityName, isCommentsScreen, isCommunity, post } = route.params;
     const [caption, setCaption] = useState('');
     const [link, setLink] = useState('');
     const [photoName, setPhotoName] = useState('');
@@ -99,6 +100,7 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
     const [videoName, setVideoName] = useState('');
     const [videoUri, setVideoUri] = useState<Blob | null>(null);
     const [isLinkDialogOpen, setIsLinkDialogOpen] = useState(false);
+    const hookNavigation = useNavigation();
     let uploadPostType = '';
     let isBinaryPost = false;
     const isUploadButtonDisabled = checkBlankInfo();
@@ -108,7 +110,13 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
     const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError } = useShowDialog();
     
     function handleCancel() {
-        navigation.goBack();
+        if (!isCommentsScreen) {
+            navigation.goBack(); 
+            return;
+        }
+        
+        navigation.navigate('PostComments', { _id: post._id });
+        return;
     }
 
     function handleCaptionChange(caption: string) {
