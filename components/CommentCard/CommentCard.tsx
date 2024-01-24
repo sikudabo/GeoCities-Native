@@ -15,7 +15,9 @@ type DataLayerProps = CommentCardProps;
 
 type CommentCardDisplayLayerProps = {
     avatarUri: string;
+    caption?: string;
     createdAt: number;
+    hashTags?: Array<string>;
     userName: string;
 }
 
@@ -25,7 +27,9 @@ export default function CommentCard({ comment }: CommentCardProps) {
 
 function CommentCard_DisplayLayer({
     avatarUri,
+    caption,
     createdAt,
+    hashTags = [],
     userName,
 }: CommentCardDisplayLayerProps) {
     return (
@@ -39,21 +43,36 @@ function CommentCard_DisplayLayer({
                     <GeoCitiesBodyText color={colors.white} fontSize={14} text={postTimeDifference(createdAt)} />
                 </View>
             </View>
+            {caption && (
+                <View style={styles.captionSection}>
+                    <SafeAreaView>
+                        <ScrollView>
+                            <GeoCitiesCaptionText hashTags={hashTags as Array<string>} text={caption} />
+                        </ScrollView>
+                    </SafeAreaView>
+                </View>
+            )}
         </Surface>
     );
 }
 
 function useDataLayer({ comment }: DataLayerProps) {
-    const { authorId, createdAt, userName } = comment;
+    const { authorId, caption, createdAt, hashTags, userName } = comment;
     const avatarUri = `${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo-by-user-id/${authorId}`;
     return {
       avatarUri,
+      caption,
       createdAt,
+      hashTags,
       userName,
     };
 }
 
 const styles = StyleSheet.create({
+    captionSection: {
+        height: 100,
+        paddingTop: 20,
+    },
     cardContainer: {
         borderTopColor: colors.white,
         borderStyle: 'solid',

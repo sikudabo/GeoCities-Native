@@ -22,7 +22,7 @@ export type CommentType = {
     createdAt: number;
     caption?: string;
     postAuthorId: string;
-    hashtags?: Array<string>;
+    hashTags?: Array<string>;
     likes: Array<string>;
     postMediaId?: string;
     link?: string;
