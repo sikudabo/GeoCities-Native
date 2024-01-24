@@ -1,6 +1,7 @@
-import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
+import { Image, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Surface } from 'react-native-paper';
 import { LinkPreview } from '@flyerhq/react-native-link-preview';
+import * as Linking from 'expo-linking';
 import GeoCitiesAvatar from '../GeoCitiesAvatar';
 import GeoCitiesBodyText from '../GeoCitiesBodyText';
 import GeoCitiesCaptionText from '../GeoCitiesCaptionText';
@@ -21,6 +22,8 @@ type CommentCardDisplayLayerProps = {
     createdAt: number;
     hashTags?: Array<string>;
     link?: string;
+    openUrl: () => void;
+    postMediaId?: string;
     userName: string;
 }
 
@@ -35,6 +38,8 @@ function CommentCard_DisplayLayer({
     createdAt,
     hashTags = [],
     link,
+    openUrl,
+    postMediaId,
     userName,
 }: CommentCardDisplayLayerProps) {
     return (
@@ -81,13 +86,30 @@ function CommentCard_DisplayLayer({
                      />
                 </View>
             )}
+            {(commentType === 'photo' || commentType === 'video') && link && (
+                <TouchableOpacity onPress={openUrl} style={styles.mediaPostLinkSection}>
+                    <GeoCitiesCaptionText hashTags={[]} text={link} />
+                </TouchableOpacity>
+            )}
+             {commentType === 'photo' && postMediaId && (
+                <View style={styles.imageContainer}>
+                    <Image source={{ uri: `${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo/${postMediaId}`}} style={styles.img} />
+                </View>
+            )}
         </Surface>
     );
 }
 
 function useDataLayer({ comment }: DataLayerProps) {
-    const { authorId, caption, commentType, createdAt, hashTags, link, userName } = comment;
+    const { authorId, caption, commentType, createdAt, hashTags, link, postMediaId, userName } = comment;
     const avatarUri = `${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo-by-user-id/${authorId}`;
+
+    function openUrl() {
+        if(link) {
+            Linking.openURL(link);
+        }
+    }
+
     return {
       avatarUri,
       caption,
@@ -95,6 +117,8 @@ function useDataLayer({ comment }: DataLayerProps) {
       createdAt,
       hashTags,
       link,
+      openUrl,
+      postMediaId,
       userName,
     };
 }
@@ -111,6 +135,14 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         paddingRight: 10,
     },
+    imageContainer: {
+        paddingTop: 20,
+        paddingBottom: 20,
+    },
+    img: {
+        height: 400,
+        width: '100%',
+    },
     linkPreviewContainer: {
         paddingBottom: 10,
     },
@@ -119,6 +151,11 @@ const styles = StyleSheet.create({
     },
     linkPreviewTitle: {
         paddingBottom: 20,
+    },
+    mediaPostLinkSection: {
+        paddingTop: 10,
+        paddingBottom: 10,
+        width: '100%',
     },
     topCardSection: {
         display: 'flex',
