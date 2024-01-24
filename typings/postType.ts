@@ -19,7 +19,7 @@ export type CommentType = {
     postId: string;
     commentType: string;
     userName: string;
-    createdAt: Date;
+    createdAt: number;
     caption?: string;
     postAuthorId: string;
     hashtags?: Array<string>;
