@@ -33,8 +33,8 @@ export default function GeoCitiesAppBar({
 
     useEffect(() => {
         if (typeof navigationRef.current.getRootState() !== 'undefined' && typeof navigationRef.current.getState() !== 'undefined') {
-            console.log(navigationRef.current.getRootState().index);
-            console.log('Route is:', navigationRef.current.getState().routes[navigationRef.current.getRootState().index]);
+            // console.log(navigationRef.current.getRootState().index);
+            // console.log('Route is:', navigationRef.current.getState().routes[navigationRef.current.getRootState().index]);
         }
     }, [navigationRef.current]);
 

@@ -97,7 +97,7 @@ function useDataLayer({ route }: PostCommentsProps) {
     }
 
     return {
-        comments: comments.length > 0 ? orderBy(comments, ['createdAt'], ['desc']) : comments,
+        comments: typeof comments !== 'undefined' &&  comments.length > 0 ? orderBy(comments, ['createdAt'], ['desc']) : comments,
         handleBackPress,
         isLoading,
         isPostDeleted,

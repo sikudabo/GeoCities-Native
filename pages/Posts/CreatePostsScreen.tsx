@@ -211,7 +211,7 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
             fd.append('createdAt', String(createdAt));
             fd.append('link', link);
             fd.append('commentType', uploadPostType);
-            fd.append('postId', postId);
+            fd.append('postId', post._id);
             fd.append('postAuthorId', postAuthorId);
 
             if (uploadPostType === 'video') {

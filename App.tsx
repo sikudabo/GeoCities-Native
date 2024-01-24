@@ -68,7 +68,7 @@ function App_DisplayLayer({
   }
 
   const onNavigationStateChange = (state: any) => {
-    console.log('The navigation state is:', state.routeNames);
+    // console.log('The navigation state is:', state.routeNames);
   }
 
   const openDrawer = () => {
