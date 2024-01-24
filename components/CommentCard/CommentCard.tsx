@@ -1,5 +1,6 @@
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import { Surface } from 'react-native-paper';
+import { LinkPreview } from '@flyerhq/react-native-link-preview';
 import GeoCitiesAvatar from '../GeoCitiesAvatar';
 import GeoCitiesBodyText from '../GeoCitiesBodyText';
 import GeoCitiesCaptionText from '../GeoCitiesCaptionText';
@@ -16,8 +17,10 @@ type DataLayerProps = CommentCardProps;
 type CommentCardDisplayLayerProps = {
     avatarUri: string;
     caption?: string;
+    commentType: 'video' | 'photo' | 'link' | 'text';
     createdAt: number;
     hashTags?: Array<string>;
+    link?: string;
     userName: string;
 }
 
@@ -28,8 +31,10 @@ export default function CommentCard({ comment }: CommentCardProps) {
 function CommentCard_DisplayLayer({
     avatarUri,
     caption,
+    commentType,
     createdAt,
     hashTags = [],
+    link,
     userName,
 }: CommentCardDisplayLayerProps) {
     return (
@@ -52,18 +57,44 @@ function CommentCard_DisplayLayer({
                     </SafeAreaView>
                 </View>
             )}
+            {commentType === 'link' && link && (
+                <View style={styles.linkPreviewContainer}>
+                    <LinkPreview 
+                        containerStyle={{  width: '100%', padding: 0 }}
+                        renderDescription={(text) => (
+                            <View style={styles.linkPreviewTextContainer}>
+                                <GeoCitiesCaptionText hashTags={[]} text={text} />
+                            </View>
+                        )}
+                        renderText={(text) => (
+                            <View style={styles.linkPreviewTextContainer}>
+                                <GeoCitiesCaptionText hashTags={[]} text={text} />
+                            </View>
+                        )}
+                        renderTitle={(text) => (
+                            <View style={[styles.linkPreviewTextContainer, styles.linkPreviewTitle]}>
+                                <GeoCitiesCaptionText hashTags={[]} text={text} />
+                            </View>
+                        )}
+                        text={link}
+                        textContainerStyle={{ padding: 0 }}
+                     />
+                </View>
+            )}
         </Surface>
     );
 }
 
 function useDataLayer({ comment }: DataLayerProps) {
-    const { authorId, caption, createdAt, hashTags, userName } = comment;
+    const { authorId, caption, commentType, createdAt, hashTags, link, userName } = comment;
     const avatarUri = `${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo-by-user-id/${authorId}`;
     return {
       avatarUri,
       caption,
+      commentType,
       createdAt,
       hashTags,
+      link,
       userName,
     };
 }
@@ -79,6 +110,15 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         paddingLeft: 10,
         paddingRight: 10,
+    },
+    linkPreviewContainer: {
+        paddingBottom: 10,
+    },
+    linkPreviewTextContainer: {
+        width: '100%',
+    },
+    linkPreviewTitle: {
+        paddingBottom: 20,
     },
     topCardSection: {
         display: 'flex',

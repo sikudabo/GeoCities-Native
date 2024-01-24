@@ -17,7 +17,7 @@ export type PostType = {
 export type CommentType = {
     authorId: string;
     postId: string;
-    commentType: string;
+    commentType: 'video' | 'photo' | 'link' | 'text';
     userName: string;
     createdAt: number;
     caption?: string;

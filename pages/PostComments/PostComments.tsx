@@ -1,4 +1,5 @@
 import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import orderBy from 'lodash/orderBy';
 import { useNavigation } from '@react-navigation/native';
 import { useFetchPost } from '../../hooks/fetch-hooks';
 import { CommentType, PostType } from '../../typings';
@@ -96,7 +97,7 @@ function useDataLayer({ route }: PostCommentsProps) {
     }
 
     return {
-        comments,
+        comments: comments.length > 0 ? orderBy(comments, ['createdAt'], ['desc']) : comments,
         handleBackPress,
         isLoading,
         isPostDeleted,
