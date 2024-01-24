@@ -32,6 +32,7 @@ type PostCardDisplayLayerProps = {
     caption: string | undefined;
     createdAt: number;
     deletePost: () => void;
+    handleAddCommentButtonClick: () => void;
     handleLikeButtonPress: () => void;
     handleCommentButtonClick: () => void;
     hashTags: Array<string> | undefined;
@@ -58,6 +59,7 @@ function PostCard_DisplayLayer({
     caption,
     createdAt,
     deletePost,
+    handleAddCommentButtonClick,
     handleLikeButtonPress,
     handleCommentButtonClick,
     hashTags,
@@ -227,7 +229,7 @@ function PostCard_DisplayLayer({
                         <GeoCitiesBodyText color={colors.white} fontSize={14} fontWeight={900} text={millify(numberOfLikes)} />
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={handleCommentButtonClick} style={styles.buttonsTouchContainer}>
+                <TouchableOpacity onPress={isCommentsScreen ? handleAddCommentButtonClick : handleCommentButtonClick} style={styles.buttonsTouchContainer}>
                     {!hasCommented ? (
                         <GeoCitiesCommentIconOutlined height={20} width={20} />
                     ): (
@@ -250,7 +252,7 @@ function PostCard_DisplayLayer({
 function useDataLayer({ post }: DataLayerProps) {
     const queryClient = useQueryClient();
     const navigation: any = useNavigation();
-    const { authorId, caption, comments, createdAt, hashTags, _id: postId, likes, link, postMediaId, postType, userName } = post;
+    const { authorId, caption, comments, createdAt, hashTags, _id: postId, likes, link, postMediaId, postOriginType, postType, userName } = post;
     const { user } = useUser();
     const { _id } = user;
     const commentUser = comments.find((user) => user.authorId === _id);
@@ -330,6 +332,10 @@ function useDataLayer({ post }: DataLayerProps) {
         navigation.navigate('PostComments', { _id: postId });
     }
 
+    function handleAddCommentButtonClick() {
+        navigation.navigate('CreatePost', { isCommunity: postOriginType === 'community' ? true : false });
+    }
+
     function hasLikedPost() {
         if (typeof likes !== 'undefined' && likes.length > 0) {
             if (likes.includes(_id)) {
@@ -389,6 +395,7 @@ function useDataLayer({ post }: DataLayerProps) {
         caption,
         createdAt,
         deletePost,
+        handleAddCommentButtonClick,
         handleLikeButtonPress,
         handleCommentButtonClick,
         hashTags,
