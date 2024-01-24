@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Keyboard, KeyboardAvoidingView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { Dialog, Portal, TextInput } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import { useShowDialog, useShowLoader } from '../../hooks';
@@ -100,7 +99,6 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
     const [videoName, setVideoName] = useState('');
     const [videoUri, setVideoUri] = useState<Blob | null>(null);
     const [isLinkDialogOpen, setIsLinkDialogOpen] = useState(false);
-    const hookNavigation = useNavigation();
     let uploadPostType = '';
     let isBinaryPost = false;
     const isUploadButtonDisabled = checkBlankInfo();
