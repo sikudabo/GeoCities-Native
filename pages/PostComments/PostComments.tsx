@@ -1,8 +1,8 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useFetchPost } from '../../hooks/fetch-hooks';
 import { PostType } from '../../typings';
-import { GeoCitiesBackArrowIcon, GeoCitiesBodyText, LoadingIndicator, colors } from '../../components';
+import { GeoCitiesBackArrowIcon, GeoCitiesBodyText, LoadingIndicator, PostCard, colors } from '../../components';
 
 type PostCommentsProps = { 
     route: any;
@@ -12,6 +12,7 @@ type PostCommentsDisplayLayerProps = {
     handleBackPress: () => void;
     isLoading: boolean;
     isPostDeleted: boolean;
+    post: PostType;
 };
 
 export default function PostComments({ route }: PostCommentsProps) {
@@ -23,6 +24,7 @@ function PostComments_DisplayLayer({
     handleBackPress,
     isLoading,
     isPostDeleted,
+    post
 }: PostCommentsDisplayLayerProps) {
     if (isLoading) {
         return <LoadingIndicator />;
@@ -50,6 +52,15 @@ function PostComments_DisplayLayer({
                     <GeoCitiesBackArrowIcon height={30} width={30} />
                 </TouchableOpacity>
             </View>
+            <View style={styles.screenBodyContainer}>
+                <SafeAreaView>
+                    <ScrollView>
+                        <PostCard 
+                            post={post}
+                        />
+                    </ScrollView>
+                </SafeAreaView>
+            </View>
         </View>
     );
 }
@@ -68,6 +79,7 @@ function useDataLayer({ route }: PostCommentsProps) {
         handleBackPress,
         isLoading,
         isPostDeleted,
+        post,
     };
 }
 
@@ -94,5 +106,8 @@ const styles =  StyleSheet.create({
         color: colors.white,
         fontSize: 32,
         fontWeight: '900',
+    },
+    screenBodyContainer: {
+        height: '100%',
     },
 });
