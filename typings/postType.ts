@@ -16,9 +16,14 @@ export type PostType = {
 
 export type CommentType = {
     authorId: string;
+    postId: string;
+    commentType: string;
     userName: string;
     createdAt: Date;
-    caption: string;
+    caption?: string;
     postAuthorId: string;
-    hashtags: Array<string>;
+    hashtags?: Array<string>;
+    likes: Array<string>;
+    postMediaId?: string;
+    link?: string;
 };
