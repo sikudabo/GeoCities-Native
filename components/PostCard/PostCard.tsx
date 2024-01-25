@@ -25,6 +25,7 @@ import { useShowDialog, useShowLoader } from '../../hooks';
 
 type DataLayerProps = {
     post: PostType;
+    renderedFrom?: string;
 };
 
 type PostCardDisplayLayerProps = {
@@ -50,8 +51,8 @@ type PostCardDisplayLayerProps = {
     videoRef: any;
 };
 
-export default function PostCard({ post, isCommentsScreen = false }: { post: PostType; isCommentsScreen?: boolean }) {
-    return <PostCard_DisplayLayer isCommentsScreen={isCommentsScreen} {...useDataLayer({ post })} />;
+export default function PostCard({ post, isCommentsScreen = false, renderedFrom = 'profile' }: { post: PostType; isCommentsScreen?: boolean; renderedFrom?: string; }) {
+    return <PostCard_DisplayLayer isCommentsScreen={isCommentsScreen} {...useDataLayer({ post, renderedFrom })} />;
 }
 
 function PostCard_DisplayLayer({
@@ -249,7 +250,7 @@ function PostCard_DisplayLayer({
     );
 }
 
-function useDataLayer({ post }: DataLayerProps) {
+function useDataLayer({ post, renderedFrom }: DataLayerProps) {
     const queryClient = useQueryClient();
     const navigation: any = useNavigation();
     const { authorId, caption, comments, createdAt, hashTags, _id: postId, likes, link, postMediaId, postOriginType, postType, userName } = post;
@@ -332,7 +333,7 @@ function useDataLayer({ post }: DataLayerProps) {
     }
 
     function handleCommentButtonClick() {
-        navigation.navigate('PostComments', { _id: postId });
+        navigation.navigate('PostComments', { _id: postId, renderedFrom });
     }
 
     function handleAddCommentButtonClick() {

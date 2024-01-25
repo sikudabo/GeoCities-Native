@@ -7,6 +7,7 @@ import { CommentType, PostType } from '../../typings';
 import { CommentCard, GeoCitiesBackArrowIcon, GeoCitiesBodyText, LoadingIndicator, PostCard, colors } from '../../components';
 
 type PostCommentsProps = { 
+    navigation: any;
     route: any;
 };
 
@@ -20,8 +21,8 @@ type PostCommentsDisplayLayerProps = {
     refreshing: boolean;
 };
 
-export default function PostComments({ route }: PostCommentsProps) {
-    return <PostComments_DisplayLayer {...useDataLayer({ route })} />;
+export default function PostComments({ navigation, route }: PostCommentsProps) {
+    return <PostComments_DisplayLayer {...useDataLayer({ navigation, route })} />;
 }
 
 
@@ -98,16 +99,20 @@ function PostComments_DisplayLayer({
     );
 }
 
-function useDataLayer({ route }: PostCommentsProps) {
+function useDataLayer({ navigation, route }: PostCommentsProps) {
     const [refreshing, setRefreshing] = useState(false);
-    const navigation = useNavigation();
-    const { _id } = route.params;
+    const { _id, renderedFrom } = route.params;
     const { data, isLoading } = useFetchPost({ _id });
     const { isPostDeleted, post } = typeof data !== 'undefined' && !isLoading ? data : { isPostDeleted: false, post: {} };
     const { comments } = !isLoading && post ? post : [];
 
     function handleBackPress() {
-        navigation.goBack();
+       if (renderedFrom === 'feed') {
+            navigation.navigate('Feed');
+            return
+       } 
+
+       navigation.goBack();
     }
 
     const onRefresh = useCallback(() => {

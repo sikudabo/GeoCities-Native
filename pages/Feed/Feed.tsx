@@ -1,23 +1,16 @@
 import { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { Button } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
-import { colors, GeoCitiesButton, GeoCitiesCheckbox, GeoCitiesFAB, GeoCitiesIconButton, GeoCitiesLogo, GeoCitiesLongTextAlert, GeoCitiesRadioGroup } from '../../components';
-const geocitiesLogoIcon = require('../../assets/static-images/icon.svg');
-const simeonIcon = require('../../assets/static-images/simeon_profile.jpeg');
+import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
+import { useFetchFeedPosts } from '../../hooks/fetch-hooks';
+import { PostType } from '../../typings';
+import { colors, GeoCitiesBodyText, LoadingIndicator, PostCard } from '../../components';
 
 type FeedProps = {
     navigation: any;
 };
 
 type FeedDisplayLayerProps = {
-    handleNavigation: () => void;
-};
-
-type NavigationProps = {
-    navigation: {
-        navigate: (name: string, params?: any) => void;
-    };
+    isLoading: boolean;
+    posts: Array<PostType>;
 };
 
 export default function Feed({ navigation }: FeedProps) {
@@ -25,40 +18,54 @@ export default function Feed({ navigation }: FeedProps) {
 }
 
 function Feed_DisplayLayer({
-    handleNavigation,
+    isLoading,
+    posts,
 }: FeedDisplayLayerProps) {
-    const [dialogOpen, setDialogOpen] = useState(false);
-
-    function toggleDialogOpen() {
-        setDialogOpen(!dialogOpen);
+    
+    if (isLoading) {
+        return <LoadingIndicator />;
     }
+
+    
 
     return (
         <View style={styles.container}>
-            <GeoCitiesButton color={colors.salmonPink} mode='contained' onPress={toggleDialogOpen} text='Open' />
-            <GeoCitiesLongTextAlert handleClose={() => setDialogOpen(false)} isOpen={dialogOpen} />
+            <SafeAreaView>
+                <ScrollView>
+                    <View style={styles.postsSectionContainer}>
+                        {posts.map((post, index) => (
+                            <PostCard 
+                                key={index}
+                                post={post}
+                                renderedFrom="feed"
+                            />
+                        ))}
+                    </View>
+                </ScrollView>
+            </SafeAreaView>
         </View>
     );
 }
 
 function useDataLayer({ navigation }: FeedProps) {
-
-    function handleNavigation() {
-        navigation.navigate('Profile');
-    }
+    const { data: posts, isLoading } = useFetchFeedPosts();
 
     return {
-        handleNavigation,
+        isLoading,
+        posts: !isLoading && typeof posts !== 'undefined' ? posts : [],
     };
 }
 
 const styles = StyleSheet.create({
     container: {
-        alignItems: 'center',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        paddingTop: 50,
-    }
+        backgroundColor: colors.nightGray,
+        height: '100%',
+        paddingTop: 20,
+        width: '100%',
+    },
+    postsSectionContainer: {
+        paddingLeft: 10,
+        paddingRight: 10,
+    },
 });
 
