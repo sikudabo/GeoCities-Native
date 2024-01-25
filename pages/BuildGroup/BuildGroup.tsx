@@ -86,6 +86,9 @@ function BuildGroup_DisplayLayer({
                         <View style={styles.avatarButtonContainer}>
                             <GeoCitiesButton buttonColor={colors.salmonPink} icon="image-album" onPress={handleSelectAvatar} text="Avatar" />
                         </View>
+                        <View style={styles.submitButtonSection}>
+                            <GeoCitiesButton buttonColor={colors.salmonPink} icon="cog" mode="outlined" text="Build" />
+                        </View>
                     </ScrollView>
                 </Surface>
             </View>
@@ -188,6 +191,9 @@ const styles = StyleSheet.create({
     },
     nameHelperTextDanger: {
         color: colors.error,
+    },
+    submitButtonSection: {
+        paddingTop: 30,
     },
     topHeader: {
         alignItems: 'center',
