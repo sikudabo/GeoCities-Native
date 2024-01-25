@@ -6,7 +6,9 @@ import { useUser } from '../../hooks/storage-hooks';
 import { GeoCitiesBodyText, colors } from '../../components';
 
 type BuildGroupDisplayLayerProps = {
+    description: string;
     groupName: string;
+    handleDescriptionChange: (description: string) => void;
     handleGroupNameChange: (name: string) => void;
 };
 
@@ -15,7 +17,9 @@ export default function BuildGroup() {
 }
 
 function BuildGroup_DisplayLayer({
+    description,
     groupName,
+    handleDescriptionChange,
     handleGroupNameChange,
 }: BuildGroupDisplayLayerProps) {
     return (
@@ -34,6 +38,14 @@ function BuildGroup_DisplayLayer({
                                 </HelperText>
                             </KeyboardAvoidingView>
                         </View>
+                        <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={400}>
+                            <View style={styles.inputContainer}>
+                                <TextInput activeOutlineColor={colors.salmonPink} label="Text" mode="outlined" numberOfLines={5} onChangeText={handleDescriptionChange} outlineColor={colors.white} placeholder="Text..." style={styles.captionInput} value={description} multiline />
+                                <HelperText style={description.length <= 300 ? styles.nameHelperText : styles.nameHelperTextDanger} type="info">
+                                    Required {`${description.length} / 300`}
+                                </HelperText>
+                            </View>
+                        </KeyboardAvoidingView>
                     </ScrollView>
                 </Surface>
             </View>
@@ -45,19 +57,30 @@ function useDataLayer() {
     const { user } = useUser();
     const { _id } = user;
     const queryClient = useQueryClient();
+    const [description, setDescription] = useState('');
     const [groupName, setGroupName] = useState('');
+
+    function handleDescriptionChange(description: string) {
+        setDescription(description);
+    }
 
     function handleGroupNameChange(name: string) {
         setGroupName(name);
     }
 
     return {
+        description,
         groupName,
+        handleDescriptionChange,
         handleGroupNameChange,
     };
 }
 
 const styles = StyleSheet.create({
+    captionInput: {
+        height: 100,
+        paddingBottom: 5,
+    },
     container: {
         backgroundColor: colors.nightGray,
         height: '100%',
