@@ -9,6 +9,7 @@ import * as Linking from 'expo-linking';
 import GeoCitiesAvatar from '../GeoCitiesAvatar';
 import GeoCitiesBodyText from '../GeoCitiesBodyText';
 import GeoCitiesCaptionText from '../GeoCitiesCaptionText';
+import GeoCitiesDeleteIcon from '../GeoCitiesDeleteIcon';
 import GeoCitiesLikeIconFilled from '../GeoCitiesLikeIconFilled';
 import GeoCitiesLikeIconOutlined from '../GeoCitiesLikeIconOutlined';
 import { colors } from '../colors';
@@ -26,6 +27,7 @@ type DataLayerProps = CommentCardProps;
 
 type CommentCardDisplayLayerProps = {
     avatarUri: string;
+    canDeleteComment: boolean;
     caption?: string;
     commentType: 'video' | 'photo' | 'link' | 'text';
     createdAt: number;
@@ -46,6 +48,7 @@ export default function CommentCard({ comment }: CommentCardProps) {
 
 function CommentCard_DisplayLayer({
     avatarUri,
+    canDeleteComment,
     caption,
     commentType,
     createdAt,
@@ -137,6 +140,11 @@ function CommentCard_DisplayLayer({
                         <GeoCitiesBodyText color={colors.white} fontSize={14} fontWeight={900} text={millify(numberOfLikes)} />
                     </View>
                 </TouchableOpacity>
+                {canDeleteComment && (
+                    <TouchableOpacity style={styles.buttonsTouchContainer}>
+                    <GeoCitiesDeleteIcon color={colors.salmonPink} height={20} width={20} />
+                </TouchableOpacity>
+                )}
             </View>
         </Surface>
     );
@@ -148,8 +156,9 @@ function useDataLayer({ comment }: DataLayerProps) {
     const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError } = useShowDialog();
     const { user } = useUser();
     const { _id } = user;
-    const { authorId, caption, commentType, createdAt, hashTags, _id: commentId, likes, link, postId, postMediaId, userName } = comment;
+    const { authorId, caption, commentType, createdAt, hashTags, _id: commentId, likes, link, postAuthorId, postId, postMediaId, userName } = comment;
     const avatarUri = `${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo-by-user-id/${authorId}`;
+    const canDeleteComment = _id === authorId || _id === postAuthorId ? true : false;
     const numberOfLikes = typeof likes !== 'undefined' ? likes.length : 0;
     const videoRef: any = useRef(null);
 
@@ -208,6 +217,7 @@ function useDataLayer({ comment }: DataLayerProps) {
 
     return {
       avatarUri,
+      canDeleteComment,
       caption,
       commentType,
       createdAt,
