@@ -1,15 +1,25 @@
 import { useState } from 'react';
 import { KeyboardAvoidingView, ScrollView, StyleSheet, View } from 'react-native';
+import Dropdown from 'react-native-paper-dropdown';
 import { useQueryClient } from '@tanstack/react-query';
 import { HelperText, Surface, TextInput } from 'react-native-paper';
 import { useUser } from '../../hooks/storage-hooks';
+import { topics } from '../../utils/constants';
 import { GeoCitiesBodyText, colors } from '../../components';
 
 type BuildGroupDisplayLayerProps = {
     description: string;
     groupName: string;
+    groupTopics: {
+        label: string;
+        value: string;
+    }[];
     handleDescriptionChange: (description: string) => void;
     handleGroupNameChange: (name: string) => void;
+    setShowDropdown: React.Dispatch<React.SetStateAction<boolean>>;
+    setTopic: React.Dispatch<React.SetStateAction<string>>;
+    showDropdown: boolean;
+    topic: string;
 };
 
 export default function BuildGroup() {
@@ -19,8 +29,13 @@ export default function BuildGroup() {
 function BuildGroup_DisplayLayer({
     description,
     groupName,
+    groupTopics,
     handleDescriptionChange,
     handleGroupNameChange,
+    setShowDropdown,
+    setTopic,
+    showDropdown,
+    topic,
 }: BuildGroupDisplayLayerProps) {
     return (
         <View style={styles.container}>
@@ -32,20 +47,38 @@ function BuildGroup_DisplayLayer({
                     <ScrollView>
                         <View style={styles.inputContainer}>
                             <KeyboardAvoidingView behavior="position" style={styles.keyboardContainer}>
-                                <TextInput mode='outlined' onChangeText={handleGroupNameChange} label="Group Name" left={<TextInput.Icon icon="mail" />} outlineColor={colors.white} placeholder="Group Name" activeOutlineColor={colors.white} value={groupName} />
+                                <TextInput mode='outlined' onChangeText={handleGroupNameChange} label="Group Name" left={<TextInput.Icon icon="spellcheck" />} outlineColor={colors.white} placeholder="Group Name" activeOutlineColor={colors.salmonPink} value={groupName} />
                                 <HelperText style={groupName.length <= 50 ? styles.nameHelperText : styles.nameHelperTextDanger} type="info">
                                     Required {`${groupName.length} / 50`}
                                 </HelperText>
                             </KeyboardAvoidingView>
                         </View>
-                        <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={400}>
+                        <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={100}>
                             <View style={styles.inputContainer}>
-                                <TextInput activeOutlineColor={colors.salmonPink} label="Text" mode="outlined" numberOfLines={5} onChangeText={handleDescriptionChange} outlineColor={colors.white} placeholder="Text..." style={styles.captionInput} value={description} multiline />
+                                <TextInput activeOutlineColor={colors.salmonPink} label="Description" mode="outlined" numberOfLines={5} onChangeText={handleDescriptionChange} outlineColor={colors.white} placeholder="Description..." style={styles.captionInput} value={description} multiline />
                                 <HelperText style={description.length <= 300 ? styles.nameHelperText : styles.nameHelperTextDanger} type="info">
                                     Required {`${description.length} / 300`}
                                 </HelperText>
                             </View>
                         </KeyboardAvoidingView>
+                        <View style={styles.inputContainer}>
+                        <Dropdown
+                            dropDownItemTextStyle={{
+                                color: colors.white,
+                            }}
+                            dropDownItemSelectedTextStyle={{
+                                color: colors.salmonPink,
+                            }}
+                            label="Topic"
+                            mode="outlined"
+                            visible={showDropdown}
+                            showDropDown={() => setShowDropdown(true)}
+                            onDismiss={() => setShowDropdown(false)}
+                            value={topic}
+                            setValue={setTopic}
+                            list={groupTopics}
+                        />
+                    </View>
                     </ScrollView>
                 </Surface>
             </View>
@@ -59,6 +92,12 @@ function useDataLayer() {
     const queryClient = useQueryClient();
     const [description, setDescription] = useState('');
     const [groupName, setGroupName] = useState('');
+    const [showDropdown, setShowDropdown] = useState(false);
+    const [topic, setTopic] = useState(topics[0]);
+    let groupTopics: Array<{label: string; value: string;}> = [];
+    topics.forEach((topic) => {
+        groupTopics.push({ label: topic, value: topic });
+    });
 
     function handleDescriptionChange(description: string) {
         setDescription(description);
@@ -71,8 +110,13 @@ function useDataLayer() {
     return {
         description,
         groupName,
+        groupTopics,
         handleDescriptionChange,
         handleGroupNameChange,
+        setShowDropdown,
+        setTopic,
+        showDropdown,
+        topic,
     };
 }
 
