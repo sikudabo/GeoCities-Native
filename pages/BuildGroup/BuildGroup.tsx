@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { KeyboardAvoidingView, ScrollView, StyleSheet, View } from 'react-native';
 import Dropdown from 'react-native-paper-dropdown';
+import * as ImagePicker from 'expo-image-picker';
 import { useQueryClient } from '@tanstack/react-query';
 import { HelperText, Surface, TextInput } from 'react-native-paper';
 import { useUser } from '../../hooks/storage-hooks';
 import { topics } from '../../utils/constants';
-import { GeoCitiesBodyText, colors } from '../../components';
+import { GeoCitiesButton, GeoCitiesBodyText, colors } from '../../components';
 
 type BuildGroupDisplayLayerProps = {
     description: string;
@@ -16,6 +17,7 @@ type BuildGroupDisplayLayerProps = {
     }[];
     handleDescriptionChange: (description: string) => void;
     handleGroupNameChange: (name: string) => void;
+    handleSelectAvatar: () => void;
     setShowDropdown: React.Dispatch<React.SetStateAction<boolean>>;
     setTopic: React.Dispatch<React.SetStateAction<string>>;
     showDropdown: boolean;
@@ -32,6 +34,7 @@ function BuildGroup_DisplayLayer({
     groupTopics,
     handleDescriptionChange,
     handleGroupNameChange,
+    handleSelectAvatar,
     setShowDropdown,
     setTopic,
     showDropdown,
@@ -62,24 +65,27 @@ function BuildGroup_DisplayLayer({
                             </View>
                         </KeyboardAvoidingView>
                         <View style={styles.inputContainer}>
-                        <Dropdown
-                            activeColor={colors.salmonPink}
-                            dropDownItemTextStyle={{
-                                color: colors.white,
-                            }}
-                            dropDownItemSelectedTextStyle={{
-                                color: colors.salmonPink,
-                            }}
-                            label="Topic"
-                            mode="outlined"
-                            visible={showDropdown}
-                            showDropDown={() => setShowDropdown(true)}
-                            onDismiss={() => setShowDropdown(false)}
-                            value={topic}
-                            setValue={setTopic}
-                            list={groupTopics}
-                        />
-                    </View>
+                            <Dropdown
+                                activeColor={colors.salmonPink}
+                                dropDownItemTextStyle={{
+                                    color: colors.white,
+                                }}
+                                dropDownItemSelectedTextStyle={{
+                                    color: colors.salmonPink,
+                                }}
+                                label="Topic"
+                                mode="outlined"
+                                visible={showDropdown}
+                                showDropDown={() => setShowDropdown(true)}
+                                onDismiss={() => setShowDropdown(false)}
+                                value={topic}
+                                setValue={setTopic}
+                                list={groupTopics}
+                            />
+                        </View>
+                        <View style={styles.inputContainer}>
+                            <GeoCitiesButton buttonColor={colors.salmonPink} icon="image-album" onPress={handleSelectAvatar} text="Avatar" />
+                        </View>
                     </ScrollView>
                 </Surface>
             </View>
@@ -93,6 +99,8 @@ function useDataLayer() {
     const queryClient = useQueryClient();
     const [description, setDescription] = useState('');
     const [groupName, setGroupName] = useState('');
+    const [photoName, setPhotoName] = useState('');
+    const [photoUri, setPhotoUri] = useState<Blob | null>(null);
     const [showDropdown, setShowDropdown] = useState(false);
     const [topic, setTopic] = useState(topics[0]);
     let groupTopics: Array<{label: string; value: string;}> = [];
@@ -108,12 +116,33 @@ function useDataLayer() {
         setGroupName(name);
     }
 
+    async function handleSelectAvatar() {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            allowsEditing: true,
+            aspect: [1, 1],
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            quality: 1,
+        });
+
+        if (result.canceled) {
+            return;
+        }
+
+        const localUri = result.assets[0].uri;
+        
+        const filename = localUri.split('/').pop();
+
+        setPhotoUri(localUri as any);
+        setPhotoName(filename as string);
+    }
+
     return {
         description,
         groupName,
         groupTopics,
         handleDescriptionChange,
         handleGroupNameChange,
+        handleSelectAvatar,
         setShowDropdown,
         setTopic,
         showDropdown,
