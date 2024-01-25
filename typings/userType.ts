@@ -12,6 +12,6 @@ export type UserType = {
     locationState: string;
     blockList: Array<string>;
     blockedFrom: Array<string>;
-    groupsBlockList: Array<string>;
+    groupsBlockedFrom: Array<string>;
     groups: Array<string>;
 };
