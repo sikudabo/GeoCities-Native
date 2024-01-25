@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
+import { useCallback, useState } from 'react';
+import { RefreshControl, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import { useFetchFeedPosts } from '../../hooks/fetch-hooks';
 import { PostType } from '../../typings';
 import { colors, GeoCitiesBodyText, LoadingIndicator, PostCard } from '../../components';
@@ -10,7 +10,9 @@ type FeedProps = {
 
 type FeedDisplayLayerProps = {
     isLoading: boolean;
+    onRefresh: () => void;
     posts: Array<PostType>;
+    refreshing: boolean;
 };
 
 export default function Feed({ navigation }: FeedProps) {
@@ -19,7 +21,9 @@ export default function Feed({ navigation }: FeedProps) {
 
 function Feed_DisplayLayer({
     isLoading,
+    onRefresh,
     posts,
+    refreshing,
 }: FeedDisplayLayerProps) {
     
     if (isLoading) {
@@ -31,7 +35,15 @@ function Feed_DisplayLayer({
     return (
         <View style={styles.container}>
             <SafeAreaView>
-                <ScrollView>
+                <ScrollView
+                    refreshControl={
+                        <RefreshControl 
+                            onRefresh={onRefresh}
+                            refreshing={refreshing}
+                            tintColor={colors.white}
+                        />
+                    }
+                >
                     <View style={styles.postsSectionContainer}>
                         {posts.map((post, index) => (
                             <PostCard 
@@ -49,10 +61,20 @@ function Feed_DisplayLayer({
 
 function useDataLayer({ navigation }: FeedProps) {
     const { data: posts, isLoading } = useFetchFeedPosts();
+    const [refreshing, setRefreshing] = useState(false);
+
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 2000);
+    }, []);
 
     return {
         isLoading,
+        onRefresh,
         posts: !isLoading && typeof posts !== 'undefined' ? posts : [],
+        refreshing,
     };
 }
 
