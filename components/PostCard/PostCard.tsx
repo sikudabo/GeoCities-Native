@@ -282,11 +282,13 @@ function useDataLayer({ post }: DataLayerProps) {
                     setDialogTitle('Whoops');
                     setDialogMessage(message);
                     handleDialogMessageChange(true);
+                    return;
                 }
     
                 setIsLoading(false);
                 queryClient.invalidateQueries(['fetchProfilePosts']);
                 queryClient.invalidateQueries(['fetchPost']);
+                return;
             }).catch(err => {
                 console.log(`There was an error deleting a binary post: ${err.message}`);
                 setIsLoading(false);
@@ -295,6 +297,7 @@ function useDataLayer({ post }: DataLayerProps) {
                 setDialogTitle('Whoops');
                 setDialogMessage(`There was an error deleting this post. Please try again!`);
                 handleDialogMessageChange(true);
+                return;
             });
         }
 

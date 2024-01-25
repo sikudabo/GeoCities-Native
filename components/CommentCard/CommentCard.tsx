@@ -17,7 +17,7 @@ import { CommentType } from '../../typings';
 import { postTimeDifference } from '../../utils/helpers';
 import { useUser } from '../../hooks/storage-hooks';
 import { useShowDialog, useShowLoader } from '../../hooks';
-import { postNonBinaryData } from '../../utils/requests';
+import { deleteData, postNonBinaryData } from '../../utils/requests';
 
 type CommentCardProps = {
     comment: CommentType;
@@ -31,6 +31,7 @@ type CommentCardDisplayLayerProps = {
     caption?: string;
     commentType: 'video' | 'photo' | 'link' | 'text';
     createdAt: number;
+    deleteComment: () => void;
     handleLikeButtonPress: () => void;
     hashTags?: Array<string>;
     hasLikedComment: boolean;
@@ -52,6 +53,7 @@ function CommentCard_DisplayLayer({
     caption,
     commentType,
     createdAt,
+    deleteComment,
     handleLikeButtonPress,
     hashTags = [],
     hasLikedComment,
@@ -141,7 +143,7 @@ function CommentCard_DisplayLayer({
                     </View>
                 </TouchableOpacity>
                 {canDeleteComment && (
-                    <TouchableOpacity style={styles.buttonsTouchContainer}>
+                    <TouchableOpacity onPress={deleteComment} style={styles.buttonsTouchContainer}>
                     <GeoCitiesDeleteIcon color={colors.salmonPink} height={20} width={20} />
                 </TouchableOpacity>
                 )}
@@ -171,6 +173,48 @@ function useDataLayer({ comment }: DataLayerProps) {
         }
 
         return false;
+    }
+
+    async function deleteComment() {
+        setIsLoading(true);
+
+        if (commentType === 'text' || commentType === 'link') {
+            await deleteData({
+                data: {
+                    commentId,
+                    postId,
+                },
+                uri: 'delete-nonbinary-comment',
+            }).then(res => {
+                const { isError, message } = res;
+
+                if (isError) {
+                    setIsLoading(false);
+                    setIsError(true);
+                    setDialogTitle('Whoops');
+                    setDialogMessage(message);
+                    handleDialogMessageChange(true);
+                    return;
+                }
+
+                setIsLoading(false);
+                queryClient.invalidateQueries(['fetchProfilePosts']);
+                queryClient.invalidateQueries(['fetchPost']);
+                return;
+            }).catch(err => {
+                console.log(`There was an error deleting non-binary comment: ${err.message}`);
+                setIsLoading(false);
+                setIsLoading(false);
+                setIsError(true);
+                setDialogTitle('Whoops');
+                setDialogMessage(`There was an error deleting this comment. Please try again!`);
+                handleDialogMessageChange(true);
+                return;
+            });
+        }
+
+        setIsLoading(false);
+        return;
     }
 
     async function handleLikeButtonPress() {
@@ -221,6 +265,7 @@ function useDataLayer({ comment }: DataLayerProps) {
       caption,
       commentType,
       createdAt,
+      deleteComment,
       handleLikeButtonPress,
       hashTags,
       hasLikedComment: hasLikedComment(),
