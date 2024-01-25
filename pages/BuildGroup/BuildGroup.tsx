@@ -83,7 +83,7 @@ function BuildGroup_DisplayLayer({
                                 list={groupTopics}
                             />
                         </View>
-                        <View style={styles.inputContainer}>
+                        <View style={styles.avatarButtonContainer}>
                             <GeoCitiesButton buttonColor={colors.salmonPink} icon="image-album" onPress={handleSelectAvatar} text="Avatar" />
                         </View>
                     </ScrollView>
@@ -151,6 +151,9 @@ function useDataLayer() {
 }
 
 const styles = StyleSheet.create({
+    avatarButtonContainer: {
+        paddingTop: 20,
+    },
     captionInput: {
         height: 100,
         paddingBottom: 5,
