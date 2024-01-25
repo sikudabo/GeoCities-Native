@@ -382,6 +382,7 @@ function useDataLayer({ post, renderedFrom }: DataLayerProps) {
             queryClient.invalidateQueries(['fetchUser']);
             queryClient.invalidateQueries(['fetchProfilePosts']);
             queryClient.invalidateQueries(['fetchPost']);
+            queryClient.invalidateQueries(['fetchFeedPosts']);
             setIsLoading(false);
         }).catch(err => {
             console.log(`There was an error ${alreadyLiked ? 'unliking' : 'liking'} a post: ${err.message}`);
