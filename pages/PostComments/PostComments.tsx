@@ -1,4 +1,5 @@
-import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useCallback, useState } from 'react';
+import { RefreshControl, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import orderBy from 'lodash/orderBy';
 import { useNavigation } from '@react-navigation/native';
 import { useFetchPost } from '../../hooks/fetch-hooks';
@@ -14,7 +15,9 @@ type PostCommentsDisplayLayerProps = {
     handleBackPress: () => void;
     isLoading: boolean;
     isPostDeleted: boolean;
+    onRefresh: () => void;
     post: PostType;
+    refreshing: boolean;
 };
 
 export default function PostComments({ route }: PostCommentsProps) {
@@ -27,7 +30,9 @@ function PostComments_DisplayLayer({
     handleBackPress,
     isLoading,
     isPostDeleted,
-    post
+    onRefresh,
+    post,
+    refreshing,
 }: PostCommentsDisplayLayerProps) {
     if (isLoading) {
         return <LoadingIndicator />;
@@ -51,7 +56,15 @@ function PostComments_DisplayLayer({
     return (
         <View style={styles.container}>
             <SafeAreaView>
-                <ScrollView>
+                <ScrollView
+                    refreshControl={
+                        <RefreshControl 
+                            onRefresh={onRefresh}
+                            refreshing={refreshing}
+                            tintColor={colors.white}
+                        />
+                    }
+                >
                     <View style={styles.backButtonSection}>
                         <TouchableOpacity onPress={handleBackPress} style={styles.backButtonContainer}>
                             <GeoCitiesBackArrowIcon height={30} width={30} />
@@ -86,6 +99,7 @@ function PostComments_DisplayLayer({
 }
 
 function useDataLayer({ route }: PostCommentsProps) {
+    const [refreshing, setRefreshing] = useState(false);
     const navigation = useNavigation();
     const { _id } = route.params;
     const { data, isLoading } = useFetchPost({ _id });
@@ -96,12 +110,21 @@ function useDataLayer({ route }: PostCommentsProps) {
         navigation.goBack();
     }
 
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 2000);
+    }, []);
+
     return {
         comments: typeof comments !== 'undefined' &&  comments.length > 0 ? orderBy(comments, ['createdAt'], ['desc']) : comments,
         handleBackPress,
         isLoading,
         isPostDeleted,
+        onRefresh,
         post,
+        refreshing,
     };
 }
 
