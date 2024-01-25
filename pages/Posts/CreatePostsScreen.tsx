@@ -96,7 +96,7 @@ function CreatePostScreen_DisplayLayer({
 
 function useDataLayer({ navigation, route }: CreatePostsProps) {
     const { communityName, isCommentsScreen, isCommunity, post } = route.params;
-    const { authorId: postAuthorId, __id: postId} = post;
+    const { authorId: postAuthorId } = isCommentsScreen ? post : { authorId: '1' };
     const [caption, setCaption] = useState('');
     const [link, setLink] = useState('');
     const [photoName, setPhotoName] = useState('');
