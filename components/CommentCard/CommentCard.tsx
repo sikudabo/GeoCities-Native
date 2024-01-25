@@ -213,8 +213,40 @@ function useDataLayer({ comment }: DataLayerProps) {
             });
         }
 
-        setIsLoading(false);
-        return;
+        else {
+            await deleteData({
+                data: {
+                    commentId,
+                    postId,
+                    fileId: postMediaId,
+                },
+                uri: 'delete-binary-comment',
+            }).then(res => {
+                const { isError, message } = res;
+                if (isError) {
+                    setIsLoading(false);
+                    setIsError(true);
+                    setDialogTitle('Whoops');
+                    setDialogMessage(message);
+                    handleDialogMessageChange(true);
+                    return;
+                }
+    
+                setIsLoading(false);
+                queryClient.invalidateQueries(['fetchProfilePosts']);
+                queryClient.invalidateQueries(['fetchPost']);
+                return;
+            }).catch(err => {
+                console.log(`There was an error deleting binary comment: ${err.message}`);
+                setIsLoading(false);
+                setIsLoading(false);
+                setIsError(true);
+                setDialogTitle('Whoops');
+                setDialogMessage(`There was an error deleting this comment. Please try again!`);
+                handleDialogMessageChange(true);
+                return;
+            });
+        }
     }
 
     async function handleLikeButtonPress() {

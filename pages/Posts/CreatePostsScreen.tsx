@@ -253,48 +253,50 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
             });
         }
 
-        let sendData  = {
-            authorId: _id,
-            userName,
-            caption,
-            commentType: uploadPostType,
-            createdAt,
-            link,
-            postId: post._id,
-            postAuthorId: post.authorId,
-        };
-
-        await putNonBinaryData({
-            data: sendData,
-            uri: 'upload-link-text-comment',
-        }).then(res => {
-            const { isError, message } = res;
-
-            if (isError) {
+        else {
+            let sendData  = {
+                authorId: _id,
+                userName,
+                caption,
+                commentType: uploadPostType,
+                createdAt,
+                link,
+                postId: post._id,
+                postAuthorId: post.authorId,
+            };
+    
+            await putNonBinaryData({
+                data: sendData,
+                uri: 'upload-link-text-comment',
+            }).then(res => {
+                const { isError, message } = res;
+    
+                if (isError) {
+                        setIsLoading(false);
+                        setIsError(true);
+                        setDialogTitle('Uh Oh!');
+                        setDialogMessage(message);
+                        handleDialogMessageChange(true);
+                        return;
+                    }
+    
                     setIsLoading(false);
-                    setIsError(true);
-                    setDialogTitle('Uh Oh!');
+                    setIsError(false);
+                    setDialogTitle('Success');
                     setDialogMessage(message);
                     handleDialogMessageChange(true);
+                    navigation.navigate('PostComments', { _id: post._id });
                     return;
-                }
-
+            }).catch(err => {
+                console.log(`There was an error uploading a post comment ${err.message}`);
                 setIsLoading(false);
-                setIsError(false);
-                setDialogTitle('Success');
-                setDialogMessage(message);
+                setIsError(true);
+                setDialogTitle('Uh Oh!');
+                setDialogMessage('There was an error uploading that comment. Please try again!');
                 handleDialogMessageChange(true);
-                navigation.navigate('PostComments', { _id: post._id });
                 return;
-        }).catch(err => {
-            console.log(`There was an error uploading a post comment ${err.message}`);
-            setIsLoading(false);
-            setIsError(true);
-            setDialogTitle('Uh Oh!');
-            setDialogMessage('There was an error uploading that comment. Please try again!');
-            handleDialogMessageChange(true);
-            return;
-        });
+            });
+        }
 
     }
     async function uploadPost() {
