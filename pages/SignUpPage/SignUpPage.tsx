@@ -222,6 +222,7 @@ export default function SignUpPage() {
                 return;
             }
         }).catch(err => {
+            console.log(`There was an error creating a new user: ${err.message}`);
             setIsLoading(false);
         });
     }
