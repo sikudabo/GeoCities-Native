@@ -100,8 +100,8 @@ export default function GeoCitiesNavigationDrawer({ navigation }: { navigation: 
                                 size={20}
                             />
                         )}
-                        label="Build Group"
-                        onPress={() => console.log('Build Group')}
+                        label="Create Group"
+                        onPress={() => navigation.navigate('BuildGroup')}
                     />
                     <DrawerItem 
                         icon={() => (

@@ -1,3 +1,4 @@
+import BuildGroup from "./BuildGroup/BuildGroup";
 import CreatePostScreen from "./Posts/CreatePostsScreen";
 import DummyIcon from "./DummyIcon";
 import Feed from "./Feed/Feed";
@@ -9,6 +10,7 @@ import SignInPage from "./SignInPage/SignInPage";
 import SignUpPage from "./SignUpPage/SignUpPage";
 
 export {
+    BuildGroup,
     CreatePostScreen,
     DummyIcon,
     Feed,

@@ -10,6 +10,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useShowLoader } from './hooks';
 import { useUser } from './hooks/storage-hooks';
 import {
+  BuildGroup,
   CreatePostScreen,
   Feed,
   LoginCreateStack,
@@ -118,6 +119,10 @@ function App_DisplayLayer({
                   <Drawer.Screen 
                     component={PostComments}
                     name="PostComments"
+                  />
+                  <Drawer.Screen 
+                    component={BuildGroup}
+                    name="BuildGroup"
                   />
                 </>
               )}
