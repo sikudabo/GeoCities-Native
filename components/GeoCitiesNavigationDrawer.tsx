@@ -80,8 +80,8 @@ export default function GeoCitiesNavigationDrawer({ navigation }: { navigation: 
                                 size={20}
                             />
                         )}
-                        label="Communities"
-                        onPress={() => console.log('Communities')}
+                        label="Groups"
+                        onPress={() => console.log('Groups')}
                     />
                     <DrawerItem 
                         icon={() => (
@@ -100,8 +100,8 @@ export default function GeoCitiesNavigationDrawer({ navigation }: { navigation: 
                                 size={20}
                             />
                         )}
-                        label="Build Community"
-                        onPress={() => console.log('Community Builder')}
+                        label="Build Group"
+                        onPress={() => console.log('Build Group')}
                     />
                     <DrawerItem 
                         icon={() => (
