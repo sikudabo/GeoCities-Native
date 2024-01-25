@@ -63,6 +63,7 @@ function BuildGroup_DisplayLayer({
                         </KeyboardAvoidingView>
                         <View style={styles.inputContainer}>
                         <Dropdown
+                            activeColor={colors.salmonPink}
                             dropDownItemTextStyle={{
                                 color: colors.white,
                             }}
