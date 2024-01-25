@@ -11,4 +11,5 @@ export type UserType = {
     locationCity: string;
     locationState: string;
     blockList: Array<string>;
+    blockedFrom: Array<string>;
 };
