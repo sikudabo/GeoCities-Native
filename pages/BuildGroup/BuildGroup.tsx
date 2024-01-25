@@ -168,6 +168,7 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     form: {
+        borderRadius: 20,
         height: '100%',
         paddingLeft: 10,
         paddingRight: 10,
