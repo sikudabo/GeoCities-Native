@@ -170,6 +170,15 @@ function useDataLayer() {
             return;
         }
 
+        if (description.length > 300) {
+            setIsLoading(false);
+            setIsError(true);
+            setDialogTitle('Uh Oh');
+            setDialogMessage('Please shorten the group description to 300 characters or less.');
+            handleDialogMessageChange(true);
+            return;
+        }
+
         if (!avatar || !photoName || !photoUri) {
             setIsLoading(false);
             setIsError(true);
@@ -184,7 +193,7 @@ function useDataLayer() {
         fd.append('createdAt', createdAt);
         fd.append('creator', _id);
         fd.append('description', description);
-        fd.append('groupName', groupName);
+        fd.append('groupName', groupName.trim());
         fd.append('topic', topic);
         fd.append('avatar', { name: photoName, uri: photoUri, type: 'image' })
 
