@@ -101,6 +101,7 @@ export const topics = [
     'medicine',
     'men',
     'mental health',
+    'military',
     'mlb',
     'major league soccer',
     'mma',

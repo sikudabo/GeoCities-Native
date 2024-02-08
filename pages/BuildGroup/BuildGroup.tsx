@@ -4,8 +4,10 @@ import Dropdown from 'react-native-paper-dropdown';
 import * as ImagePicker from 'expo-image-picker';
 import { useQueryClient } from '@tanstack/react-query';
 import { HelperText, Surface, TextInput } from 'react-native-paper';
+import { putBinaryData } from '../../utils/requests';
 import { useUser } from '../../hooks/storage-hooks';
 import { topics } from '../../utils/constants';
+import { useShowDialog, useShowLoader } from '../../hooks';
 import { GeoCitiesButton, GeoCitiesBodyText, colors } from '../../components';
 
 type BuildGroupDisplayLayerProps = {
@@ -21,6 +23,7 @@ type BuildGroupDisplayLayerProps = {
     setShowDropdown: React.Dispatch<React.SetStateAction<boolean>>;
     setTopic: React.Dispatch<React.SetStateAction<string>>;
     showDropdown: boolean;
+    submitGroup: () => void;
     topic: string;
 };
 
@@ -38,6 +41,7 @@ function BuildGroup_DisplayLayer({
     setShowDropdown,
     setTopic,
     showDropdown,
+    submitGroup,
     topic,
 }: BuildGroupDisplayLayerProps) {
     return (
@@ -87,7 +91,7 @@ function BuildGroup_DisplayLayer({
                             <GeoCitiesButton buttonColor={colors.salmonPink} icon="image-album" onPress={handleSelectAvatar} text="Avatar" />
                         </View>
                         <View style={styles.submitButtonSection}>
-                            <GeoCitiesButton buttonColor={colors.salmonPink} icon="cog" mode="outlined" text="Build" />
+                            <GeoCitiesButton buttonColor={colors.salmonPink} icon="cog" mode="outlined" onPress={submitGroup} text="Build" />
                         </View>
                     </ScrollView>
                 </Surface>
@@ -102,10 +106,14 @@ function useDataLayer() {
     const queryClient = useQueryClient();
     const [description, setDescription] = useState('');
     const [groupName, setGroupName] = useState('');
+    const [avatar, setAvatar] = useState<any>();
     const [photoName, setPhotoName] = useState('');
     const [photoUri, setPhotoUri] = useState<Blob | null>(null);
     const [showDropdown, setShowDropdown] = useState(false);
     const [topic, setTopic] = useState(topics[0]);
+    const { setIsLoading } = useShowLoader();
+    const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError } = useShowDialog();
+    
     let groupTopics: Array<{label: string; value: string;}> = [];
     topics.forEach((topic) => {
         groupTopics.push({ label: topic, value: topic });
@@ -135,8 +143,41 @@ function useDataLayer() {
         
         const filename = localUri.split('/').pop();
 
+        setAvatar(result as any);
         setPhotoUri(localUri as any);
         setPhotoName(filename as string);
+    }
+
+    async function submitGroup() {
+        setIsLoading(true);
+
+        if (!groupName.trim()) {
+            setIsLoading(false);
+            setIsError(true);
+            setDialogTitle('Uh Oh');
+            setDialogMessage('Please add a name for this group!');
+            handleDialogMessageChange(true);
+            return;
+        }
+
+        if (!description.trim()) {
+            setIsLoading(false);
+            setIsError(true);
+            setDialogTitle('Uh Oh');
+            setDialogMessage('Please add a description for this group!');
+            handleDialogMessageChange(true);
+            return;
+        }
+
+        if (!avatar || !photoName || !photoUri) {
+            setIsLoading(false);
+            setIsError(true);
+            setDialogTitle('Uh Oh');
+            setDialogMessage('Please add an avatar for this group!');
+            handleDialogMessageChange(true);
+            return;
+        }
+
     }
 
     return {
@@ -149,6 +190,7 @@ function useDataLayer() {
         setShowDropdown,
         setTopic,
         showDropdown,
+        submitGroup,
         topic,
     };
 }
