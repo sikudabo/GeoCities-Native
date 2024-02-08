@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { KeyboardAvoidingView, ScrollView, StyleSheet, View } from 'react-native';
 import Dropdown from 'react-native-paper-dropdown';
 import * as ImagePicker from 'expo-image-picker';
+import { GenericFormData } from 'axios';
 import { useQueryClient } from '@tanstack/react-query';
 import { HelperText, Surface, TextInput } from 'react-native-paper';
 import { putBinaryData } from '../../utils/requests';
@@ -178,6 +179,36 @@ function useDataLayer() {
             return;
         }
 
+        let fd: GenericFormData = new FormData();
+        const createdAt = new Date().getTime();
+        fd.append('createdAt', createdAt);
+        fd.append('creator', _id);
+        fd.append('description', description);
+        fd.append('groupName', groupName);
+        fd.append('topic', topic);
+        fd.append('avatar', { name: photoName, uri: photoUri, type: 'image' })
+
+        await putBinaryData({
+            data: fd,
+            uri: 'create-group',
+        }).then(res => {
+            const { isError, message } = res;
+            
+            setIsLoading(false);
+            setIsError(isError ? true : false);
+            setDialogTitle(isError ? 'Uh Oh!' : 'Success!');
+            setDialogMessage(message);
+            handleDialogMessageChange(true);
+            return;
+        }).catch(err => {
+            console.log('Error creating a new GeoGroup:', err.message);
+            setIsLoading(false);
+            setIsError(true);
+            setDialogTitle('Uh Oh!');
+            setDialogMessage('There was an error creating that group. Please try again!');
+            handleDialogMessageChange(true);
+            return;
+        });
     }
 
     return {
