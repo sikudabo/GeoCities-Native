@@ -2,6 +2,7 @@ import BuildGroup from "./BuildGroup/BuildGroup";
 import CreatePostScreen from "./Posts/CreatePostsScreen";
 import DummyIcon from "./DummyIcon";
 import Feed from "./Feed/Feed";
+import GroupScreen from "./GroupScreen/GroupScreen";
 import PostComments from "./PostComments/PostComments";
 import Profile from "./Profile/Profile";
 import LoginCreateStack from "./LoginCreateStack";
@@ -14,6 +15,7 @@ export {
     CreatePostScreen,
     DummyIcon,
     Feed,
+    GroupScreen,
     LoginCreateStack,
     PostComments,
     Profile,

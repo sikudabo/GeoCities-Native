@@ -13,6 +13,7 @@ import {
   BuildGroup,
   CreatePostScreen,
   Feed,
+  GroupScreen,
   LoginCreateStack,
   PostComments,
   Profile,
@@ -123,6 +124,10 @@ function App_DisplayLayer({
                   <Drawer.Screen 
                     component={BuildGroup}
                     name="BuildGroup"
+                  />
+                  <Drawer.Screen 
+                    component={GroupScreen}
+                    name="GroupScreen" 
                   />
                 </>
               )}
