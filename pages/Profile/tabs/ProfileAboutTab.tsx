@@ -113,6 +113,8 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     groupContainer: {
+        paddingLeft: 10,
+        paddingRight: 10,
         paddingTop: 20,
     },
 });
