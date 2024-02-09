@@ -13,8 +13,11 @@ export function useFetchUserData({ _id }: UseFetchUserDataProps) {
         const userData = await getData({
             uri: `get-user/${_id}`,
         }).then(res => {
-            const { user } = res;
-            return user;
+            const { user, userGroups } = res;
+            return {
+                user,
+                userGroups,
+            };
         }).catch(err => {
             console.log('There was an error fetching a user profile', err.message);
             setIsError(true);

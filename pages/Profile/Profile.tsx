@@ -126,7 +126,7 @@ function useDataLayer({ navigation }: ProfileProps) {
     const { user, setUser } = useUser();
     const { _id } = user;
     const { data, isLoading } = useFetchUserData({ _id });
-    const { user: currentUser } = typeof data !== 'undefined' && !isLoading ? data : { user: undefined };
+    const { user: currentUser, userGroups } = typeof data !== 'undefined' && !isLoading ? data : { user: undefined, userGroups: [] };
     const { avatar, firstName, followers, following, lastName, locationCity, locationState } = user;
     const [currentIndex, setCurrentIndex] = useState(0);
     const [refreshing, setRefreshing] = useState(false);
@@ -248,4 +248,3 @@ const styles = StyleSheet.create({
         width: '100%',
     },
 });
-

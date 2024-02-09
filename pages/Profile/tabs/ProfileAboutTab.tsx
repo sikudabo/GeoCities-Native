@@ -47,7 +47,7 @@ function ProfileAboutTabs_DisplayLayer({
 }
 
 function useDataLayer({ user }: ProfileAboutTabProps) {
-    const { createdOn, dob, email } = typeof user !== 'undefined' ? user : { createdOn: new Date(), dob: new Date(), email: ''};
+    const { createdOn, dob, email, userGroups, groups } = typeof user !== 'undefined' ? user : { createdOn: new Date(), dob: new Date(), email: '', groups: [], userGroups: []};
     const age = birthdayToYears(dob);
     const createdOnString = createdDate(createdOn as Date);
 
