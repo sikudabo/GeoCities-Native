@@ -2,6 +2,7 @@ import { View, StyleSheet } from 'react-native';
 import { UserType } from '../../../typings';
 import { birthdayToYears } from '../../../utils/helpers';
 import { GeoCitiesBodyText, colors } from '../../../components';
+import { months } from '../../../utils/constants';
 
 type ProfileAboutTabProps = {
     user: UserType,
@@ -9,6 +10,7 @@ type ProfileAboutTabProps = {
 
 type ProfileAboutTabDisplayLayerProps = {
     age: number;
+    createdOnString: string;
 }
 
 export default function ProfileAboutTabs({ user }: ProfileAboutTabProps) {
@@ -17,12 +19,16 @@ export default function ProfileAboutTabs({ user }: ProfileAboutTabProps) {
 
 
 function ProfileAboutTabs_DisplayLayer({
-    age
+    age,
+    createdOnString,
 }: ProfileAboutTabDisplayLayerProps) {
     return (
         <View style={styles.container}>
             <View style={styles.ageContainer}>
                 <GeoCitiesBodyText color={colors.white} text={`${age.toString()} years old`} />
+            </View>
+            <View style={styles.createdOnContainer}>
+                <GeoCitiesBodyText color={colors.white} text={`Account made ${createdOnString}`} />
             </View>
         </View>
     );
@@ -30,12 +36,16 @@ function ProfileAboutTabs_DisplayLayer({
 
 function useDataLayer({ user }: ProfileAboutTabProps) {
     const { createdOn, dob } = typeof user !== 'undefined' ? user : { createdOn: new Date(), dob: new Date() };
-    console.log('The user is:', user);
     const age = birthdayToYears(dob);
-    const createdDate = new Date(createdOn).getMonth();
-    console.log(createdDate);
+    const createdDate = new Date(createdOn);
+    const createdDay = createdDate.getDate();
+    const createdMonth = createdDate.getMonth();
+    const createdYear = createdDate.getFullYear();
+    const createdMonthString = months[createdMonth];
+    const createdOnString = `${createdMonthString} ${createdDay}, ${createdYear}`;
     return {
        age,
+       createdOnString,
     }
 };
 
@@ -48,4 +58,10 @@ const styles = StyleSheet.create({
     container: {
         paddingTop: 40,
     },
+    createdOnContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingTop: 20,
+        width: '100%',
+    }
 });
