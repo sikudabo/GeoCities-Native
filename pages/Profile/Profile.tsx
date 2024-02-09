@@ -101,10 +101,10 @@ function Profile_DisplayLayer({
                                     </View>
                                 </TabScreen>
                                 <TabScreen icon="information" label="About">
-                                    <ProfileAboutTabs />
+                                    <ProfileAboutTabs user={user} />
                                 </TabScreen>
                                 <TabScreen icon="calendar" label="Events">
-                                    <ProfileAboutTabs />
+                                    <ProfileAboutTabs user={user} />
                                 </TabScreen>
                             </Tabs>
                         </TabsProvider>
@@ -113,7 +113,7 @@ function Profile_DisplayLayer({
                        {currentIndex === 0 ? (
                             <ProfilePostsTab createButtonNavigator={createPostNavigation} />
                        ): currentIndex === 1 ? (
-                            <ProfileAboutTabs />
+                            <ProfileAboutTabs user={user} />
                        ): null}
                     </View>
                 </ScrollView>

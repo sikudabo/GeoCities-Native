@@ -1,4 +1,5 @@
-export default function birthdayToYears(birthtime: number) {
-    const age = Math.floor(birthtime / 31536000000);
-    return age;
+export default function birthdayToYears(dob: Date) {
+    const diff_ms = new Date().getTime() - new Date(dob).getTime();
+    const age_dt = new Date(diff_ms); 
+    return Math.abs(age_dt.getUTCFullYear() - 1970);
 }

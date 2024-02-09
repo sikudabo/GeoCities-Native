@@ -1,4 +1,5 @@
 export type UserType = {
+    createdOn: number;
     firstName: string;
     lastName: string;
     email: string;
