@@ -122,14 +122,12 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: colors.nightGray,
         height: '100%',
-        paddingLeft: 10,
-        paddingRight: 10,
         paddingTop: 20,
         width: '100%',
     },
     descriptionContainer: {
-        paddingLeft: 10,
-        paddingRight: 10,
+        paddingLeft: 20,
+        paddingRight: 20,
         paddingTop: 20,
         width: '100%',
     },
