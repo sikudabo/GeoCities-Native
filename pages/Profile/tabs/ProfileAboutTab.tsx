@@ -36,10 +36,11 @@ function ProfileAboutTabs_DisplayLayer({
                 <GeoCitiesBodyText color={colors.white} fontSize={14} text={`Account made ${createdOnString}`} />
             </View>
             <TouchableOpacity onPress={handleEmailPress} style={styles.emailContainer}>
+                <GeoCitiesMailIconOutlined color={colors.white} height={20} width={20} />
                 <GeoCitiesBodyText color={colors.white} fontSize={14} text={email} />
             </TouchableOpacity>
             <View style={styles.communitiesHeaderContainer}>
-            <GeoCitiesBodyText color={colors.white} fontSize={14} text='Communities' />
+                <GeoCitiesBodyText color={colors.white} fontSize={14} text='Communities' />
             </View>
         </View>
     );
@@ -89,6 +90,9 @@ const styles = StyleSheet.create({
     },
     emailContainer: {
         alignItems: 'center',
+        columnGap: 5,
+        display: 'flex',
+        flexDirection: 'row',
         justifyContent: 'center',
         paddingTop: 20, 
         width: '100%',
