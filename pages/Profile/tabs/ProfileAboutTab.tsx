@@ -47,12 +47,12 @@ function ProfileAboutTabs_DisplayLayer({
             </View>
             <View>
                 {userGroups.map((group, index) => (
-                    <TouchableOpacity style={styles.groupContainer}>
+                    <View style={styles.groupContainer}>
                         <GeoGroupsGroupsCard 
                             group={group}
                             key={index}
                         />
-                    </TouchableOpacity>
+                    </View>
                 ))}
             </View>
         </View>
