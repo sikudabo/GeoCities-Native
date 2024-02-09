@@ -1,8 +1,9 @@
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, } from 'react-native';
+import truncate from 'lodash/truncate';
+import * as Linking from 'expo-linking';
 import { UserType } from '../../../typings';
 import { birthdayToYears, createdDate } from '../../../utils/helpers';
-import { GeoCitiesBodyText, colors } from '../../../components';
-import { months } from '../../../utils/constants';
+import { GeoCitiesBodyText, GeoCitiesMailIconOutlined, colors } from '../../../components';
 
 type ProfileAboutTabProps = {
     user: UserType,
@@ -11,6 +12,8 @@ type ProfileAboutTabProps = {
 type ProfileAboutTabDisplayLayerProps = {
     age: number;
     createdOnString: string;
+    email: string;
+    handleEmailPress: () => void;
 }
 
 export default function ProfileAboutTabs({ user }: ProfileAboutTabProps) {
@@ -21,26 +24,38 @@ export default function ProfileAboutTabs({ user }: ProfileAboutTabProps) {
 function ProfileAboutTabs_DisplayLayer({
     age,
     createdOnString,
+    email,
+    handleEmailPress,
 }: ProfileAboutTabDisplayLayerProps) {
     return (
         <View style={styles.container}>
             <View style={styles.ageContainer}>
-                <GeoCitiesBodyText color={colors.white} text={`${age.toString()} years old`} />
+                <GeoCitiesBodyText color={colors.white} fontSize={14} text={`${age.toString()} years old`} />
             </View>
             <View style={styles.createdOnContainer}>
-                <GeoCitiesBodyText color={colors.white} text={`Account made ${createdOnString}`} />
+                <GeoCitiesBodyText color={colors.white} fontSize={14} text={`Account made ${createdOnString}`} />
             </View>
+            <TouchableOpacity onPress={handleEmailPress} style={styles.emailContainer}>
+                <GeoCitiesBodyText color={colors.white} fontSize={14} text={email} />
+            </TouchableOpacity>
         </View>
     );
 }
 
 function useDataLayer({ user }: ProfileAboutTabProps) {
-    const { createdOn, dob } = typeof user !== 'undefined' ? user : { createdOn: new Date(), dob: new Date() };
+    const { createdOn, dob, email } = typeof user !== 'undefined' ? user : { createdOn: new Date(), dob: new Date(), email: ''};
     const age = birthdayToYears(dob);
     const createdOnString = createdDate(createdOn as Date);
+
+    function handleEmailPress() {
+        Linking.openURL(`mailto:${email}`);
+    }
+
     return {
        age,
        createdOnString,
+       email: truncate(email, { length: 40 }),
+       handleEmailPress,
     }
 };
 
@@ -57,6 +72,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         paddingTop: 20,
+        width: '100%',
+    },
+    emailContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingTop: 20, 
         width: '100%',
     }
 });
