@@ -1,3 +1,5 @@
+import { GroupType } from "./groupType";
+
 export type UserType = {
     createdOn: number;
     firstName: string;
@@ -15,4 +17,5 @@ export type UserType = {
     blockedFrom: Array<string>;
     groupsBlockedFrom: Array<string>;
     groups: Array<string>;
+    userGroups: Array<GroupType>;
 };
