@@ -17,6 +17,7 @@ import GeoCitiesLikeIconFilled from "./GeoCitiesLikeIconFilled";
 import GeoCitiesLikeIconOutlined from "./GeoCitiesLikeIconOutlined";
 import GeoCitiesLinkIcon from "./GeoCitiesLinkIcon";
 import GeoCitiesLogo from "./GeoCitiesLogo";
+import GeoCitiesMailIconOutlined from './GeoCitiesMailOutlinedIcon'
 import GeoCitiesMarkerIcon from "./GeoCitiesMarkerIcon";
 import GeoCitiesNavigationDrawer from "./GeoCitiesNavigationDrawer";
 import GeoCitiesLongTextAlert from "./GeoCitiesLongTextAlert";
@@ -47,6 +48,7 @@ export {
     GeoCitiesLinkIcon,
     GeoCitiesLogo,
     GeoCitiesLongTextAlert,
+    GeoCitiesMailIconOutlined,
     GeoCitiesMarkerIcon,
     GeoCitiesNavigationDrawer,
     GeoCitiesPhotoIcon,
