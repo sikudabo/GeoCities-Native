@@ -38,6 +38,9 @@ function ProfileAboutTabs_DisplayLayer({
             <TouchableOpacity onPress={handleEmailPress} style={styles.emailContainer}>
                 <GeoCitiesBodyText color={colors.white} fontSize={14} text={email} />
             </TouchableOpacity>
+            <View style={styles.communitiesHeaderContainer}>
+            <GeoCitiesBodyText color={colors.white} fontSize={14} text='Communities' />
+            </View>
         </View>
     );
 }
@@ -65,6 +68,16 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         width: '100%',
     },
+    communitiesHeaderContainer: {
+        alignItems: 'center',
+        borderBottomColor: colors.white,
+        borderStyle: 'solid',
+        borderBottomWidth: 1,
+        justifyContent: 'center',
+        paddingBottom: 20,
+        paddingTop: 20,
+        width: '100%',
+    },
     container: {
         paddingTop: 40,
     },
@@ -79,5 +92,5 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         paddingTop: 20, 
         width: '100%',
-    }
+    },
 });
