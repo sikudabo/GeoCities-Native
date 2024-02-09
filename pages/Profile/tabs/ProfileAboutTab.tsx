@@ -3,7 +3,7 @@ import truncate from 'lodash/truncate';
 import * as Linking from 'expo-linking';
 import { UserType } from '../../../typings';
 import { birthdayToYears, createdDate } from '../../../utils/helpers';
-import { GeoCitiesBodyText, GeoCitiesMailIconOutlined, colors } from '../../../components';
+import { GeoCitiesBodyText, GeoCitiesMailIconOutlined, GeoGroupsGroupsCard, colors } from '../../../components';
 
 type ProfileAboutTabProps = {
     user: UserType,
