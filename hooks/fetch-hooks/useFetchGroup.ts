@@ -19,8 +19,8 @@ export default function useFetchGroup(_id: string) {
         return group;
     }, {
         refetchIntervalInBackground: true,
-        refetchInterval: 30000,
+        refetchInterval: 1000,
         refetchOnMount: true,
-        staleTime: 30000,
+        staleTime: 1000,
     });
 }

@@ -43,7 +43,7 @@ function GroupScreen_DisplayLayer({
 }
 
 function useDataLayer({ navigation, route }: GroupScreenProps) {
-    const { _id } = route.params;
+    const { _id } = route.params.group;
     const { data: group, isLoading } = useFetchGroup(_id);
     const { avatar, groupName } = !isLoading ? group : { 
         avatar: '',

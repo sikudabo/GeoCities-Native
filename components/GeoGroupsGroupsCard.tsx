@@ -1,5 +1,6 @@
-import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Surface } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
 import { GroupType } from '../typings';
 import GeoCitiesAvatar from './GeoCitiesAvatar';
 import GeoCitiesBodyText from './GeoCitiesBodyText';
@@ -14,6 +15,7 @@ type GeoGroupsGroupCardDisplayLayerProps = {
     avatarUri: string;
     description: string;
     groupName: string;
+    handleViewButtonPress: () => void;
     membersCount: number;
     topic: string;
 };
@@ -26,6 +28,7 @@ function GeoGroupsGroupsCard_DisplayLayer({
     avatarUri,
     description,
     groupName,
+    handleViewButtonPress,
     membersCount,
     topic,
 }: GeoGroupsGroupCardDisplayLayerProps) {
@@ -51,7 +54,9 @@ function GeoGroupsGroupsCard_DisplayLayer({
                 </SafeAreaView>
             </View>
             <View style={styles.viewButtonContainer}>
-                <GeoCitiesButton buttonColor={colors.salmonPink} text="View" />
+                <TouchableOpacity onPress={handleViewButtonPress}>
+                    <GeoCitiesButton buttonColor={colors.salmonPink} text="View" />
+                </TouchableOpacity>
             </View>
         </Surface>
     );
@@ -60,11 +65,18 @@ function GeoGroupsGroupsCard_DisplayLayer({
 function useDataLayer({ group }: GeoGroupsGroupsCardProps) {
     const { avatar, groupName, description, members, topic } = group;
     const avatarUri = `${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo/${avatar}`;
+    const navigation: any = useNavigation();
     const membersCount = members.length;
+
+    function handleViewButtonPress() {
+        navigation.navigate('GroupScreen', { group });
+    }
+
     return {
         avatarUri,
         groupName,
         description,
+        handleViewButtonPress,
         membersCount,
         topic: topic.charAt(0).toUpperCase() + topic.slice(1),
     };
