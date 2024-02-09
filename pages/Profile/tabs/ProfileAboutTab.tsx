@@ -1,6 +1,6 @@
 import { View, StyleSheet } from 'react-native';
 import { UserType } from '../../../typings';
-import { birthdayToYears } from '../../../utils/helpers';
+import { birthdayToYears, createdDate } from '../../../utils/helpers';
 import { GeoCitiesBodyText, colors } from '../../../components';
 import { months } from '../../../utils/constants';
 
@@ -37,12 +37,7 @@ function ProfileAboutTabs_DisplayLayer({
 function useDataLayer({ user }: ProfileAboutTabProps) {
     const { createdOn, dob } = typeof user !== 'undefined' ? user : { createdOn: new Date(), dob: new Date() };
     const age = birthdayToYears(dob);
-    const createdDate = new Date(createdOn);
-    const createdDay = createdDate.getDate();
-    const createdMonth = createdDate.getMonth();
-    const createdYear = createdDate.getFullYear();
-    const createdMonthString = months[createdMonth];
-    const createdOnString = `${createdMonthString} ${createdDay}, ${createdYear}`;
+    const createdOnString = createdDate(createdOn as Date);
     return {
        age,
        createdOnString,
