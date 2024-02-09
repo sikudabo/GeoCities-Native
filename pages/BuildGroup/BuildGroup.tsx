@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { KeyboardAvoidingView, ScrollView, StyleSheet, View } from 'react-native';
 import Dropdown from 'react-native-paper-dropdown';
+import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { GenericFormData } from 'axios';
-import { useQueryClient } from '@tanstack/react-query';
 import { HelperText, Surface, TextInput } from 'react-native-paper';
 import { putBinaryData } from '../../utils/requests';
 import { useUser } from '../../hooks/storage-hooks';
@@ -102,9 +102,9 @@ function BuildGroup_DisplayLayer({
 }
 
 function useDataLayer() {
+    const navigation: any = useNavigation();
     const { user } = useUser();
     const { _id } = user;
-    const queryClient = useQueryClient();
     const [description, setDescription] = useState('');
     const [groupName, setGroupName] = useState('');
     const [avatar, setAvatar] = useState<any>();
@@ -201,13 +201,17 @@ function useDataLayer() {
             data: fd,
             uri: 'create-group',
         }).then(res => {
-            const { isError, message } = res;
+            const { group, isError, message } = res;
             
             setIsLoading(false);
             setIsError(isError ? true : false);
             setDialogTitle(isError ? 'Uh Oh!' : 'Success!');
             setDialogMessage(message);
             handleDialogMessageChange(true);
+
+            if (!isError) {
+                navigation.navigate('GroupScreen', { group });
+            }
             return;
         }).catch(err => {
             console.log('Error creating a new GeoGroup:', err.message);
