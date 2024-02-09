@@ -24,6 +24,7 @@ import GeoCitiesLongTextAlert from "./GeoCitiesLongTextAlert";
 import GeoCitiesPhotoIcon from "./GeoCitiesPhotoIcon";
 import GeoCitiesRadioGroup from './GeoCitiesRadioGroup';
 import GeoCitiesVideoIcon from "./GeoCitiesVideoIcon";
+import GeoGroupsGroupsCard from "./GeoGroupsGroupsCard";
 import LoadingIndicator from "./LoadingIndicator";
 import PostCard from "./PostCard/PostCard";
 
@@ -54,6 +55,7 @@ export {
     GeoCitiesPhotoIcon,
     GeoCitiesRadioGroup,
     GeoCitiesVideoIcon,
+    GeoGroupsGroupsCard,
     LoadingIndicator,
     PostCard,
 };
