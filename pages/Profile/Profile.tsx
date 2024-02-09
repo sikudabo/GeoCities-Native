@@ -16,7 +16,7 @@ import ProfilePostsTab from './tabs/ProfilePostsTab';
 import { GeoCitiesAvatar, GeoCitiesBodyText, GeoCitiesMarkerIcon, colors } from '../../components';
 import { useUser } from '../../hooks/storage-hooks';
 import { useFetchUserData } from '../../hooks/fetch-hooks';
-import { UserType } from '../../typings';
+import { GroupType, UserType } from '../../typings';
 
 type ProfileProps = {
     navigation: any;
@@ -34,6 +34,7 @@ type ProfileDisplayLayerProps = {
     onRefresh: () => void;
     refreshing: boolean;
     user: UserType;
+    userGroups: Array<GroupType>;
     userLocation: string;
 };
 
@@ -59,6 +60,7 @@ function Profile_DisplayLayer({
     onRefresh,
     refreshing,
     user,
+    userGroups,
     userLocation,
 }: ProfileDisplayLayerProps) {
     return (
@@ -90,6 +92,7 @@ function Profile_DisplayLayer({
                         </View>
                     </View>
                     <View style={styles.locationSection}>
+                        <GeoCitiesMarkerIcon color={colors.salmonPink} height={25} width={30} />
                         <GeoCitiesBodyText color={colors.white} text={truncate(userLocation, { length: 40 })} />
                     </View>
                     <View style={styles.tabsSectionContainer}>
@@ -101,10 +104,10 @@ function Profile_DisplayLayer({
                                     </View>
                                 </TabScreen>
                                 <TabScreen icon="information" label="About">
-                                    <ProfileAboutTabs user={user} />
+                                    <ProfileAboutTabs user={user} userGroups={userGroups} />
                                 </TabScreen>
                                 <TabScreen icon="calendar" label="Events">
-                                    <ProfileAboutTabs user={user} />
+                                    <ProfileAboutTabs user={user} userGroups={userGroups} />
                                 </TabScreen>
                             </Tabs>
                         </TabsProvider>
@@ -113,7 +116,7 @@ function Profile_DisplayLayer({
                        {currentIndex === 0 ? (
                             <ProfilePostsTab createButtonNavigator={createPostNavigation} />
                        ): currentIndex === 1 ? (
-                            <ProfileAboutTabs user={user} />
+                            <ProfileAboutTabs user={user} userGroups={userGroups} />
                        ): null}
                     </View>
                 </ScrollView>
@@ -175,6 +178,7 @@ function useDataLayer({ navigation }: ProfileProps) {
         onRefresh,
         refreshing,
         user,
+        userGroups,
         userLocation,
     };
 }

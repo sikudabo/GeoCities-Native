@@ -1,12 +1,13 @@
 import { View, StyleSheet, TouchableOpacity, } from 'react-native';
 import truncate from 'lodash/truncate';
 import * as Linking from 'expo-linking';
-import { UserType } from '../../../typings';
+import { GroupType, UserType } from '../../../typings';
 import { birthdayToYears, createdDate } from '../../../utils/helpers';
 import { GeoCitiesBodyText, GeoCitiesMailIconOutlined, GeoGroupsGroupsCard, colors } from '../../../components';
 
 type ProfileAboutTabProps = {
     user: UserType,
+    userGroups: Array<GroupType>;
 };
 
 type ProfileAboutTabDisplayLayerProps = {
@@ -14,10 +15,11 @@ type ProfileAboutTabDisplayLayerProps = {
     createdOnString: string;
     email: string;
     handleEmailPress: () => void;
-}
+    userGroups: Array<GroupType>;
+};
 
-export default function ProfileAboutTabs({ user }: ProfileAboutTabProps) {
-    return <ProfileAboutTabs_DisplayLayer {...useDataLayer({ user })} />;
+export default function ProfileAboutTabs({ user, userGroups }: ProfileAboutTabProps) {
+    return <ProfileAboutTabs_DisplayLayer {...useDataLayer({ user, userGroups })} />;
 }
 
 
@@ -26,6 +28,7 @@ function ProfileAboutTabs_DisplayLayer({
     createdOnString,
     email,
     handleEmailPress,
+    userGroups,
 }: ProfileAboutTabDisplayLayerProps) {
     return (
         <View style={styles.container}>
@@ -42,12 +45,21 @@ function ProfileAboutTabs_DisplayLayer({
             <View style={styles.communitiesHeaderContainer}>
                 <GeoCitiesBodyText color={colors.white} fontSize={14} text='Communities' />
             </View>
+            <View>
+                {userGroups.map((group, index) => (
+                    <GeoGroupsGroupsCard 
+                        group={group}
+                        key={index}
+                    />
+                ))}
+            </View>
         </View>
     );
 }
 
-function useDataLayer({ user }: ProfileAboutTabProps) {
-    const { createdOn, dob, email, userGroups, groups } = typeof user !== 'undefined' ? user : { createdOn: new Date(), dob: new Date(), email: '', groups: [], userGroups: []};
+function useDataLayer({ user, userGroups }: ProfileAboutTabProps) {
+    const { createdOn, dob, email } = typeof user !== 'undefined' ? user : { createdOn: new Date(), dob: new Date(), email: '' };
+    const myGroups = typeof userGroups !== 'undefined' ? userGroups : [];
     const age = birthdayToYears(dob);
     const createdOnString = createdDate(createdOn as Date);
 
@@ -60,6 +72,7 @@ function useDataLayer({ user }: ProfileAboutTabProps) {
        createdOnString,
        email: truncate(email, { length: 40 }),
        handleEmailPress,
+       userGroups: myGroups,
     }
 };
 
