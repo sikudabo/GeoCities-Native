@@ -7,7 +7,7 @@ import {
 } from 'react-native-paper-tabs';
 import { useUser } from '../../hooks/storage-hooks';
 import { useFetchGroup } from '../../hooks/fetch-hooks';
-import { GeoCitiesAvatar, GeoCitiesBodyText, LoadingIndicator, colors } from '../../components';
+import { GeoCitiesAvatar, GeoCitiesBodyText, GeoCitiesButton, LoadingIndicator, colors } from '../../components';
 
 type GroupScreenProps = {
     navigation: any;
@@ -22,6 +22,7 @@ type GroupScreenDisplayLayerProps = {
     handleChangeIndex: (index: number) => void;
     isCreator: boolean;
     isLoading: boolean;
+    isMember: boolean;
 }
 
 export default function GroupScreen({
@@ -39,6 +40,7 @@ function GroupScreen_DisplayLayer({
     handleChangeIndex,
     isCreator,
     isLoading,
+    isMember,
 }: GroupScreenDisplayLayerProps) {
 
     if (isLoading) {
@@ -58,6 +60,11 @@ function GroupScreen_DisplayLayer({
                     <View style={styles.descriptionContainer}>
                         <GeoCitiesBodyText color={colors.white} fontSize={12} fontWeight='normal' text={description} />
                     </View>
+                    {!isCreator && (
+                        <View style={styles.joinButtonContainer}>
+                            <GeoCitiesButton buttonColor={isMember ? colors.white : colors.salmonPink} mode={isMember ? 'outlined' : 'contained'} text={isMember ? 'Leave' : 'Join' } />
+                        </View>
+                    )}
                     <View style={styles.tabsSectionContainer}>
                         <TabsProvider defaultIndex={0} onChangeIndex={handleChangeIndex}>
                             <Tabs style={styles.tabsStyle} tabLabelStyle={styles.tabLabel} disableSwipe>
@@ -88,13 +95,15 @@ function useDataLayer({ navigation, route }: GroupScreenProps) {
     const { user } = useUser();
     const { _id: userId } = user;
     const { data: group, isLoading } = useFetchGroup(_id);
-    const { avatar, creator, description, groupName } = !isLoading ? group : { 
+    const { avatar, creator, description, groupName, members } = !isLoading ? group : { 
         avatar: '',
         creator: '',
         description: '',
         groupName: '',
+        members: [],
     };
     const isCreator = creator === userId;
+    const isMember = members.includes(userId);
     const avatarUri = `${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo/${avatar}`;
     const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -110,6 +119,7 @@ function useDataLayer({ navigation, route }: GroupScreenProps) {
         handleChangeIndex,
         isCreator,
         isLoading,
+        isMember,
     };
 };
 
@@ -134,6 +144,11 @@ const styles = StyleSheet.create({
     groupNameContainer: {
         alignItems: 'center',
         justifyContent: 'center',
+        paddingTop: 20,
+    },
+    joinButtonContainer: {
+        paddingLeft: 10,
+        paddingRight: 10,
         paddingTop: 20,
     },
     tabsSectionContainer: {
