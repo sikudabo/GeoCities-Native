@@ -5,6 +5,7 @@ import {
     TabsProvider,
     TabScreen,
 } from 'react-native-paper-tabs';
+import PostsTab from './PostsTab/PostsTab';
 import { useUser } from '../../hooks/storage-hooks';
 import { useFetchGroup } from '../../hooks/fetch-hooks';
 import { GeoCitiesAvatar, GeoCitiesBodyText, GeoCitiesButton, LoadingIndicator, colors } from '../../components';
@@ -84,6 +85,9 @@ function GroupScreen_DisplayLayer({
                             </Tabs>
                         </TabsProvider>
                     </View>
+                    {currentIndex === 0 && (
+                        <PostsTab groupName={groupName} />
+                    )}
                 </ScrollView>
             </SafeAreaView>
         </View>
