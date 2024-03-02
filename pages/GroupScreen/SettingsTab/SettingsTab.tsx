@@ -148,6 +148,8 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
         paddingBottom: 10,
+        paddingLeft: 10,
+        paddingRight: 10,
     },
     nameHelperText: {
         color: colors.white,
