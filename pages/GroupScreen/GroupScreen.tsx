@@ -106,7 +106,7 @@ function useDataLayer({ navigation, route }: GroupScreenProps) {
     const { user } = useUser();
     const { _id: userId } = user;
     const { data: group, isLoading } = useFetchGroup(name);
-    const { avatar, creator, description, groupName, _id, members } = !isLoading ? group : { 
+    const { avatar, creator, description, groupName, _id, members } = !isLoading && group ? group : { 
         avatar: '',
         creator: '',
         description: '',

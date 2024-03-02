@@ -95,7 +95,7 @@ function CreatePostScreen_DisplayLayer({
 }
 
 function useDataLayer({ navigation, route }: CreatePostsProps) {
-    const { group, groupId, groupName, isCommentsScreen, isCommunity, post } = route.params;
+    const { group, groupId, groupName, isCommentsScreen, isCommunity, post, renderedFrom } = route.params;
     const { authorId: postAuthorId } = isCommentsScreen ? post : { authorId: '1' };
     const [caption, setCaption] = useState('');
     const [link, setLink] = useState('');
@@ -113,16 +113,13 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
     const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError } = useShowDialog();
     
     function handleCancel() {
-        if (isCommunity && !isCommentsScreen) {
-            navigation.navigate('GroupScreen', { group });
-            return;
-        }
+
         if (!isCommentsScreen) {
-            navigation.goBack(); 
+            isCommunity ? navigation.navigate('GroupScreen', { group }) : navigation.goBack(); 
             return;
         }
-        
-        navigation.navigate('PostComments', { _id: post._id });
+
+        navigation.navigate('PostComments', { _id: post._id, renderedFrom, groupName });
         return;
     }
 
@@ -243,7 +240,7 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
                 setDialogTitle('Success');
                 setDialogMessage(message);
                 handleDialogMessageChange(true);
-                navigation.navigate('PostComments', { _id: post._id });
+                navigation.navigate('PostComments', { _id: post._id, renderedFrom });
                 return;
             }).catch(err => {
                 console.log(`There was an error uploading a comment with media ${err.message}.`);
@@ -289,7 +286,7 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
                     setDialogTitle('Success');
                     setDialogMessage(message);
                     handleDialogMessageChange(true);
-                    navigation.navigate('PostComments', { _id: post._id });
+                    navigation.navigate('PostComments', { _id: post._id, renderedFrom });
                     return;
             }).catch(err => {
                 console.log(`There was an error uploading a post comment ${err.message}`);

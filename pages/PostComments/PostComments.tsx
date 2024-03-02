@@ -13,11 +13,13 @@ type PostCommentsProps = {
 
 type PostCommentsDisplayLayerProps = {
     comments: Array<CommentType>;
+    groupName?: string;
     handleBackPress: () => void;
     isLoading: boolean;
     isPostDeleted: boolean;
     onRefresh: () => void;
     post: PostType;
+    renderedFrom: string;
     refreshing: boolean;
 };
 
@@ -33,6 +35,7 @@ function PostComments_DisplayLayer({
     isPostDeleted,
     onRefresh,
     post,
+    renderedFrom,
     refreshing,
 }: PostCommentsDisplayLayerProps) {
     if (isLoading) {
@@ -74,6 +77,7 @@ function PostComments_DisplayLayer({
                     <View style={styles.screenBodyContainer}>
                         <PostCard 
                             post={post}
+                            renderedFrom={renderedFrom}
                             isCommentsScreen
                         />
                         <View style={styles.postCommentsSection}>
@@ -102,7 +106,6 @@ function PostComments_DisplayLayer({
 function useDataLayer({ navigation, route }: PostCommentsProps) {
     const [refreshing, setRefreshing] = useState(false);
     const { groupName, _id, renderedFrom } = route.params;
-    console.log('This screen was rendered from', renderedFrom);
     const { data, isLoading } = useFetchPost({ _id });
     const { isPostDeleted, post } = typeof data !== 'undefined' && !isLoading ? data : { isPostDeleted: false, post: {} };
     const { comments } = !isLoading && post ? post : [];
@@ -113,12 +116,17 @@ function useDataLayer({ navigation, route }: PostCommentsProps) {
             return
        } 
 
+       if (renderedFrom === 'profile') {
+        navigation.navigate('Profile');
+        return;
+       }
+
        if (renderedFrom === 'group') {
         navigation.navigate('GroupScreen', { group: { groupName }});
         return;
        }
 
-       navigation.goBack();
+       // navigation.goBack();
     }
 
     const onRefresh = useCallback(() => {
@@ -130,11 +138,13 @@ function useDataLayer({ navigation, route }: PostCommentsProps) {
 
     return {
         comments: typeof comments !== 'undefined' &&  comments.length > 0 ? orderBy(comments, ['createdAt'], ['desc']) : comments,
+        groupName,
         handleBackPress,
         isLoading,
         isPostDeleted,
         onRefresh,
         post,
+        renderedFrom,
         refreshing,
     };
 }
