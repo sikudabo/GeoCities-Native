@@ -63,7 +63,12 @@ function GroupScreen_DisplayLayer({
                     </View>
                     {!isCreator && (
                         <View style={styles.joinButtonContainer}>
-                            <GeoCitiesButton buttonColor={isMember ? colors.white : colors.salmonPink} mode={isMember ? 'outlined' : 'contained'} text={isMember ? 'Leave' : 'Join' } />
+                            <GeoCitiesButton buttonColor={isMember ? colors.white : colors.error} mode={isMember ? 'outlined' : 'contained'} text={isMember ? 'Leave' : 'Join' } />
+                        </View>
+                    )}
+                    {isMember && (
+                        <View style={styles.createButtonContainer}>
+                            <GeoCitiesButton buttonColor={colors.salmonPink} icon="pencil" text="Create" />
                         </View>
                     )}
                     <View style={styles.tabsSectionContainer}>
@@ -138,6 +143,11 @@ const styles = StyleSheet.create({
         height: '100%',
         paddingTop: 20,
         width: '100%',
+    },
+    createButtonContainer: {
+        paddingLeft: 10,
+        paddingRight: 10,
+        paddingTop: 20,
     },
     descriptionContainer: {
         paddingLeft: 20,
