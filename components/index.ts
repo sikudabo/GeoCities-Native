@@ -27,6 +27,7 @@ import GeoCitiesVideoIcon from "./GeoCitiesVideoIcon";
 import GeoGroupsGroupsCard from "./GeoGroupsGroupsCard";
 import LoadingIndicator from "./LoadingIndicator";
 import PostCard from "./PostCard/PostCard";
+import UserCard from "./UserCard/UserCard";
 
 export {
     colors,
@@ -58,4 +59,5 @@ export {
     GeoGroupsGroupsCard,
     LoadingIndicator,
     PostCard,
+    UserCard,
 };
