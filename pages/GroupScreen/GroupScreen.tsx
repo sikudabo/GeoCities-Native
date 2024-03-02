@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
+import { useCallback, useState } from 'react';
+import { RefreshControl, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import {
     Tabs,
     TabsProvider,
@@ -25,6 +25,8 @@ type GroupScreenDisplayLayerProps = {
     isCreator: boolean;
     isLoading: boolean;
     isMember: boolean;
+    onRefresh: () => void;
+    refreshing: boolean;
 }
 
 export default function GroupScreen({
@@ -44,6 +46,8 @@ function GroupScreen_DisplayLayer({
     isCreator,
     isLoading,
     isMember,
+    onRefresh,
+    refreshing,
 }: GroupScreenDisplayLayerProps) {
 
     if (isLoading) {
@@ -53,7 +57,15 @@ function GroupScreen_DisplayLayer({
     return (
         <View style={styles.container}>
             <SafeAreaView>
-                <ScrollView>
+                <ScrollView
+                    refreshControl={
+                        <RefreshControl 
+                            onRefresh={onRefresh}
+                            refreshing={refreshing}
+                            tintColor={colors.white}
+                        />
+                    }
+                >
                     <View style={styles.avatarContainer}>
                         <GeoCitiesAvatar size={100} src={avatarUri} />
                     </View>
@@ -102,6 +114,7 @@ function GroupScreen_DisplayLayer({
 }
 
 function useDataLayer({ navigation, route }: GroupScreenProps) {
+    const [refreshing, setRefreshing]= useState(false);
     const { groupName: name } = route.params.group;
     const { user } = useUser();
     const { _id: userId } = user;
@@ -126,6 +139,13 @@ function useDataLayer({ navigation, route }: GroupScreenProps) {
     function handleCreatePost() {
         navigation.navigate('CreatePost', { group, groupId: _id, groupName, isCommunity: true });
     }
+
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 2000);
+    }, []);
     
     return {
         avatarUri,
@@ -137,6 +157,8 @@ function useDataLayer({ navigation, route }: GroupScreenProps) {
         isCreator,
         isLoading,
         isMember,
+        onRefresh,
+        refreshing,
     };
 };
 
