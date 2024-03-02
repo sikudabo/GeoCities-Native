@@ -240,7 +240,7 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
                 setDialogTitle('Success');
                 setDialogMessage(message);
                 handleDialogMessageChange(true);
-                navigation.navigate('PostComments', { _id: post._id, renderedFrom });
+                navigation.navigate('PostComments', { _id: post._id, renderedFrom, groupName });
                 return;
             }).catch(err => {
                 console.log(`There was an error uploading a comment with media ${err.message}.`);
@@ -286,7 +286,7 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
                     setDialogTitle('Success');
                     setDialogMessage(message);
                     handleDialogMessageChange(true);
-                    navigation.navigate('PostComments', { _id: post._id, renderedFrom });
+                    navigation.navigate('PostComments', { _id: post._id, renderedFrom, groupName });
                     return;
             }).catch(err => {
                 console.log(`There was an error uploading a post comment ${err.message}`);
