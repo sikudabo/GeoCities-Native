@@ -28,8 +28,10 @@ function PostsTab_DisplayLayer({
 
     return (
         <View style={styles.container}>
-            {!data ? (
-                <GeoCitiesBodyText color={colors.white} text="No Posts" />
+            {typeof data !== 'undefined' && data.length < 1 ? (
+                <View style={styles.noPostsSectionContainer}>
+                    <GeoCitiesBodyText color={colors.white} fontWeight={700} text="No Posts" />
+                </View>
             ): (
                 <GeoCitiesBodyText color={colors.white} text="Posts" />
             )}
@@ -51,6 +53,9 @@ const styles = StyleSheet.create({
     container: {
         paddingLeft: 10,
         paddingRight: 10,
-        paddingTop: 10,
+        paddingTop: 30,
+    },
+    noPostsSectionContainer: {
+        alignItems: 'center',
     },
 });
