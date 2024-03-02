@@ -4,7 +4,7 @@ export type PostType = {
     postOriginType: 'community' | 'profile';
     createdAt: number;
     postType: 'video' | 'photo' | 'link' | 'text';
-    communityName?: string;
+    groupName?: string;
     caption?: string;
     likes: Array<string>;
     postMediaId?: string;

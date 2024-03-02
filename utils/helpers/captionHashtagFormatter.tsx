@@ -1,7 +1,6 @@
 import { GeoCitiesBodyText, colors } from '../../components';
 
 export function captionHashtagFormatter(str: string, hashtags: Array<string> | undefined) {
-    console.log('The hashtags are:', hashtags);
     if (!hashtags || hashtags.length === 0) {
         return str;
     }

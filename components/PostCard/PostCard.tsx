@@ -33,6 +33,7 @@ type PostCardDisplayLayerProps = {
     caption: string | undefined;
     createdAt: number;
     deletePost: () => void;
+    groupName?: string;
     handleAddCommentButtonClick: () => void;
     handleLikeButtonPress: () => void;
     handleCommentButtonClick: () => void;
@@ -47,6 +48,7 @@ type PostCardDisplayLayerProps = {
     openUrl: () => void;
     postMediaId: string | undefined;
     postType: 'video' | 'photo' | 'link' | 'text';
+    postOriginType: 'profile' | 'community';
     userName: string;
     videoRef: any;
 };
@@ -60,6 +62,7 @@ function PostCard_DisplayLayer({
     caption,
     createdAt,
     deletePost,
+    groupName,
     handleAddCommentButtonClick,
     handleLikeButtonPress,
     handleCommentButtonClick,
@@ -74,6 +77,7 @@ function PostCard_DisplayLayer({
     openUrl,
     postMediaId,
     postType,
+    postOriginType,
     userName,
     videoRef,
 }: PostCardDisplayLayerProps) {
@@ -157,7 +161,7 @@ function PostCard_DisplayLayer({
     return (
         <Surface elevation={4} style={styles.cardContainer}>
             <View style={styles.topCardSection}>
-                <GeoCitiesAvatar size={50} src={`${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo-by-user-id/${authorId}`} />
+                <GeoCitiesAvatar size={50} src={`${process.env.EXPO_PUBLIC_API_BASE_URI}${postOriginType === 'profile' ? `get-photo-by-user-id/${authorId}` : `get-avatar-by-group-name/${groupName}`}`} />
                 <View style={styles.topSectionNameContainer}>
                     <GeoCitiesBodyText color={colors.white} fontSize={14} fontWeight={900} text={userName} />
                 </View>
@@ -253,7 +257,7 @@ function PostCard_DisplayLayer({
 function useDataLayer({ post, renderedFrom }: DataLayerProps) {
     const queryClient = useQueryClient();
     const navigation: any = useNavigation();
-    const { authorId, caption, comments, createdAt, hashTags, _id: postId, likes, link, postMediaId, postOriginType, postType, userName } = post;
+    const { authorId, caption, comments, createdAt, groupName, hashTags, _id: postId, likes, link, postMediaId, postOriginType, postType, userName } = post;
     const { user } = useUser();
     const { _id } = user;
     const commentUser = comments.find((user) => user.authorId === _id);
@@ -399,6 +403,7 @@ function useDataLayer({ post, renderedFrom }: DataLayerProps) {
         caption,
         createdAt,
         deletePost,
+        groupName,
         handleAddCommentButtonClick,
         handleLikeButtonPress,
         handleCommentButtonClick,
@@ -412,6 +417,7 @@ function useDataLayer({ post, renderedFrom }: DataLayerProps) {
         openUrl,
         postMediaId,
         postType,
+        postOriginType,
         userName: truncate(userName, { length: 30 }),
         videoRef,
     };

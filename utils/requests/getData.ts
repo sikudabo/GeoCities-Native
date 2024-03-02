@@ -9,7 +9,6 @@ export default async function getData({ uri }: GetDataProps) {
         method: 'GET',
         url: `${process.env.EXPO_PUBLIC_API_BASE_URI}${uri}`,
     }).then(res => {
-        console.log('Retrun data is:', res.data);
         return res.data;
     }).catch(err => {
         const { message } = err.response.data;
