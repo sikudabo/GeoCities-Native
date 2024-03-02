@@ -340,7 +340,7 @@ function useDataLayer({ post, renderedFrom }: DataLayerProps) {
     }
 
     function handleCommentButtonClick() {
-        navigation.navigate('PostComments', { _id: postId, renderedFrom });
+        navigation.navigate('PostComments', { _id: postId, renderedFrom, groupName });
     }
 
     function handleAddCommentButtonClick() {

@@ -102,6 +102,7 @@ function PostComments_DisplayLayer({
 function useDataLayer({ navigation, route }: PostCommentsProps) {
     const [refreshing, setRefreshing] = useState(false);
     const { _id, renderedFrom } = route.params;
+    console.log('This screen was rendered from', renderedFrom);
     const { data, isLoading } = useFetchPost({ _id });
     const { isPostDeleted, post } = typeof data !== 'undefined' && !isLoading ? data : { isPostDeleted: false, post: {} };
     const { comments } = !isLoading && post ? post : [];

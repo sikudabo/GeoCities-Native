@@ -102,15 +102,16 @@ function GroupScreen_DisplayLayer({
 }
 
 function useDataLayer({ navigation, route }: GroupScreenProps) {
-    const { _id } = route.params.group;
+    const { groupName: name } = route.params.group;
     const { user } = useUser();
     const { _id: userId } = user;
-    const { data: group, isLoading } = useFetchGroup(_id);
-    const { avatar, creator, description, groupName, members } = !isLoading ? group : { 
+    const { data: group, isLoading } = useFetchGroup(name);
+    const { avatar, creator, description, groupName, _id, members } = !isLoading ? group : { 
         avatar: '',
         creator: '',
         description: '',
         groupName: '',
+        _id: '',
         members: [],
     };
     const isCreator = creator === userId;

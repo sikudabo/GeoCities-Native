@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { getData } from "../../utils/requests";
 
-export default function useFetchGroup(_id: string) {
+export default function useFetchGroup(groupName: string) {
     return useQuery(['fetchGroup'], async () => {
         const group = await getData({
-            uri: `get-group/${_id}`,
+            uri: `get-group/${groupName}`,
         }).then(res => {
             const { group } = res;
             return group;

@@ -38,6 +38,7 @@ function PostsTab_DisplayLayer({
                         <PostCard 
                             post={post}
                             key={index}
+                            renderedFrom="group"
                         />
                     ))}
                 </View>
