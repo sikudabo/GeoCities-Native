@@ -1,14 +1,14 @@
 import { StyleSheet, View } from 'react-native';
 import { useFetchGroupPosts } from '../../../hooks/fetch-hooks';
 import { PostType } from '../../../typings';
-import { GeoCitiesBodyText, LoadingIndicator, colors } from '../../../components';
+import { GeoCitiesBodyText, LoadingIndicator, PostCard, colors } from '../../../components';
 
 type PostsTabProps = {
     groupName: string;
 };
 
 type PostsTabDisplayLayerProps = {
-    data: Array<PostType>;
+    posts: Array<PostType>;
     isLoading: boolean;
 };
 
@@ -19,7 +19,7 @@ export default function PostsTab({
 }
 
 function PostsTab_DisplayLayer({
-    data,
+    posts,
     isLoading,
 }: PostsTabDisplayLayerProps) {
     if (isLoading) {
@@ -28,12 +28,19 @@ function PostsTab_DisplayLayer({
 
     return (
         <View style={styles.container}>
-            {typeof data !== 'undefined' && data.length < 1 ? (
+            {typeof posts !== 'undefined' && posts.length < 1 ? (
                 <View style={styles.noPostsSectionContainer}>
                     <GeoCitiesBodyText color={colors.white} fontWeight={700} text="No Posts" />
                 </View>
             ): (
-                <GeoCitiesBodyText color={colors.white} text="Posts" />
+                <View>
+                    {posts.map((post, index) => (
+                        <PostCard 
+                            post={post}
+                            key={index}
+                        />
+                    ))}
+                </View>
             )}
         </View>
     );
@@ -41,10 +48,10 @@ function PostsTab_DisplayLayer({
 }
 
 function useDataLayer(groupName: string) {
-    const { data, isLoading  } = useFetchGroupPosts(groupName);
+    const { data: posts, isLoading  } = useFetchGroupPosts(groupName);
 
     return {
-        data,
+        posts,
         isLoading,
     };
 }

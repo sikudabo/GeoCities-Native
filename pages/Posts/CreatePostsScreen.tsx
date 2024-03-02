@@ -359,7 +359,12 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
                 setDialogTitle('Success');
                 setDialogMessage(message);
                 handleDialogMessageChange(true);
-                navigation.navigate('Profile');
+                if (!isCommunity) {
+                    navigation.navigate('Profile');
+                    return;
+                }
+
+                navigation.navigate('GroupScreen', { group });
                 return;
             }).catch(err => {
                 console.log(`There was an error uploading a post ${err.message}`);
@@ -407,7 +412,13 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
             setDialogTitle('Success');
             setDialogMessage(message);
             handleDialogMessageChange(true);
-            navigation.navigate('Profile');
+            
+            if(!isCommunity) {
+                navigation.navigate('Profile');
+                return;
+            }
+
+            navigation.navigate('GroupScreen', { group });
             return;
         }).catch(err => {
             console.log(`There was an error uploading a post ${err.message}`);
