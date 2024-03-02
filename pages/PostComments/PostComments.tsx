@@ -101,7 +101,7 @@ function PostComments_DisplayLayer({
 
 function useDataLayer({ navigation, route }: PostCommentsProps) {
     const [refreshing, setRefreshing] = useState(false);
-    const { _id, renderedFrom } = route.params;
+    const { groupName, _id, renderedFrom } = route.params;
     console.log('This screen was rendered from', renderedFrom);
     const { data, isLoading } = useFetchPost({ _id });
     const { isPostDeleted, post } = typeof data !== 'undefined' && !isLoading ? data : { isPostDeleted: false, post: {} };
@@ -112,6 +112,11 @@ function useDataLayer({ navigation, route }: PostCommentsProps) {
             navigation.navigate('Feed');
             return
        } 
+
+       if (renderedFrom === 'group') {
+        navigation.navigate('GroupScreen', { group: { groupName }});
+        return;
+       }
 
        navigation.goBack();
     }
