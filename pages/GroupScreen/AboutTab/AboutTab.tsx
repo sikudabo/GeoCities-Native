@@ -1,4 +1,5 @@
 import { StyleSheet, View } from 'react-native';
+import millify from 'millify';
 import { GroupType } from '../../../typings';
 import { GeoCitiesBodyText, colors } from '../../../components';
 
@@ -7,6 +8,7 @@ type AboutTabProps = {
 };
 
 type AboutTabDisplayLayerProps = {
+    membersCountText: string;
     topicMessage: string;
 };
 
@@ -16,6 +18,7 @@ export default function AboutTab({ group }: AboutTabProps) {
 
 
 function AboutTab_DisplayLayer({
+    membersCountText,
     topicMessage,
 }: AboutTabDisplayLayerProps) {
     return (
@@ -26,14 +29,20 @@ function AboutTab_DisplayLayer({
             <View style={styles.topicContainer}>
                 <GeoCitiesBodyText color={colors.white} fontSize={14} fontWeight={500} text={topicMessage} />
             </View>
+            <View style={styles.topicContainer}>
+                <GeoCitiesBodyText color={colors.white} fontSize={14} fontWeight={500} text={membersCountText} />
+            </View>
         </View>
     );
 }
 
 function useDataLayer(group: GroupType) {
-    const { topic } = group;
+    const { members, topic } = group;
+    const memberCount = typeof members !== 'undefined' ? members.length : 0;
+    const membersCountText = `${memberCount !== 1 ? millify(memberCount) + ' Members' : memberCount + ' Member'}`;
     const topicMessage = `Topic: ${topic.charAt(0).toUpperCase() + topic.slice(1)}`;
     return {
+        membersCountText,
         topicMessage,
     };
 }
