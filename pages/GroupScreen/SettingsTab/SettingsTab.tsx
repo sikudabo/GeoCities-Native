@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Dropdown from 'react-native-paper-dropdown';
 import { HelperText, TextInput } from 'react-native-paper';
 import * as FileSystem from 'expo-file-system';
@@ -7,7 +7,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { GroupType } from '../../../typings';
 import { useShowLoader } from '../../../hooks';
 import { topics } from '../../../utils/constants';
-import { GeoCitiesBodyText, GeoCitiesButton, colors } from '../../../components';
+import { GeoCitiesBodyText, GeoCitiesButton, GeoCitiesDeleteIcon, colors } from '../../../components';
 import { putBinaryData, putNonBinaryData } from '../../../utils/requests';
 
 type SettingsTabProps = {
@@ -21,6 +21,7 @@ type SettingsTabDisplayLayerProps = {
         value: string;
     }[];
     handleDescriptionChange: (description: string) => void;
+    rules?: Array<string>;
     setShowDropdown: React.Dispatch<React.SetStateAction<boolean>>;
     showDropdown: boolean;
     setTopic: React.Dispatch<React.SetStateAction<string>>;
@@ -36,6 +37,7 @@ function SettingsTab_DisplayLayer({
     description,
     groupTopics,
     handleDescriptionChange,
+    rules,
     setShowDropdown,
     setTopic,
     showDropdown,
@@ -44,7 +46,7 @@ function SettingsTab_DisplayLayer({
 }: SettingsTabDisplayLayerProps) {
     return (
         <View style={styles.container}>
-            <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={700}>
+            <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={350}>
                 <View style={styles.inputContainer}>
                     <TextInput activeOutlineColor={colors.salmonPink} label="Description" mode="outlined" numberOfLines={5} onChangeText={handleDescriptionChange} outlineColor={colors.white} placeholder="Description..." style={styles.captionInput} value={description} multiline />
                     <HelperText style={description.length <= 300 ? styles.nameHelperText : styles.nameHelperTextDanger} type="info">
@@ -70,6 +72,29 @@ function SettingsTab_DisplayLayer({
                         list={groupTopics}
                     />
                 </View>
+                {typeof rules !== 'undefined' && rules.length > 0 && (
+                    <View style={styles.rulesSection}>
+                        <View style={styles.rulesSectionHeader}>
+                            <GeoCitiesBodyText color={colors.white} fontSize={20} fontWeight={700} text="Rules" />
+                        </View>
+                        {rules.map((rule, index) => (
+                            <View 
+                                key={index}
+                                style={styles.ruleContainer}
+                            >
+                                <GeoCitiesBodyText color={colors.white} fontSize={12} fontWeight='normal' text={rule} />
+                                <TouchableOpacity style={styles.ruleDeleteButtonContainer}>
+                                    <GeoCitiesDeleteIcon color={colors.error} height={50} width={50} />
+                                </TouchableOpacity>
+                            </View>
+                        ))}
+                    </View>
+                )}
+                {typeof rules === 'undefined' || rules.length < 10 && (
+                    <View style={styles.addRuleButtonContainer}>
+                        <GeoCitiesButton buttonColor={colors.success} icon="plus" text="Add Rule" />
+                    </View>
+                )}
             </KeyboardAvoidingView>
         </View>
     );
@@ -130,6 +155,7 @@ function useDataLayer(group: GroupType) {
         description: currentDescription,
         groupTopics,
         handleDescriptionChange,
+        rules,
         setTopic: setCurrentTopic,
         setShowDropdown,
         showDropdown,
@@ -139,6 +165,12 @@ function useDataLayer(group: GroupType) {
 }
 
 const styles = StyleSheet.create({
+    addRuleButtonContainer: {
+        paddingLeft: 10,
+        paddingRight: 10,
+        paddingTop: 20,
+        width: '100%',
+    },
     captionInput: {
         height: 100,
         paddingBottom: 5,
@@ -156,5 +188,22 @@ const styles = StyleSheet.create({
     },
     nameHelperTextDanger: {
         color: colors.error,
+    },
+    ruleContainer: {
+        borderTopColor: colors.white,
+        borderStyle: 'solid',
+        rowGap: 20,
+    },
+    ruleDeleteButtonContainer: {
+        alignSelf: 'flex-end',
+    },
+    rulesSection: {
+        paddingLeft: 10,
+        paddingRight: 10,
+        paddingTop: 20,
+    },
+    rulesSectionHeader: {
+        alignItems: 'center',
+        paddingBottom: 20,
     },
 });
