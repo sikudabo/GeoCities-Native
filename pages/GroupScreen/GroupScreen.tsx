@@ -21,6 +21,7 @@ type GroupScreenDisplayLayerProps = {
     description: string;
     groupName: string;
     handleChangeIndex: (index: number) => void;
+    handleCreatePost: () => void;
     isCreator: boolean;
     isLoading: boolean;
     isMember: boolean;
@@ -39,6 +40,7 @@ function GroupScreen_DisplayLayer({
     description,
     groupName,
     handleChangeIndex,
+    handleCreatePost,
     isCreator,
     isLoading,
     isMember,
@@ -68,7 +70,7 @@ function GroupScreen_DisplayLayer({
                     )}
                     {isMember && (
                         <View style={styles.createButtonContainer}>
-                            <GeoCitiesButton buttonColor={colors.salmonPink} icon="pencil" text="Create" />
+                            <GeoCitiesButton buttonColor={colors.salmonPink} icon="pencil" onPress={handleCreatePost} text="Create" />
                         </View>
                     )}
                     <View style={styles.tabsSectionContainer}>
@@ -119,6 +121,10 @@ function useDataLayer({ navigation, route }: GroupScreenProps) {
     function handleChangeIndex(index: number) {
         setCurrentIndex(index);
     }
+
+    function handleCreatePost() {
+        navigation.navigate('CreatePost', { group, groupId: _id, groupName, isCommunity: true });
+    }
     
     return {
         avatarUri,
@@ -126,6 +132,7 @@ function useDataLayer({ navigation, route }: GroupScreenProps) {
         description,
         groupName,
         handleChangeIndex,
+        handleCreatePost,
         isCreator,
         isLoading,
         isMember,

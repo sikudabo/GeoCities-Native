@@ -163,7 +163,7 @@ function useDataLayer({ navigation }: ProfileProps) {
     }
 
     function createPostNavigation() {
-        navigation.navigate('CreatePost', { isCommunity: false});
+        navigation.navigate('CreatePost', { isCommunity: false });
     }
 
     return {

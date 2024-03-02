@@ -95,7 +95,7 @@ function CreatePostScreen_DisplayLayer({
 }
 
 function useDataLayer({ navigation, route }: CreatePostsProps) {
-    const { communityName, isCommentsScreen, isCommunity, post } = route.params;
+    const { group, groupId, groupName, isCommentsScreen, isCommunity, post } = route.params;
     const { authorId: postAuthorId } = isCommentsScreen ? post : { authorId: '1' };
     const [caption, setCaption] = useState('');
     const [link, setLink] = useState('');
@@ -113,6 +113,10 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
     const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError } = useShowDialog();
     
     function handleCancel() {
+        if (isCommunity && !isCommentsScreen) {
+            navigation.navigate('GroupScreen', { group });
+            return;
+        }
         if (!isCommentsScreen) {
             navigation.goBack(); 
             return;
@@ -327,7 +331,7 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
         fd.append('postType', uploadPostType);
         fd.append('postOriginType', isCommunity ? 'community' : 'profile');
         if (isCommunity) {
-            fd.append('community', communityName);
+            fd.append('groupName', groupName);
         }
 
         if (isBinaryPost) {
@@ -381,7 +385,7 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
         };
 
         if (isCommunity) {
-            sendData.communityName = communityName;
+            sendData.groupName = groupName;
         }
 
         await putNonBinaryData({
