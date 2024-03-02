@@ -1,4 +1,5 @@
 import birthdayToYears from "./birthdayToYears";
+import convertToDate from "./convertToDate";
 import createdDate from "./createdDate";
 import postTimeDifference from "./postTimeDifference";
 import { checkValidAge } from "./checkValidAge";
@@ -13,6 +14,7 @@ export {
     checkValidAge,
     checkValidEmail,
     checkValidUrl,
+    convertToDate,
     createdDate,
     formatUserBirthday,
     postTimeDifference,
