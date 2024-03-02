@@ -7,6 +7,7 @@ import {
 } from 'react-native-paper-tabs';
 import AboutTab from './AboutTab/AboutTab';
 import PostsTab from './PostsTab/PostsTab';
+import SettingsTab from './SettingsTab/SettingsTab';
 import { GroupType } from '../../typings';
 import { useUser } from '../../hooks/storage-hooks';
 import { useFetchGroup } from '../../hooks/fetch-hooks';
@@ -113,6 +114,9 @@ function GroupScreen_DisplayLayer({
                     )}
                     {currentIndex === 1 && (
                         <AboutTab group={group} />
+                    )}
+                    {currentIndex === 2 && (
+                        <SettingsTab group={group} />
                     )}
                 </ScrollView>
             </SafeAreaView>
