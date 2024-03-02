@@ -11,6 +11,7 @@ type AboutTabProps = {
 type AboutTabDisplayLayerProps = {
     dateCreated: string;
     membersCountText: string;
+    rules?: Array<string>;
     topicMessage: string;
 };
 
@@ -22,6 +23,7 @@ export default function AboutTab({ group }: AboutTabProps) {
 function AboutTab_DisplayLayer({
     dateCreated,
     membersCountText,
+    rules,
     topicMessage,
 }: AboutTabDisplayLayerProps) {
     return (
@@ -38,12 +40,24 @@ function AboutTab_DisplayLayer({
             <View style={styles.topicContainer}>
                 <GeoCitiesBodyText color={colors.white} fontSize={16} fontWeight={500} text={dateCreated} />
             </View>
+            {typeof rules !== 'undefined' && rules.length !== 0 && (
+                <View style={styles.rulesSection}>
+                    <View style={styles.rulesHeader}>
+                        <GeoCitiesBodyText color={colors.white} fontSize={20} fontWeight={700} text="Rules" />
+                    </View>
+                    {rules.map((rule, index) => (
+                        <View key={index} style={styles.ruleContainer}>
+                            <GeoCitiesBodyText color={colors.white} fontSize={16} fontWeight={700} text={`${index + 1}. ${rule}`} />
+                        </View>
+                    ))}
+                </View>
+            )}
         </View>
     );
 }
 
 function useDataLayer(group: GroupType) {
-    const { createdAt, members, topic } = group;
+    const { createdAt, members, rules, topic } = group;
     const dateCreated = `Created On ${convertToDate(createdAt)}`;
     const memberCount = typeof members !== 'undefined' ? members.length : 0;
     const membersCountText = `${memberCount !== 1 ? millify(memberCount) + ' Members' : memberCount + ' Member'}`;
@@ -51,6 +65,7 @@ function useDataLayer(group: GroupType) {
     return {
         dateCreated,
         membersCountText,
+        rules,
         topicMessage,
     };
 }
@@ -60,6 +75,17 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         paddingRight: 10,
         paddingTop: 30,
+    },
+    ruleContainer: {
+        paddingTop: 20,
+    },
+    rulesHeader: {
+        alignItems: 'center',
+        paddingBottom: 20,
+    },
+    rulesSection: {
+        paddingTop: 10,
+        width: '100%',
     },
     topicContainer: {
         alignItems: 'center',
