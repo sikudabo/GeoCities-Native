@@ -5,7 +5,9 @@ import {
     TabsProvider,
     TabScreen,
 } from 'react-native-paper-tabs';
+import AboutTab from './AboutTab/AboutTab';
 import PostsTab from './PostsTab/PostsTab';
+import { GroupType } from '../../typings';
 import { useUser } from '../../hooks/storage-hooks';
 import { useFetchGroup } from '../../hooks/fetch-hooks';
 import { GeoCitiesAvatar, GeoCitiesBodyText, GeoCitiesButton, LoadingIndicator, colors } from '../../components';
@@ -19,6 +21,7 @@ type GroupScreenDisplayLayerProps = {
     avatarUri: string;
     currentIndex: number;
     description: string;
+    group: GroupType;
     groupName: string;
     handleChangeIndex: (index: number) => void;
     handleCreatePost: () => void;
@@ -40,6 +43,7 @@ function GroupScreen_DisplayLayer({
     avatarUri,
     currentIndex,
     description,
+    group,
     groupName,
     handleChangeIndex,
     handleCreatePost,
@@ -107,6 +111,9 @@ function GroupScreen_DisplayLayer({
                     {currentIndex === 0 && (
                         <PostsTab groupName={groupName} />
                     )}
+                    {currentIndex === 1 && (
+                        <AboutTab group={group} />
+                    )}
                 </ScrollView>
             </SafeAreaView>
         </View>
@@ -152,6 +159,7 @@ function useDataLayer({ navigation, route }: GroupScreenProps) {
         currentIndex,
         description,
         groupName,
+        group,
         handleChangeIndex,
         handleCreatePost,
         isCreator,
