@@ -163,6 +163,9 @@ function PostCard_DisplayLayer({
             <View style={styles.topCardSection}>
                 <GeoCitiesAvatar size={50} src={`${process.env.EXPO_PUBLIC_API_BASE_URI}${postOriginType === 'profile' ? `get-photo-by-user-id/${authorId}` : `get-avatar-by-group-name/${groupName}`}`} />
                 <View style={styles.topSectionNameContainer}>
+                    {postOriginType === 'community' && (
+                        <GeoCitiesBodyText color={colors.white} fontSize={14} fontWeight={900} text={groupName as string} />
+                    )}
                     <GeoCitiesBodyText color={colors.white} fontSize={14} fontWeight={900} text={userName} />
                 </View>
                 <View style={styles.topSectionDateContainer}>
