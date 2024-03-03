@@ -99,6 +99,9 @@ function SettingsTab_DisplayLayer({
             <View style={styles.blockUserButtonContainer}>
                 <GeoCitiesButton buttonColor={colors.error} icon="cancel" text="Block" />
             </View>
+            <View style={styles.blockUserButtonContainer}>
+                <GeoCitiesButton buttonColor={colors.white} icon="camera" text="Avatar" />
+            </View>
         </View>
     );
 }
