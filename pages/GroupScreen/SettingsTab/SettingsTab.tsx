@@ -46,56 +46,59 @@ function SettingsTab_DisplayLayer({
 }: SettingsTabDisplayLayerProps) {
     return (
         <View style={styles.container}>
-            <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={350}>
+            <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={400}>
                 <View style={styles.inputContainer}>
                     <TextInput activeOutlineColor={colors.salmonPink} label="Description" mode="outlined" numberOfLines={5} onChangeText={handleDescriptionChange} outlineColor={colors.white} placeholder="Description..." style={styles.captionInput} value={description} multiline />
                     <HelperText style={description.length <= 300 ? styles.nameHelperText : styles.nameHelperTextDanger} type="info">
                         Required {`${description.length} / 300`}
                     </HelperText>
                 </View>
-                <View style={styles.inputContainer}>
-                    <Dropdown
-                        activeColor={colors.salmonPink}
-                        dropDownItemTextStyle={{
-                            color: colors.white,
-                        }}
-                        dropDownItemSelectedTextStyle={{
-                            color: colors.salmonPink,
-                        }}
-                        label="Topic"
-                        mode="outlined"
-                        visible={showDropdown}
-                        showDropDown={() => setShowDropdown(true)}
-                        onDismiss={() => setShowDropdown(false)}
-                        value={topic}
-                        setValue={setTopic}
-                        list={groupTopics}
-                    />
-                </View>
-                {typeof rules !== 'undefined' && rules.length > 0 && (
-                    <View style={styles.rulesSection}>
-                        <View style={styles.rulesSectionHeader}>
-                            <GeoCitiesBodyText color={colors.white} fontSize={20} fontWeight={700} text="Rules" />
-                        </View>
-                        {rules.map((rule, index) => (
-                            <View 
-                                key={index}
-                                style={styles.ruleContainer}
-                            >
-                                <GeoCitiesBodyText color={colors.white} fontSize={12} fontWeight='normal' text={rule} />
-                                <TouchableOpacity style={styles.ruleDeleteButtonContainer}>
-                                    <GeoCitiesDeleteIcon color={colors.error} height={50} width={50} />
-                                </TouchableOpacity>
-                            </View>
-                        ))}
-                    </View>
-                )}
-                {typeof rules === 'undefined' || rules.length < 10 && (
-                    <View style={styles.addRuleButtonContainer}>
-                        <GeoCitiesButton buttonColor={colors.success} icon="plus" text="Add Rule" />
-                    </View>
-                )}
             </KeyboardAvoidingView>
+            <View style={styles.inputContainer}>
+                <Dropdown
+                    activeColor={colors.salmonPink}
+                    dropDownItemTextStyle={{
+                        color: colors.white,
+                    }}
+                    dropDownItemSelectedTextStyle={{
+                        color: colors.salmonPink,
+                    }}
+                    label="Topic"
+                    mode="outlined"
+                    visible={showDropdown}
+                    showDropDown={() => setShowDropdown(true)}
+                    onDismiss={() => setShowDropdown(false)}
+                    value={topic}
+                    setValue={setTopic}
+                    list={groupTopics}
+                />
+            </View>
+            {typeof rules !== 'undefined' && rules.length > 0 && (
+                <View style={styles.rulesSection}>
+                    <View style={styles.rulesSectionHeader}>
+                        <GeoCitiesBodyText color={colors.white} fontSize={20} fontWeight={700} text="Rules" />
+                    </View>
+                    {rules.map((rule, index) => (
+                        <View 
+                            key={index}
+                            style={styles.ruleContainer}
+                        >
+                            <GeoCitiesBodyText color={colors.white} fontSize={12} fontWeight='normal' text={rule} />
+                            <TouchableOpacity style={styles.ruleDeleteButtonContainer}>
+                                <GeoCitiesDeleteIcon color={colors.error} height={50} width={50} />
+                            </TouchableOpacity>
+                        </View>
+                    ))}
+                </View>
+            )}
+            {typeof rules === 'undefined' || rules.length < 10 && (
+                <View style={styles.addRuleButtonContainer}>
+                    <GeoCitiesButton buttonColor={colors.success} icon="plus" text="Add Rule" />
+                </View>
+            )}
+            <View style={styles.blockUserButtonContainer}>
+                <GeoCitiesButton buttonColor={colors.error} icon="cancel" text="Block" />
+            </View>
         </View>
     );
 }
@@ -170,6 +173,11 @@ const styles = StyleSheet.create({
         paddingRight: 10,
         paddingTop: 20,
         width: '100%',
+    },
+    blockUserButtonContainer: {
+        paddingLeft: 10,
+        paddingRight: 10,
+        paddingTop: 20,
     },
     captionInput: {
         height: 100,
