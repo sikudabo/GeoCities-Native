@@ -21,6 +21,7 @@ type SettingsTabDisplayLayerProps = {
         value: string;
     }[];
     handleDescriptionChange: (description: string) => void;
+    handleTopicChange: (topic: string) => void;
     rules?: Array<string>;
     setShowDropdown: React.Dispatch<React.SetStateAction<boolean>>;
     showDropdown: boolean;
@@ -37,6 +38,7 @@ function SettingsTab_DisplayLayer({
     description,
     groupTopics,
     handleDescriptionChange,
+    handleTopicChange,
     rules,
     setShowDropdown,
     setTopic,
@@ -69,7 +71,7 @@ function SettingsTab_DisplayLayer({
                     showDropDown={() => setShowDropdown(true)}
                     onDismiss={() => setShowDropdown(false)}
                     value={topic}
-                    setValue={setTopic}
+                    setValue={handleTopicChange}
                     list={groupTopics}
                 />
             </View>
@@ -156,11 +158,16 @@ function useDataLayer(group: GroupType) {
             console.log('THere was an error changing the group avatar:', e.message);
         });   
     }
+
+    function handleTopicChange(topic: string) {
+        setCurrentTopic(topic);
+    }
     
     return {
         description: currentDescription,
         groupTopics,
         handleDescriptionChange,
+        handleTopicChange,
         rules,
         setTopic: setCurrentTopic,
         setShowDropdown,
