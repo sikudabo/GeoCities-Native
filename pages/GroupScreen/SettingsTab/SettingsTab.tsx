@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { KeyboardAvoidingView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Keyboard, KeyboardAvoidingView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Dropdown from 'react-native-paper-dropdown';
 import { HelperText, TextInput } from 'react-native-paper';
 import * as FileSystem from 'expo-file-system';
@@ -9,6 +9,7 @@ import { useShowLoader } from '../../../hooks';
 import { topics } from '../../../utils/constants';
 import { GeoCitiesBodyText, GeoCitiesButton, GeoCitiesDeleteIcon, colors } from '../../../components';
 import { putBinaryData, putNonBinaryData } from '../../../utils/requests';
+
 
 type SettingsTabProps = {
     group: GroupType;
@@ -21,6 +22,7 @@ type SettingsTabDisplayLayerProps = {
         value: string;
     }[];
     handleDescriptionChange: (description: string) => void;
+    handleNewRuleChange: (newRule: string) => void;
     handleTopicChange: (topic: string) => void;
     rules?: Array<string>;
     setShowDropdown: React.Dispatch<React.SetStateAction<boolean>>;
@@ -50,7 +52,7 @@ function SettingsTab_DisplayLayer({
         <View style={styles.container}>
             <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={400}>
                 <View style={styles.inputContainer}>
-                    <TextInput activeOutlineColor={colors.salmonPink} label="Description" mode="outlined" numberOfLines={5} onChangeText={handleDescriptionChange} outlineColor={colors.white} placeholder="Description..." style={styles.captionInput} value={description} multiline />
+                    <TextInput activeOutlineColor={colors.salmonPink} label="Description" mode="outlined" numberOfLines={5} onChangeText={handleDescriptionChange} onSubmitEditing={() => console.log('We are now submitting')} outlineColor={colors.white} placeholder="Description..." style={styles.captionInput} value={description} blurOnSubmit multiline />
                     <HelperText style={description.length <= 300 ? styles.nameHelperText : styles.nameHelperTextDanger} type="info">
                         Required {`${description.length} / 300`}
                     </HelperText>
@@ -95,7 +97,7 @@ function SettingsTab_DisplayLayer({
             )}
             {typeof rules === 'undefined' || rules.length < 10 && (
                 <View style={styles.addRuleButtonContainer}>
-                    <GeoCitiesButton buttonColor={colors.success} icon="plus" text="Add Rule" />
+                    <GeoCitiesButton buttonColor={colors.success} icon="plus"  text="Add Rule" />
                 </View>
             )}
             <View style={styles.blockUserButtonContainer}>
@@ -117,6 +119,7 @@ function useDataLayer(group: GroupType) {
     const [currentDescription, setCurrentDescription] = useState(description);
     const [showDropdown, setShowDropdown] = useState(false);
     const [currentTopic, setCurrentTopic] = useState(topic);
+    const [newRule, setNewRule] = useState('');
     let groupTopics: Array<{label: string; value: string;}> = [];
     topics.forEach((topic) => {
         groupTopics.push({ label: topic, value: topic });
@@ -159,6 +162,13 @@ function useDataLayer(group: GroupType) {
         });   
     }
 
+    function handleNewRuleChange(currentRule: string) {
+        if (newRule.length >= 75) {
+            return;
+        }
+        setNewRule(currentRule)
+    }
+
     function handleTopicChange(topic: string) {
         setCurrentTopic(topic);
     }
@@ -167,6 +177,7 @@ function useDataLayer(group: GroupType) {
         description: currentDescription,
         groupTopics,
         handleDescriptionChange,
+        handleNewRuleChange,
         handleTopicChange,
         rules,
         setTopic: setCurrentTopic,
@@ -184,6 +195,11 @@ const styles = StyleSheet.create({
         paddingTop: 20,
         width: '100%',
     },
+    addRuleTitleContainer: {
+    },
+    addRuleContentContainer: {
+        width: '100%',
+    },
     blockUserButtonContainer: {
         paddingLeft: 10,
         paddingRight: 10,
@@ -195,6 +211,11 @@ const styles = StyleSheet.create({
     },
     container: {
         paddingTop: 30,
+    },
+    dialog: {
+        borderRadius: 5,
+        height: 400,
+        padding: 0,
     },
     inputContainer: {
         paddingBottom: 10,

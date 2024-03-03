@@ -127,6 +127,7 @@ function GroupScreen_DisplayLayer({
 function useDataLayer({ navigation, route }: GroupScreenProps) {
     const [refreshing, setRefreshing]= useState(false);
     const { groupName: name } = route.params.group;
+    const { settingsIndex } = route.params;
     const { user } = useUser();
     const { _id: userId } = user;
     const { data: group, isLoading } = useFetchGroup(name);
@@ -142,6 +143,10 @@ function useDataLayer({ navigation, route }: GroupScreenProps) {
     const isMember = members.includes(userId);
     const avatarUri = `${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo/${avatar}`;
     const [currentIndex, setCurrentIndex] = useState(0);
+
+    if (settingsIndex) {
+        setCurrentIndex(2);
+    }
 
     function handleChangeIndex(index: number) {
         setCurrentIndex(index);

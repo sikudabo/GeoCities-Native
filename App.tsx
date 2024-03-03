@@ -7,6 +7,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { useFonts, Montserrat_400Regular, Montserrat_700Bold, Montserrat_500Medium, Montserrat_600SemiBold } from '@expo-google-fonts/montserrat';
 import { MD3DarkTheme as DefaultTheme, PaperProvider } from 'react-native-paper';
 import * as SplashScreen from 'expo-splash-screen';
+import NewRulesScreen from './pages/GroupScreen/SettingsTab/NewRuleScreen/NewRuleScreen';
 import { useShowLoader } from './hooks';
 import { useUser } from './hooks/storage-hooks';
 import {
@@ -128,6 +129,10 @@ function App_DisplayLayer({
                   <Drawer.Screen 
                     component={GroupScreen}
                     name="GroupScreen" 
+                  />
+                  <Drawer.Screen 
+                    component={NewRulesScreen}
+                    name="NewRulesScreen"
                   />
                 </>
               )}
