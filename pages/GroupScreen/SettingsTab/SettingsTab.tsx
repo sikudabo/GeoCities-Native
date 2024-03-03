@@ -89,9 +89,9 @@ function SettingsTab_DisplayLayer({
                             key={index}
                             style={styles.ruleContainer}
                         >
-                            <GeoCitiesBodyText color={colors.white} fontSize={12} fontWeight='normal' text={rule} />
+                            <GeoCitiesBodyText color={colors.white} fontSize={12} fontWeight='normal' text={`${index + 1}. ${rule}`} />
                             <TouchableOpacity style={styles.ruleDeleteButtonContainer}>
-                                <GeoCitiesDeleteIcon color={colors.error} height={50} width={50} />
+                                <GeoCitiesDeleteIcon color={colors.error} height={25} width={25} />
                             </TouchableOpacity>
                         </View>
                     ))}
@@ -171,8 +171,8 @@ function useDataLayer(group: GroupType) {
     function handleNewRuleClick() {
         const group = {
             blockList,
-            currentDescription,
-            currentTopic,
+            description: currentDescription,
+            topic: currentTopic,
             groupName,
             rules,
         };
@@ -237,9 +237,14 @@ const styles = StyleSheet.create({
         color: colors.error,
     },
     ruleContainer: {
-        borderTopColor: colors.white,
+        borderColor: colors.white,
         borderStyle: 'solid',
-        rowGap: 20,
+        borderWidth: 1,
+        paddingBottom: 20,
+        paddingLeft: 5,
+        paddingRight: 5,
+        paddingTop: 5,
+        rowGap: 10,
     },
     ruleDeleteButtonContainer: {
         alignSelf: 'flex-end',
