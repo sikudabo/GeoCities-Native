@@ -2,14 +2,15 @@ import { useState } from 'react';
 import { Keyboard, KeyboardAvoidingView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Dropdown from 'react-native-paper-dropdown';
 import { useNavigation } from '@react-navigation/native';
+import { useQueryClient } from '@tanstack/react-query';
 import { HelperText, TextInput } from 'react-native-paper';
 import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
 import { GroupType } from '../../../typings';
-import { useShowLoader } from '../../../hooks';
 import { topics } from '../../../utils/constants';
 import { GeoCitiesBodyText, GeoCitiesButton, GeoCitiesDeleteIcon, colors } from '../../../components';
-import { putBinaryData, putNonBinaryData } from '../../../utils/requests';
+import { postNonBinaryData, putNonBinaryData } from '../../../utils/requests';
+import { useShowDialog, useShowLoader } from '../../../hooks';
 
 
 type SettingsTabProps = {
@@ -22,6 +23,7 @@ type SettingsTabDisplayLayerProps = {
         label: string;
         value: string;
     }[];
+    handleDeleteRule: (rule: string) => void;
     handleDescriptionChange: (description: string) => void;
     handleNewRuleClick: () => void;
     handleTopicChange: (topic: string) => void;
@@ -40,6 +42,7 @@ export default function SettingsTab({ group }: SettingsTabProps) {
 function SettingsTab_DisplayLayer({
     description,
     groupTopics,
+    handleDeleteRule,
     handleDescriptionChange,
     handleNewRuleClick,
     handleTopicChange,
@@ -90,8 +93,8 @@ function SettingsTab_DisplayLayer({
                             style={styles.ruleContainer}
                         >
                             <GeoCitiesBodyText color={colors.white} fontSize={12} fontWeight='normal' text={`${index + 1}. ${rule}`} />
-                            <TouchableOpacity style={styles.ruleDeleteButtonContainer}>
-                                <GeoCitiesDeleteIcon color={colors.error} height={25} width={25} />
+                            <TouchableOpacity onPress={() => handleDeleteRule(rule)} style={styles.ruleDeleteButtonContainer}>
+                                <GeoCitiesDeleteIcon color={colors.error} height={25}  width={25} />
                             </TouchableOpacity>
                         </View>
                     ))}
@@ -113,6 +116,7 @@ function SettingsTab_DisplayLayer({
 }
 
 function useDataLayer(group: GroupType) {
+    const queryClient = useQueryClient();
     const { setIsLoading } = useShowLoader();
     const { avatar, blockList, description, groupName, rules, topic } = group;
     const [currentAvatar, setCurrentAvatar] = useState<any>();
@@ -122,6 +126,7 @@ function useDataLayer(group: GroupType) {
     const [showDropdown, setShowDropdown] = useState(false);
     const [currentTopic, setCurrentTopic] = useState(topic);
     const navigation: any = useNavigation();
+    const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError } = useShowDialog();
     let groupTopics: Array<{label: string; value: string;}> = [];
     topics.forEach((topic) => {
         groupTopics.push({ label: topic, value: topic });
@@ -129,6 +134,49 @@ function useDataLayer(group: GroupType) {
 
     function handleDescriptionChange(description: string) {
         setCurrentDescription(description);
+    }
+
+    async function handleDeleteRule(rule: string) {
+        setIsLoading(true);
+        const currentRules = rules?.filter(ruleIt => ruleIt !== rule);
+
+        await postNonBinaryData({
+            data: {
+                blockList,
+                description,
+                groupName,
+                rules: currentRules,
+                topic,
+            },
+            uri: 'update-group',
+        }).then(res => {
+            const { isSuccess, message } = res;
+
+            if (isSuccess) {
+                queryClient.invalidateQueries(['fetchGroup']);
+                setDialogMessage(message);
+                setDialogTitle('Success!');
+                setIsError(false);
+                setIsLoading(false);
+                handleDialogMessageChange(true);
+                return;
+            } else {
+                setDialogMessage('There was an error deleting that rule. Please try again!');
+                setDialogTitle('Uh Oh!');
+                setIsError(true);
+                setIsLoading(false);
+                handleDialogMessageChange(true);
+                return;
+            }
+        }).catch(err => {
+            console.log(`There was an error removing a rule from a group: ${err.message}`);
+            setDialogMessage('There was an error deleting that rule. Please try again!');
+            setDialogTitle('Uh Oh!');
+            setIsError(true);
+            setIsLoading(false);
+            handleDialogMessageChange(true);
+            return;
+        });
     }
 
     async function takePicture() {
@@ -160,7 +208,7 @@ function useDataLayer(group: GroupType) {
             setIsLoading(false);
         }).catch(e => {
             setIsLoading(false);
-            console.log('THere was an error changing the group avatar:', e.message);
+            console.log('There was an error changing the group avatar:', e.message);
         });   
     }
 
@@ -184,6 +232,7 @@ function useDataLayer(group: GroupType) {
     return {
         description: currentDescription,
         groupTopics,
+        handleDeleteRule,
         handleDescriptionChange,
         handleNewRuleClick,
         handleTopicChange,
