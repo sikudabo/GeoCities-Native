@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import { RefreshControl, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import {
     Tabs,
@@ -31,6 +31,7 @@ type GroupScreenDisplayLayerProps = {
     isMember: boolean;
     onRefresh: () => void;
     refreshing: boolean;
+    settingsIndex?: boolean;
 }
 
 export default function GroupScreen({
@@ -53,6 +54,7 @@ function GroupScreen_DisplayLayer({
     isMember,
     onRefresh,
     refreshing,
+    settingsIndex,
 }: GroupScreenDisplayLayerProps) {
 
     if (isLoading) {
@@ -91,7 +93,7 @@ function GroupScreen_DisplayLayer({
                         </View>
                     )}
                     <View style={styles.tabsSectionContainer}>
-                        <TabsProvider defaultIndex={0} onChangeIndex={handleChangeIndex}>
+                        <TabsProvider defaultIndex={settingsIndex ? 2 : 0} onChangeIndex={handleChangeIndex}>
                             <Tabs style={styles.tabsStyle} tabLabelStyle={styles.tabLabel} disableSwipe>
                                 <TabScreen icon="mail" label="Posts">
                                     <View style={{ alignItems: 'center',  flex: 1, height: 500, paddingTop: 300 }}>
@@ -128,6 +130,7 @@ function useDataLayer({ navigation, route }: GroupScreenProps) {
     const [refreshing, setRefreshing]= useState(false);
     const { groupName: name } = route.params.group;
     const { settingsIndex } = route.params;
+    console.log('The settings index is:', settingsIndex);
     const { user } = useUser();
     const { _id: userId } = user;
     const { data: group, isLoading } = useFetchGroup(name);
@@ -143,10 +146,6 @@ function useDataLayer({ navigation, route }: GroupScreenProps) {
     const isMember = members.includes(userId);
     const avatarUri = `${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo/${avatar}`;
     const [currentIndex, setCurrentIndex] = useState(0);
-
-    if (settingsIndex) {
-        setCurrentIndex(2);
-    }
 
     function handleChangeIndex(index: number) {
         setCurrentIndex(index);
@@ -176,6 +175,7 @@ function useDataLayer({ navigation, route }: GroupScreenProps) {
         isMember,
         onRefresh,
         refreshing,
+        settingsIndex,
     };
 };
 

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Keyboard, KeyboardAvoidingView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Dropdown from 'react-native-paper-dropdown';
+import { useNavigation } from '@react-navigation/native';
 import { HelperText, TextInput } from 'react-native-paper';
 import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
@@ -22,7 +23,7 @@ type SettingsTabDisplayLayerProps = {
         value: string;
     }[];
     handleDescriptionChange: (description: string) => void;
-    handleNewRuleChange: (newRule: string) => void;
+    handleNewRuleClick: () => void;
     handleTopicChange: (topic: string) => void;
     rules?: Array<string>;
     setShowDropdown: React.Dispatch<React.SetStateAction<boolean>>;
@@ -40,6 +41,7 @@ function SettingsTab_DisplayLayer({
     description,
     groupTopics,
     handleDescriptionChange,
+    handleNewRuleClick,
     handleTopicChange,
     rules,
     setShowDropdown,
@@ -97,7 +99,7 @@ function SettingsTab_DisplayLayer({
             )}
             {typeof rules === 'undefined' || rules.length < 10 && (
                 <View style={styles.addRuleButtonContainer}>
-                    <GeoCitiesButton buttonColor={colors.success} icon="plus"  text="Add Rule" />
+                    <GeoCitiesButton buttonColor={colors.success} icon="plus" onPress={handleNewRuleClick}  text="Add Rule" />
                 </View>
             )}
             <View style={styles.blockUserButtonContainer}>
@@ -119,7 +121,7 @@ function useDataLayer(group: GroupType) {
     const [currentDescription, setCurrentDescription] = useState(description);
     const [showDropdown, setShowDropdown] = useState(false);
     const [currentTopic, setCurrentTopic] = useState(topic);
-    const [newRule, setNewRule] = useState('');
+    const navigation: any = useNavigation();
     let groupTopics: Array<{label: string; value: string;}> = [];
     topics.forEach((topic) => {
         groupTopics.push({ label: topic, value: topic });
@@ -162,22 +164,28 @@ function useDataLayer(group: GroupType) {
         });   
     }
 
-    function handleNewRuleChange(currentRule: string) {
-        if (newRule.length >= 75) {
-            return;
-        }
-        setNewRule(currentRule)
-    }
-
     function handleTopicChange(topic: string) {
         setCurrentTopic(topic);
+    }
+
+    function handleNewRuleClick() {
+        const group = {
+            blockList,
+            currentDescription,
+            currentTopic,
+            groupName,
+            rules,
+        };
+
+        navigation.navigate('NewRulesScreen', { group });
+        return;
     }
     
     return {
         description: currentDescription,
         groupTopics,
         handleDescriptionChange,
-        handleNewRuleChange,
+        handleNewRuleClick,
         handleTopicChange,
         rules,
         setTopic: setCurrentTopic,
