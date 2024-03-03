@@ -134,7 +134,8 @@ function useDataLayer({ navigation, route }: CreatePostsProps) {
     async function launchPhotoPicker() {
         let result = await ImagePicker.launchImageLibraryAsync({
             allowsEditing: true,
-            aspect: [1, 1],
+            aspect: [4, 3],
+            exif: true,
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             quality: 1,
         });

@@ -130,8 +130,7 @@ function useDataLayer() {
 
     async function handleSelectAvatar() {
         let result = await ImagePicker.launchImageLibraryAsync({
-            allowsEditing: true,
-            aspect: [1, 1],
+            allowsEditing: false,
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             quality: 1,
         });

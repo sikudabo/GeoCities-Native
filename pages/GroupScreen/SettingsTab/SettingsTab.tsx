@@ -59,7 +59,7 @@ function SettingsTab_DisplayLayer({
         <View style={styles.container}>
             <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={400}>
                 <View style={styles.inputContainer}>
-                    <TextInput activeOutlineColor={colors.salmonPink} label="Description" mode="outlined" numberOfLines={5} onChangeText={handleDescriptionChange} onSubmitEditing={() => handleSubmit()} outlineColor={colors.white} placeholder="Description..." style={styles.captionInput} value={description} blurOnSubmit multiline />
+                    <TextInput activeOutlineColor={colors.salmonPink} label="Description" mode="outlined" numberOfLines={5} onChangeText={handleDescriptionChange} onSubmitEditing={() => handleSubmit()} outlineColor={colors.white} placeholder="Description..." returnKeyType="done" style={styles.captionInput} value={description} blurOnSubmit multiline />
                     <HelperText style={description.length <= 300 ? styles.nameHelperText : styles.nameHelperTextDanger} type="info">
                         Required {`${description.length} / 300`}
                     </HelperText>

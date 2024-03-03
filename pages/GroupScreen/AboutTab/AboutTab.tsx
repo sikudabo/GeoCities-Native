@@ -37,9 +37,6 @@ function AboutTab_DisplayLayer({
 
     return (
         <View style={styles.container}>
-            <View style={styles.topSectionContainer}>
-                <GeoCitiesBodyText color={colors.white} fontSize={20} fontWeight={700} text="About" />
-            </View>
             <View style={styles.topicContainer}>
                 <GeoCitiesBodyText color={colors.white} fontSize={16} fontWeight={500} text={topicMessage} />
             </View>
@@ -95,7 +92,7 @@ const styles = StyleSheet.create({
     container: {
         paddingLeft: 10,
         paddingRight: 10,
-        paddingTop: 30,
+        paddingTop: 10,
     },
     groupCreatorSection: {
         paddingTop: 20,

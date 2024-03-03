@@ -30,6 +30,7 @@ type AppDisplayLayerProps = {
   fontsLoaded: boolean;
   isLoading: boolean;
   isUserLoggedIn: boolean;
+  navigationRef: any;
 };
 
 // Stack navigation
@@ -56,9 +57,8 @@ function App_DisplayLayer({
   fontsLoaded,
   isLoading,
   isUserLoggedIn,
+  navigationRef,
 }: AppDisplayLayerProps) {
-
-  const navigationRef = useRef();
 
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
@@ -77,12 +77,6 @@ function App_DisplayLayer({
   const openDrawer = () => {
     (navigationRef?.current as any)?.dispatch(DrawerActions.openDrawer())
   }
-
-  useEffect(() => {
-    if (!isUserLoggedIn) {
-      (navigationRef?.current as any)?.dispatch(DrawerActions.closeDrawer());
-    }
-  }, [isUserLoggedIn]);
 
   /* if (isLoading) {
     return (
@@ -160,6 +154,8 @@ function useDataLayer() {
     Montserrat_600SemiBold,
   });
 
+  const navigationRef = useRef();
+
   const isUserLoggedIn = useMemo(() => {
     if (!user || !user.isLoggedIn) {
       return false;
@@ -168,10 +164,17 @@ function useDataLayer() {
     return true;
   }, [user])
 
+  useEffect(() => {
+    if (!isUserLoggedIn) {
+      (navigationRef?.current as any)?.dispatch(DrawerActions.closeDrawer());
+    }
+  }, [isUserLoggedIn]);
+
   return {
     fontsLoaded,
     isLoading,
     isUserLoggedIn,
+    navigationRef,
   };
 }
 

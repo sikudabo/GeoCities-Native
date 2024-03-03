@@ -42,19 +42,23 @@ function ProfileAboutTabs_DisplayLayer({
                 <GeoCitiesMailIconOutlined color={colors.white} height={20} width={20} />
                 <GeoCitiesBodyText color={colors.white} fontSize={14} text={email} />
             </TouchableOpacity>
-            <View style={styles.communitiesHeaderContainer}>
-                <GeoCitiesBodyText color={colors.white} fontSize={14} text='Communities' />
-            </View>
-            <View>
-                {userGroups.map((group, index) => (
-                    <View style={styles.groupContainer}>
-                        <GeoGroupsGroupsCard 
-                            group={group}
-                            key={index}
-                        />
+            {userGroups.length > 0 && (
+                <View>
+                    <View style={styles.communitiesHeaderContainer}>
+                        <GeoCitiesBodyText color={colors.white} fontSize={14} text='Groups' />
                     </View>
-                ))}
-            </View>
+                    <View>
+                        {userGroups.map((group, index) => (
+                            <View style={styles.groupContainer}>
+                                <GeoGroupsGroupsCard 
+                                    group={group}
+                                    key={index}
+                                />
+                            </View>
+                        ))}
+                    </View>
+                </View>
+            )}
         </View>
     );
 }
