@@ -10,7 +10,7 @@ import { colors } from './colors';
 import { useUser } from '../hooks/storage-hooks';
 
 export default function GeoCitiesNavigationDrawer({ navigation }: { navigation: any }) {
-    const { user } = useUser();
+    const { clearUser, user } = useUser();
     const { avatar, geoScore, firstName, lastName } = user;
     const fullName = `${firstName} ${lastName}`;
     const styles = StyleSheet.create({
@@ -37,6 +37,11 @@ export default function GeoCitiesNavigationDrawer({ navigation }: { navigation: 
             paddingLeft: 20,
         }
     });
+
+    function handleLogout() {
+        clearUser();
+        navigation.navigate('LoginCreateStack');
+    }
 
     return (
         <DrawerContentScrollView style={styles.container}>
@@ -131,7 +136,7 @@ export default function GeoCitiesNavigationDrawer({ navigation }: { navigation: 
                             />
                         )}
                         label="Logout"
-                        onPress={() => console.log('Logout')}
+                        onPress={handleLogout}
                     />
                 </Drawer.Section>
             </View>

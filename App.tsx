@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { Dimensions, Image, ScrollView, StyleSheet, Text, View} from 'react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { DrawerActions, NavigationContainer, NavigationState } from '@react-navigation/native';
@@ -77,6 +77,12 @@ function App_DisplayLayer({
   const openDrawer = () => {
     (navigationRef?.current as any)?.dispatch(DrawerActions.openDrawer())
   }
+
+  useEffect(() => {
+    if (!isUserLoggedIn) {
+      (navigationRef?.current as any)?.dispatch(DrawerActions.closeDrawer());
+    }
+  }, [isUserLoggedIn]);
 
   /* if (isLoading) {
     return (
