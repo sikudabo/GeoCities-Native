@@ -24,8 +24,9 @@ type SettingsTabDisplayLayerProps = {
         value: string;
     }[];
     handleDeleteRule: (rule: string) => void;
-    handleDescriptionChange: (description: string) => void;
+    handleDescriptionChange: (newDescription: string) => void;
     handleNewRuleClick: () => void;
+    handleSubmit: (newTopic?: string) => void;
     handleTopicChange: (topic: string) => void;
     rules?: Array<string>;
     setShowDropdown: React.Dispatch<React.SetStateAction<boolean>>;
@@ -45,6 +46,7 @@ function SettingsTab_DisplayLayer({
     handleDeleteRule,
     handleDescriptionChange,
     handleNewRuleClick,
+    handleSubmit,
     handleTopicChange,
     rules,
     setShowDropdown,
@@ -57,7 +59,7 @@ function SettingsTab_DisplayLayer({
         <View style={styles.container}>
             <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={400}>
                 <View style={styles.inputContainer}>
-                    <TextInput activeOutlineColor={colors.salmonPink} label="Description" mode="outlined" numberOfLines={5} onChangeText={handleDescriptionChange} onSubmitEditing={() => console.log('We are now submitting')} outlineColor={colors.white} placeholder="Description..." style={styles.captionInput} value={description} blurOnSubmit multiline />
+                    <TextInput activeOutlineColor={colors.salmonPink} label="Description" mode="outlined" numberOfLines={5} onChangeText={handleDescriptionChange} onSubmitEditing={() => handleSubmit()} outlineColor={colors.white} placeholder="Description..." style={styles.captionInput} value={description} blurOnSubmit multiline />
                     <HelperText style={description.length <= 300 ? styles.nameHelperText : styles.nameHelperTextDanger} type="info">
                         Required {`${description.length} / 300`}
                     </HelperText>
@@ -78,7 +80,7 @@ function SettingsTab_DisplayLayer({
                     showDropDown={() => setShowDropdown(true)}
                     onDismiss={() => setShowDropdown(false)}
                     value={topic}
-                    setValue={handleTopicChange}
+                    setValue={(val: string) => handleSubmit(val)}
                     list={groupTopics}
                 />
             </View>
@@ -132,8 +134,71 @@ function useDataLayer(group: GroupType) {
         groupTopics.push({ label: topic, value: topic });
     });
 
-    function handleDescriptionChange(description: string) {
-        setCurrentDescription(description);
+    async function handleSubmit(newTopic?: string) {
+        setShowDropdown(false);
+        setIsLoading(true);
+        if (!currentDescription.trim()) {
+            setIsLoading(false);
+            setDialogMessage('You must enter a group description!');
+            setDialogTitle('Uh Oh!');
+            setIsError(true);
+            handleDialogMessageChange(true);
+            return;
+        }
+
+        if (currentDescription.length > 300) {
+            setIsLoading(false);
+            setDialogMessage('The group description must be 300 characters or less.');
+            setDialogTitle('Uh Oh!');
+            setIsError(true);
+            handleDialogMessageChange(true);
+            return;
+        }
+
+        if (newTopic) {
+            setCurrentTopic(newTopic);
+        }
+
+        await postNonBinaryData({
+            data: {
+                blockList,
+                description: currentDescription,
+                groupName,
+                rules,
+                topic: typeof newTopic !== 'undefined' ? newTopic : currentTopic,
+            },
+            uri: 'update-group',
+        }).then(res => {
+            const { isSuccess, message } = res;
+
+            if (isSuccess) {
+                queryClient.invalidateQueries(['fetchGroup']);
+                setDialogMessage(message);
+                setDialogTitle('Success!');
+                setIsError(false);
+                setIsLoading(false);
+                handleDialogMessageChange(true);
+            } else {
+                setDialogMessage('There was an error updating this group. Please try again!');
+                setDialogTitle('Uh Oh!');
+                setIsError(true);
+                setIsLoading(false);
+                handleDialogMessageChange(true);
+                return;
+            }
+        }).catch(err => {
+            console.log(`There was an error updating a group: ${err.message}`);
+            setDialogMessage('There was an error deleting that rule. Please try again!');
+            setDialogTitle('Uh Oh!');
+            setIsError(true);
+            setIsLoading(false);
+            handleDialogMessageChange(true);
+            return;
+        });
+    }
+
+    async function handleDescriptionChange(newDescription: string) {
+        setCurrentDescription(newDescription);
     }
 
     async function handleDeleteRule(rule: string) {
@@ -212,8 +277,10 @@ function useDataLayer(group: GroupType) {
         });   
     }
 
-    function handleTopicChange(topic: string) {
+    async function handleTopicChange(topic: string) {
         setCurrentTopic(topic);
+        await handleSubmit();
+        return;
     }
 
     function handleNewRuleClick() {
@@ -235,6 +302,7 @@ function useDataLayer(group: GroupType) {
         handleDeleteRule,
         handleDescriptionChange,
         handleNewRuleClick,
+        handleSubmit,
         handleTopicChange,
         rules,
         setTopic: setCurrentTopic,

@@ -130,7 +130,6 @@ function useDataLayer({ navigation, route }: GroupScreenProps) {
     const [refreshing, setRefreshing]= useState(false);
     const { groupName: name } = route.params.group;
     const { settingsIndex } = route.params;
-    console.log('The settings index is:', settingsIndex);
     const { user } = useUser();
     const { _id: userId } = user;
     const { data: group, isLoading } = useFetchGroup(name);

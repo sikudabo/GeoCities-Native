@@ -44,7 +44,7 @@ function NewRulesScreen_DisplayLayer({
                 <GeoCitiesBodyText color={colors.white} fontSize={20} fontWeight={900} text="Add Rule" />
             </View>
             <View style={styles.inputContainer}>
-                <TextInput mode='outlined' onChangeText={handleNewRuleUpdate} label="Rule" maxLength={75}  outlineColor={colors.white} placeholder="Rule..." activeOutlineColor={colors.white} returnKeyType="done" style={styles.inputStyle} value={newRule} />
+                <TextInput mode='outlined' onChangeText={handleNewRuleUpdate} label="Rule" maxLength={75}  outlineColor={colors.white} placeholder="Rule..." activeOutlineColor={colors.salmonPink} returnKeyType="done" style={styles.inputStyle} value={newRule} />
                 <HelperText type="info">
                     Required {`${newRule.length} / 75`}
                 </HelperText>
