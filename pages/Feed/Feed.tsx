@@ -86,9 +86,6 @@ function useDataLayer({ navigation }: FeedProps) {
 
     if (!isLoading && !isLoadingUserData && typeof fetchedUser !== 'undefined') {
         filteredPosts = posts.filter((post: { groupName: string | undefined; authorId: string }) => !hidePost(post.groupName, post.authorId));
-        // let newUser = fetchedUser;
-        // newUser.isLoggedIn = true;
-        // setUser(newUser);
     }
 
     const onRefresh = useCallback(() => {
