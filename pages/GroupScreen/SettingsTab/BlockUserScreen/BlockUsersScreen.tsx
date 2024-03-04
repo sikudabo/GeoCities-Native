@@ -159,6 +159,7 @@ function useDataLayer({
                 setDialogTitle('Success!');
                 setIsError(false);
                 handleDialogMessageChange(true);
+                navigation.navigate('GroupScreen', { group: { groupName }, settingsIndex: true })
                 return;
             } else {
                 setIsLoading(false);
