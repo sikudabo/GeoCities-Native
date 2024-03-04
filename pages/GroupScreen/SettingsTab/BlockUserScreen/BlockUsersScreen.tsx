@@ -8,7 +8,7 @@ import { postNonBinaryData } from '../../../../utils/requests';
 import { useFetchAllUsers } from '../../../../hooks/fetch-hooks';
 import { useUser } from '../../../../hooks/storage-hooks';
 import { useShowDialog, useShowLoader } from '../../../../hooks';
-import { GeoCitiesAvatar, GeoCitiesBodyText, GeoCitiesDropdownArrow, LoadingIndicator, colors } from '../../../../components';
+import { GeoCitiesAvatar, GeoCitiesBackArrowIcon, GeoCitiesBodyText, GeoCitiesDropdownArrow, LoadingIndicator, colors } from '../../../../components';
 
 type BlockUsersScreenProps = {
     navigation: any;
@@ -17,6 +17,7 @@ type BlockUsersScreenProps = {
 
 type BlockUsersScreenDisplayLayerProps = {
     handleAutocompleteChange: (props: any) => void;
+    handleBackPress: () => void;
     handleInputValChange: (props: any) => void;
     handleUserPress: (_id: string) => void;
     inputVal: string;
@@ -41,6 +42,7 @@ export default function BlockUsersScreen({
 
 function BlockUsersScreen_DisplayLayer({
     handleAutocompleteChange,
+    handleBackPress,
     handleInputValChange,
     handleUserPress,
     inputVal,
@@ -56,6 +58,9 @@ function BlockUsersScreen_DisplayLayer({
 
     return (
         <View style={styles.container}>
+            <TouchableOpacity onPress={handleBackPress} style={styles.backIconContainer}>
+                <GeoCitiesBackArrowIcon color={colors.white} height={25} width={25} />
+            </TouchableOpacity>
             <View style={styles.headerTitleContainer}>
                 <GeoCitiesBodyText color={colors.white} fontSize={20} fontWeight={900} text="Block Users" />
             </View>
@@ -134,6 +139,10 @@ function useDataLayer({
         setInputVal(props);
     }
 
+    function handleBackPress() {
+        navigation.navigate('GroupScreen', { group: { groupName }, settingsIndex: true })
+    }
+
     function handleInputValChange(props: any) {
         setInputVal(props);
     }
@@ -182,6 +191,7 @@ function useDataLayer({
 
     return {
         handleAutocompleteChange,
+        handleBackPress,
         handleInputValChange,
         handleUserPress,
         inputVal,
@@ -198,6 +208,9 @@ const styles = StyleSheet.create({
         paddingRight: 10,
         paddingTop: 20,
         width: '100%',
+    },
+    backIconContainer: {
+        paddingLeft: 20,
     },
     container: {
         backgroundColor: colors.nightGray,
