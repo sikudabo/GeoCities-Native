@@ -5,7 +5,7 @@ import { UserType } from "../../typings";
 export default function useFetchAllUsers() {
     return useQuery(['fetchAllUsers'], async () => {
         const users: Array<UserType> = await getData({
-            uri: 'fetch-all-users',
+            uri: 'get-all-users',
         }).then(res => {
             const { users } = res;
             return users;

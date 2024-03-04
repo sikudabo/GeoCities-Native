@@ -10,6 +10,7 @@ export type UserType = {
     following: Array<string>;
     avatar: string;
     geoScore: number;
+    _id: string;
     communities: Array<string>;
     locationCity: string;
     locationState: string;

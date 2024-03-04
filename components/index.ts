@@ -11,6 +11,7 @@ import GeoCitiesCommentIconFilled from './GeoCitiesCommentIconFilled'
 import GeoCitiesCommentIconOutlined from "./GeoCitiesCommentIconOutlined";
 import GeoCitiesDeleteIcon from './GeoCitiesDeleteIcon';
 import GeoCitiesDialog from "./GeoCitiesDialog";
+import GeoCitiesDropdownArrow from "./GeoCitiesDropdownArrow";
 import GeoCitiesFAB from "./GeoCitiesFAB";
 import GeoCitiesIconButton from "./GeoCitiesIconButton";
 import GeoCitiesLikeIconFilled from "./GeoCitiesLikeIconFilled";
@@ -43,6 +44,7 @@ export {
     GeoCitiesCommentIconOutlined,
     GeoCitiesDeleteIcon,
     GeoCitiesDialog,
+    GeoCitiesDropdownArrow,
     GeoCitiesFAB,
     GeoCitiesIconButton,
     GeoCitiesLikeIconFilled,
