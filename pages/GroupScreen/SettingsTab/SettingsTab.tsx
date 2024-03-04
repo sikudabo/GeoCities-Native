@@ -30,6 +30,7 @@ type SettingsTabDisplayLayerProps = Pick<SettingsTabProps, 'blockedUsers'> & {
     handleNewRuleClick: () => void;
     handleSubmit: (newTopic?: string) => void;
     handleTopicChange: (topic: string) => void;
+    handleUnblockUser: (_id: string) => void;
     rules?: Array<string>;
     setShowDropdown: React.Dispatch<React.SetStateAction<boolean>>;
     showDropdown: boolean;
@@ -52,6 +53,7 @@ function SettingsTab_DisplayLayer({
     handleNewRuleClick,
     handleSubmit,
     handleTopicChange,
+    handleUnblockUser,
     rules,
     setShowDropdown,
     setTopic,
@@ -131,7 +133,7 @@ function SettingsTab_DisplayLayer({
                                 <GeoCitiesBodyText color={colors.white} fontSize={12} fontWeight='normal' text={`${user.firstName} ${user.lastName}`} />
                             </View>
                             <View style={styles.unBlockButtonContainer}>
-                                <GeoCitiesButton buttonColor={colors.salmonPink} mode="outlined" text="Unblock" />
+                                <GeoCitiesButton buttonColor={colors.salmonPink} mode="outlined" onPress={() => handleUnblockUser(user._id)} text="Unblock" />
                             </View>
                         </View>
                     ))}
@@ -160,6 +162,48 @@ function useDataLayer(group: GroupType) {
     topics.forEach((topic) => {
         groupTopics.push({ label: topic, value: topic });
     });
+
+    async function handleUnblockUser(_id: string) {
+        setIsLoading(true);
+        const newBlockList = blockList.filter(id => id !== _id);
+
+        await postNonBinaryData({
+            data: {
+                blockList: newBlockList,
+                description,
+                groupName,
+                rules,
+                topic,
+            },
+            uri: 'update-group',
+        }).then(res => {
+            const { isSuccess } = res;
+            if (isSuccess) {
+                queryClient.invalidateQueries(['fetchGroup']);
+                setIsLoading(false);
+                setDialogMessage('Successfully unblocked user.');
+                setDialogTitle('Success');
+                setIsError(false);
+                handleDialogMessageChange(true);
+                return;
+            } else {
+                setIsLoading(false);
+                setDialogMessage('There was an error unblocking that user. Please try again!');
+                setDialogTitle('Uh Oh!');
+                setIsError(true);
+                handleDialogMessageChange(true);
+                return;
+            }
+        }).catch(err => {
+            console.log(`There was an error unblocking a user from a group: ${err.message}`);
+            setIsLoading(false);
+            setDialogMessage('There was an error unblocking that user. Please try again!');
+            setDialogTitle('Uh Oh!');
+            setIsError(true);
+            handleDialogMessageChange(true);
+            return;
+        });
+    }
 
     async function handleSubmit(newTopic?: string) {
         setShowDropdown(false);
@@ -345,6 +389,7 @@ function useDataLayer(group: GroupType) {
         handleNewRuleClick,
         handleSubmit,
         handleTopicChange,
+        handleUnblockUser,
         rules,
         setTopic: setCurrentTopic,
         setShowDropdown,
