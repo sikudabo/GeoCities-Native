@@ -20,6 +20,7 @@ type SettingsTabProps = {
 
 type SettingsTabDisplayLayerProps = Pick<SettingsTabProps, 'blockedUsers'> & {
     description: string;
+    groupAvatarPath: string;
     groupTopics: {
         label: string;
         value: string;
@@ -46,6 +47,7 @@ export default function SettingsTab({ blockedUsers, group }: SettingsTabProps) {
 function SettingsTab_DisplayLayer({
     blockedUsers,
     description,
+    groupAvatarPath,
     groupTopics,
     handleBlockUsersClick,
     handleDeleteRule,
@@ -139,8 +141,13 @@ function SettingsTab_DisplayLayer({
                     ))}
                 </View>
             )}
-            <View style={styles.blockUserButtonContainer}>
-                <GeoCitiesButton buttonColor={colors.white} icon="camera" text="Avatar" />
+            <View>
+                <View style={styles.groupAvatarContainer}>
+                    <GeoCitiesAvatar size={75} src={groupAvatarPath} />
+                </View>
+                <View style={styles.blockUserButtonContainer}>
+                    <GeoCitiesButton buttonColor={colors.white} icon="camera" text="Update" />
+                </View>
             </View>
         </View>
     );
@@ -158,6 +165,7 @@ function useDataLayer(group: GroupType) {
     const [currentTopic, setCurrentTopic] = useState(topic);
     const navigation: any = useNavigation();
     const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError } = useShowDialog();
+    const groupAvatarPath = `${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo/${avatar}`;
     let groupTopics: Array<{label: string; value: string;}> = [];
     topics.forEach((topic) => {
         groupTopics.push({ label: topic, value: topic });
@@ -382,6 +390,7 @@ function useDataLayer(group: GroupType) {
     
     return {
         description: currentDescription,
+        groupAvatarPath,
         groupTopics,
         handleBlockUsersClick,
         handleDeleteRule,
@@ -435,6 +444,10 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         height: 400,
         padding: 0,
+    },
+    groupAvatarContainer: {
+        alignItems: 'center',
+        paddingTop: 20,
     },
     inputContainer: {
         paddingBottom: 10,
