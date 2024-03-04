@@ -132,7 +132,9 @@ function useDataLayer({ navigation, route }: GroupScreenProps) {
     const { settingsIndex } = route.params;
     const { user } = useUser();
     const { _id: userId } = user;
-    const { data: group, isLoading } = useFetchGroup(name);
+    const { data, isLoading } = useFetchGroup(name);
+    const { blockedUsers, group } = typeof data !== 'undefined' && !isLoading ? data : { group: {}, blockedUsers: [] }
+    console.log('The blocked users are:', blockedUsers);
     const { avatar, creator, description, groupName, _id, members } = !isLoading && group ? group : { 
         avatar: '',
         creator: '',
@@ -142,7 +144,7 @@ function useDataLayer({ navigation, route }: GroupScreenProps) {
         members: [],
     };
     const isCreator = creator === userId;
-    const isMember = members.includes(userId);
+    const isMember = (members as Array<string>).includes(userId);
     const avatarUri = `${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo/${avatar}`;
     const [currentIndex, setCurrentIndex] = useState(0);
 

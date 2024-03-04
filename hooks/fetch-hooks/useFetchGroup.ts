@@ -1,22 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
 import { getData } from "../../utils/requests";
+import { GroupType, UserType } from "../../typings";
 
 export default function useFetchGroup(groupName: string) {
     return useQuery(['fetchGroup'], async () => {
-        const group = await getData({
+        const groupData: { blockedUsers: Array<UserType>; group: any } = await getData({
             uri: `get-group/${groupName}`,
         }).then(res => {
-            const { group } = res;
-            return group;
-        }).catch(err => {
-            console.log(`There was an error fetching a group: ${err.message}`);
+            const { blockedUsers, group } = res;
             return {
-                isError: true,
-                message: 'There was an error fetching a group',
-            };
+                blockedUsers,
+                group,
+            }
         });
 
-        return group;
+        return groupData;
     }, {
         refetchIntervalInBackground: true,
         refetchInterval: 1000,
