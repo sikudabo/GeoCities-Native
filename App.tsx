@@ -16,6 +16,7 @@ import {
   CreatePostScreen,
   Feed,
   GroupScreen,
+  GroupSearchScreen,
   LoginCreateStack,
   PostComments,
   Profile,
@@ -138,6 +139,10 @@ function App_DisplayLayer({
                   <Drawer.Screen 
                     component={BlockUsersScreen}
                     name="BlockUsersScreen"
+                  />
+                  <Drawer.Screen 
+                    component={GroupSearchScreen}
+                    name="GroupSearchScreen"
                   />
                 </>
               )}

@@ -86,7 +86,7 @@ export default function GeoCitiesNavigationDrawer({ navigation }: { navigation: 
                             />
                         )}
                         label="Groups"
-                        onPress={() => console.log('Groups')}
+                        onPress={() => navigation.navigate('GroupSearchScreen')}
                     />
                     <DrawerItem 
                         icon={() => (
