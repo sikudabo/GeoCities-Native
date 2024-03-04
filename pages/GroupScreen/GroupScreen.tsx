@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState } from 'react';
+import {  useCallback, useMemo, useState } from 'react';
 import { RefreshControl, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import {
     Tabs,
@@ -27,6 +27,7 @@ type GroupScreenDisplayLayerProps = {
     groupName: string;
     handleChangeIndex: (index: number) => void;
     handleCreatePost: () => void;
+    isBlocked: boolean;
     isCreator: boolean;
     isLoading: boolean;
     isMember: boolean;
@@ -51,6 +52,7 @@ function GroupScreen_DisplayLayer({
     groupName,
     handleChangeIndex,
     handleCreatePost,
+    isBlocked,
     isCreator,
     isLoading,
     isMember,
@@ -61,6 +63,16 @@ function GroupScreen_DisplayLayer({
 
     if (isLoading) {
         return <LoadingIndicator />;
+    }
+
+    if (isBlocked) {
+        return (
+            <View style={styles.container}>
+                <View style={styles.blockedHeaderContainer}>
+                    <GeoCitiesBodyText color={colors.white} fontSize={20} fontWeight={900} text="Blocked" />
+                </View>
+            </View>
+        );
     }
 
     return (
@@ -136,9 +148,9 @@ function useDataLayer({ navigation, route }: GroupScreenProps) {
     const { _id: userId } = user;
     const { data, isLoading } = useFetchGroup(name);
     const { blockedUsers, group } = typeof data !== 'undefined' && !isLoading ? data : { group: {}, blockedUsers: [] }
-    console.log('The blocked users are:', blockedUsers);
-    const { avatar, creator, description, groupName, _id, members } = !isLoading && group ? group : { 
+    const { avatar, blockList, creator, description, groupName, _id, members } = !isLoading && group ? group : { 
         avatar: '',
+        blockList: [],
         creator: '',
         description: '',
         groupName: '',
@@ -149,6 +161,13 @@ function useDataLayer({ navigation, route }: GroupScreenProps) {
     const isMember = (members as Array<string>).includes(userId);
     const avatarUri = `${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo/${avatar}`;
     const [currentIndex, setCurrentIndex] = useState(0);
+
+    const isBlocked = useMemo(() => {
+        if (blockList.includes(userId)) {
+            return true;
+        }
+        return false;
+    }, [blockList]);
 
     function handleChangeIndex(index: number) {
         setCurrentIndex(index);
@@ -174,6 +193,7 @@ function useDataLayer({ navigation, route }: GroupScreenProps) {
         group,
         handleChangeIndex,
         handleCreatePost,
+        isBlocked,
         isCreator,
         isLoading,
         isMember,
@@ -188,6 +208,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         display: 'flex',
         justifyContent: 'center',
+    },
+    blockedHeaderContainer: {
+        alignItems: 'center',
     },
     container: {
         backgroundColor: colors.nightGray,
