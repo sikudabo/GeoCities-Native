@@ -11,6 +11,7 @@ import NewRulesScreen from './pages/GroupScreen/SettingsTab/NewRuleScreen/NewRul
 import { useShowLoader } from './hooks';
 import { useUser } from './hooks/storage-hooks';
 import {
+  BlockUsersScreen,
   BuildGroup,
   CreatePostScreen,
   Feed,
@@ -133,6 +134,10 @@ function App_DisplayLayer({
                   <Drawer.Screen 
                     component={NewRulesScreen}
                     name="NewRulesScreen"
+                  />
+                  <Drawer.Screen 
+                    component={BlockUsersScreen}
+                    name="BlockUsersScreen"
                   />
                 </>
               )}

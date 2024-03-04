@@ -1,3 +1,4 @@
+import BlockUsersScreen from "./GroupScreen/SettingsTab/BlockUserScreen/BlockUsersScreen";
 import BuildGroup from "./BuildGroup/BuildGroup";
 import CreatePostScreen from "./Posts/CreatePostsScreen";
 import DummyIcon from "./DummyIcon";
@@ -11,6 +12,7 @@ import SignInPage from "./SignInPage/SignInPage";
 import SignUpPage from "./SignUpPage/SignUpPage";
 
 export {
+    BlockUsersScreen,
     BuildGroup,
     CreatePostScreen,
     DummyIcon,

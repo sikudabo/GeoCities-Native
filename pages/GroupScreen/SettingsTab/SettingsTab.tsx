@@ -23,6 +23,7 @@ type SettingsTabDisplayLayerProps = {
         label: string;
         value: string;
     }[];
+    handleBlockUsersClick: () => void;
     handleDeleteRule: (rule: string) => void;
     handleDescriptionChange: (newDescription: string) => void;
     handleNewRuleClick: () => void;
@@ -43,6 +44,7 @@ export default function SettingsTab({ group }: SettingsTabProps) {
 function SettingsTab_DisplayLayer({
     description,
     groupTopics,
+    handleBlockUsersClick,
     handleDeleteRule,
     handleDescriptionChange,
     handleNewRuleClick,
@@ -108,7 +110,7 @@ function SettingsTab_DisplayLayer({
                 </View>
             )}
             <View style={styles.blockUserButtonContainer}>
-                <GeoCitiesButton buttonColor={colors.error} icon="cancel" text="Block" />
+                <GeoCitiesButton buttonColor={colors.error} icon="cancel" onPress={handleBlockUsersClick} text="Block" />
             </View>
             <View style={styles.blockUserButtonContainer}>
                 <GeoCitiesButton buttonColor={colors.white} icon="camera" text="Avatar" />
@@ -295,10 +297,24 @@ function useDataLayer(group: GroupType) {
         navigation.navigate('NewRulesScreen', { group });
         return;
     }
+
+    function handleBlockUsersClick() {
+        const group = {
+            blockList,
+            description: currentDescription,
+            topic: currentTopic,
+            groupName,
+            rules,
+        };
+
+        navigation.navigate('BlockUsersScreen', { group });
+        return;
+    }
     
     return {
         description: currentDescription,
         groupTopics,
+        handleBlockUsersClick,
         handleDeleteRule,
         handleDescriptionChange,
         handleNewRuleClick,
