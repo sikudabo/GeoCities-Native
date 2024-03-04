@@ -146,7 +146,7 @@ function SettingsTab_DisplayLayer({
                     <GeoCitiesAvatar size={75} src={groupAvatarPath} />
                 </View>
                 <View style={styles.blockUserButtonContainer}>
-                    <GeoCitiesButton buttonColor={colors.white} icon="camera" text="Update" />
+                    <GeoCitiesButton buttonColor={colors.white} icon="camera" onPress={takePicture} text="Update" />
                 </View>
             </View>
         </View>
@@ -313,6 +313,7 @@ function useDataLayer(group: GroupType) {
                 return;
             }
         }).catch(err => {
+            setIsLoading(false);
             console.log(`There was an error removing a rule from a group: ${err.message}`);
             setDialogMessage('There was an error deleting that rule. Please try again!');
             setDialogTitle('Uh Oh!');
@@ -326,9 +327,10 @@ function useDataLayer(group: GroupType) {
     async function takePicture() {
         setIsLoading(true);
         await ImagePicker.requestCameraPermissionsAsync();
-        const result = await ImagePicker.launchCameraAsync({
-            allowsEditing: false,
+        const result = await ImagePicker.launchImageLibraryAsync({
+            allowsEditing: true,
             aspect: [4, 3],
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
             quality: 1,
         });
 
@@ -344,15 +346,37 @@ function useDataLayer(group: GroupType) {
         setUri(localUri as any);
         setName(filename as string);
         const fd = new FormData();
-        await FileSystem.uploadAsync(`${process.env.EXPO_PUBLIC_API_BASE_URI}/update-group-avatar/:${groupName}`, localUri, {
+        await FileSystem.uploadAsync(`${process.env.EXPO_PUBLIC_API_BASE_URI}change-group-avatar/${groupName}/${avatar}`, localUri, {
             fieldName: 'avatar',
             httpMethod: 'POST',
             uploadType: FileSystem.FileSystemUploadType.MULTIPART,
         }).then((response: any) => {
+            const { isError, message } = JSON.parse(response.body);
+            
             setIsLoading(false);
+
+            if (!isError) {
+                queryClient.invalidateQueries(['fetchGroup']);
+                setDialogMessage(message);
+                setDialogTitle('Success!');
+                setIsError(false);
+                handleDialogMessageChange(true);
+                return;
+            } else {
+                setDialogMessage('There was an error changing the avatar image for this group. Please try again!');
+                setDialogTitle('Uh Oh!');
+                setIsError(true);
+                handleDialogMessageChange(true);
+                return;
+            }
         }).catch(e => {
             setIsLoading(false);
             console.log('There was an error changing the group avatar:', e.message);
+            setDialogMessage('There was an error changing the avatar image for this group. Please try again!');
+            setDialogTitle('Uh Oh!');
+            setIsError(true);
+            handleDialogMessageChange(true);
+            return;
         });   
     }
 
