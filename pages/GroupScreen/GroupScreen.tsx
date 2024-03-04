@@ -1,5 +1,6 @@
 import {  useCallback, useMemo, useState } from 'react';
 import { RefreshControl, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
+import { useQueryClient } from '@tanstack/react-query';
 import {
     Tabs,
     TabsProvider,
@@ -10,6 +11,8 @@ import PostsTab from './PostsTab/PostsTab';
 import SettingsTab from './SettingsTab/SettingsTab';
 import { useUser } from '../../hooks/storage-hooks';
 import { useFetchGroup } from '../../hooks/fetch-hooks';
+import { postNonBinaryData } from '../../utils/requests';
+import { useShowDialog, useShowLoader } from '../../hooks';
 import { GroupType, UserType } from '../../typings';
 import { GeoCitiesAvatar, GeoCitiesBodyText, GeoCitiesButton, LoadingIndicator, colors } from '../../components';
 
@@ -27,6 +30,7 @@ type GroupScreenDisplayLayerProps = {
     groupName: string;
     handleChangeIndex: (index: number) => void;
     handleCreatePost: () => void;
+    handleLeaveJoinGroup: () => void;
     isBlocked: boolean;
     isCreator: boolean;
     isLoading: boolean;
@@ -52,6 +56,7 @@ function GroupScreen_DisplayLayer({
     groupName,
     handleChangeIndex,
     handleCreatePost,
+    handleLeaveJoinGroup,
     isBlocked,
     isCreator,
     isLoading,
@@ -98,7 +103,7 @@ function GroupScreen_DisplayLayer({
                     </View>
                     {!isCreator && (
                         <View style={styles.joinButtonContainer}>
-                            <GeoCitiesButton buttonColor={isMember ? colors.white : colors.error} mode={isMember ? 'outlined' : 'contained'} text={isMember ? 'Leave' : 'Join' } />
+                            <GeoCitiesButton buttonColor={isMember ? colors.white : colors.error} mode={isMember ? 'outlined' : 'contained'} onPress={handleLeaveJoinGroup} text={isMember ? 'Leave' : 'Join' } />
                         </View>
                     )}
                     {isMember && (
@@ -141,6 +146,7 @@ function GroupScreen_DisplayLayer({
 }
 
 function useDataLayer({ navigation, route }: GroupScreenProps) {
+    const queryClient = useQueryClient();
     const [refreshing, setRefreshing]= useState(false);
     const { groupName: name } = route.params.group;
     const { settingsIndex } = route.params;
@@ -158,9 +164,14 @@ function useDataLayer({ navigation, route }: GroupScreenProps) {
         members: [],
     };
     const isCreator = creator === userId;
-    const isMember = (members as Array<string>).includes(userId);
+    const isMember = useMemo(() => {
+        return (members as Array<string>).includes(userId);
+    }, [data]);
+   
     const avatarUri = `${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo/${avatar}`;
     const [currentIndex, setCurrentIndex] = useState(0);
+    const { setIsLoading } = useShowLoader();
+    const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError, } = useShowDialog();
 
     const isBlocked = useMemo(() => {
         if (blockList.includes(userId)) {
@@ -175,6 +186,36 @@ function useDataLayer({ navigation, route }: GroupScreenProps) {
 
     function handleCreatePost() {
         navigation.navigate('CreatePost', { group, groupId: _id, groupName, isCommunity: true });
+    }
+
+    async function handleLeaveJoinGroup() {
+        setIsLoading(true);
+
+        await postNonBinaryData({
+            data: {
+                groupName,
+                _id: userId,
+                isLeave: isMember,
+            },
+            uri: 'join-group',
+        }).then(res => {
+            const { isError, message } = res;
+            if (!isError) {
+                queryClient.invalidateQueries(['fetchGroup']);
+            }
+            setIsLoading(false);
+            setDialogMessage(message);
+            setDialogTitle(isError ? 'Whoops!' : 'Success!');
+            setIsError(isError);
+            handleDialogMessageChange(true);
+            return;
+        }).catch(err => {
+            console.log(`There was an error ${isMember ? 'leaving' : 'joining'} a group: ${err.message}`);
+            setIsLoading(false);
+            setDialogMessage(`There was an error ${isMember ? 'leaving' : 'joining'} ${groupName}. Please try again!`);
+            setIsError(true);
+            handleDialogMessageChange(true);
+        });
     }
 
     const onRefresh = useCallback(() => {
@@ -193,6 +234,7 @@ function useDataLayer({ navigation, route }: GroupScreenProps) {
         group,
         handleChangeIndex,
         handleCreatePost,
+        handleLeaveJoinGroup,
         isBlocked,
         isCreator,
         isLoading,
