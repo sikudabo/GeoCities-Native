@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import { RefreshControl, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
-import { useFetchFeedPosts } from '../../hooks/fetch-hooks';
+import { useUser } from '../../hooks/storage-hooks';
+import { useFetchFeedPosts, useFetchUserData } from '../../hooks/fetch-hooks';
 import { PostType } from '../../typings';
 import { colors, GeoCitiesBodyText, LoadingIndicator, PostCard } from '../../components';
 
@@ -61,7 +62,34 @@ function Feed_DisplayLayer({
 
 function useDataLayer({ navigation }: FeedProps) {
     const { data: posts, isLoading } = useFetchFeedPosts();
+    const { user, setUser } = useUser();
+    const { _id } = user;
+    const { data: userData, isLoading: isLoadingUserData } = useFetchUserData({ _id });
+    const { user: fetchedUser } = typeof userData !== 'undefined' && !isLoading ? userData : { user : undefined };
     const [refreshing, setRefreshing] = useState(false);
+    let filteredPosts = [];
+
+    function hidePost(groupName: string | undefined, authorId: string | undefined) {
+        if (groupName) {
+            if (fetchedUser.groupsBlockedFrom.includes(groupName)) {
+                return true;
+            }
+        }
+
+        if (fetchedUser.blockedFrom.includes(authorId)) {
+            return true;
+        }
+
+        return false;
+
+    }
+
+    if (!isLoading && !isLoadingUserData && typeof fetchedUser !== 'undefined') {
+        filteredPosts = posts.filter((post: { groupName: string | undefined; authorId: string }) => !hidePost(post.groupName, post.authorId));
+        // let newUser = fetchedUser;
+        // newUser.isLoggedIn = true;
+        // setUser(newUser);
+    }
 
     const onRefresh = useCallback(() => {
         setRefreshing(true);
@@ -73,7 +101,7 @@ function useDataLayer({ navigation }: FeedProps) {
     return {
         isLoading,
         onRefresh,
-        posts: !isLoading && typeof posts !== 'undefined' ? posts : [],
+        posts: !isLoading && typeof filteredPosts !== 'undefined' ? filteredPosts : [],
         refreshing,
     };
 }
