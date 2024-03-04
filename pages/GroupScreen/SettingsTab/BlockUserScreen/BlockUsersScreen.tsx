@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useQueryClient } from '@tanstack/react-query';
-import { Surface, TextInput } from 'react-native-paper';
-import { Autocomplete, FlatDropdown, ModalDropdown } from '@telenko/react-native-paper-autocomplete';
-import { GroupType, UserType } from '../../../../typings';
+import { TextInput } from 'react-native-paper';
+import { Autocomplete, FlatDropdown } from '@telenko/react-native-paper-autocomplete';
+import { GroupType } from '../../../../typings';
 import { postNonBinaryData } from '../../../../utils/requests';
 import { useFetchAllUsers } from '../../../../hooks/fetch-hooks';
 import { useUser } from '../../../../hooks/storage-hooks';
@@ -24,7 +24,6 @@ type BlockUsersScreenDisplayLayerProps = {
     isLoading: boolean;
     options: { label: string; value: string; }[];
     selectedUser: any;
-    users: Array<UserType>;
 };
 
 type DataLayerProps = {
@@ -49,7 +48,6 @@ function BlockUsersScreen_DisplayLayer({
     isLoading,
     options,
     selectedUser,
-    users,
 }: BlockUsersScreenDisplayLayerProps) {
 
     if (isLoading) {
@@ -134,7 +132,6 @@ function useDataLayer({
     const [inputVal, setInputVal] = useState(selectedUser);
     
     function handleAutocompleteChange(props: any) {
-        console.log('The props are:', props);
         setSelectedUser(props);
         setInputVal(props);
     }
@@ -198,7 +195,6 @@ function useDataLayer({
         isLoading,
         options,
         selectedUser,
-        users: typeof users !== 'undefined' && !isLoading ? users : [],
     }
 }
 
