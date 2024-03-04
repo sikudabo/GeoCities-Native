@@ -69,7 +69,7 @@ function BlockUsersScreen_DisplayLayer({
                     icon={() => <GeoCitiesDropdownArrow color={colors.white} height={200} width={200} />}
                     inputValue={selectedUser}
                     onChange={handleAutocompleteChange}
-                    renderDropdown={(props) => <FlatDropdown activeOutlineColor={colors.salmonPink} label="Users" mode="outlined" onChange={handleInputValChange} outlineColor={colors.salmonPink} placeholder="Users..." {...props} right={<TextInput.Icon icon="arrow-down-circle" />} value={inputVal} openOnMount />}
+                    renderDropdown={(props) => <FlatDropdown activeOutlineColor={colors.salmonPink} label="Users" mode="outlined" onChange={handleInputValChange} outlineColor={colors.salmonPink} placeholder="Users..." {...props} right={<TextInput.Icon icon="arrow-down-circle" />} value={inputVal} />}
                     renderOption={({ onSelect }, { avatarPath, fullName }) => {
                         return (
                             <TouchableOpacity onPress={onSelect} style={styles.dropdownItemContainer}>
