@@ -8,9 +8,9 @@ import {
 import AboutTab from './AboutTab/AboutTab';
 import PostsTab from './PostsTab/PostsTab';
 import SettingsTab from './SettingsTab/SettingsTab';
-import { GroupType } from '../../typings';
 import { useUser } from '../../hooks/storage-hooks';
 import { useFetchGroup } from '../../hooks/fetch-hooks';
+import { GroupType, UserType } from '../../typings';
 import { GeoCitiesAvatar, GeoCitiesBodyText, GeoCitiesButton, LoadingIndicator, colors } from '../../components';
 
 type GroupScreenProps = {
@@ -20,6 +20,7 @@ type GroupScreenProps = {
 
 type GroupScreenDisplayLayerProps = {
     avatarUri: string;
+    blockedUsers: Array<UserType>;
     currentIndex: number;
     description: string;
     group: GroupType;
@@ -43,6 +44,7 @@ export default function GroupScreen({
 
 function GroupScreen_DisplayLayer({
     avatarUri,
+    blockedUsers,
     currentIndex,
     description,
     group,
@@ -118,7 +120,7 @@ function GroupScreen_DisplayLayer({
                         <AboutTab group={group} />
                     )}
                     {currentIndex === 2 && (
-                        <SettingsTab group={group} />
+                        <SettingsTab blockedUsers={blockedUsers} group={group} />
                     )}
                 </ScrollView>
             </SafeAreaView>
@@ -165,6 +167,7 @@ function useDataLayer({ navigation, route }: GroupScreenProps) {
     
     return {
         avatarUri,
+        blockedUsers,
         currentIndex,
         description,
         groupName,

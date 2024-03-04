@@ -6,18 +6,19 @@ import { useQueryClient } from '@tanstack/react-query';
 import { HelperText, TextInput } from 'react-native-paper';
 import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
-import { GroupType } from '../../../typings';
 import { topics } from '../../../utils/constants';
-import { GeoCitiesBodyText, GeoCitiesButton, GeoCitiesDeleteIcon, colors } from '../../../components';
+import { GroupType, UserType } from '../../../typings';
+import { GeoCitiesAvatar, GeoCitiesBodyText, GeoCitiesButton, GeoCitiesDeleteIcon, colors } from '../../../components';
 import { postNonBinaryData, putNonBinaryData } from '../../../utils/requests';
 import { useShowDialog, useShowLoader } from '../../../hooks';
 
 
 type SettingsTabProps = {
+    blockedUsers: Array<UserType>;
     group: GroupType;
 };
 
-type SettingsTabDisplayLayerProps = {
+type SettingsTabDisplayLayerProps = Pick<SettingsTabProps, 'blockedUsers'> & {
     description: string;
     groupTopics: {
         label: string;
@@ -37,11 +38,12 @@ type SettingsTabDisplayLayerProps = {
     topic: string;
 };
 
-export default function SettingsTab({ group }: SettingsTabProps) {
-    return <SettingsTab_DisplayLayer {...useDataLayer(group)} />;
+export default function SettingsTab({ blockedUsers, group }: SettingsTabProps) {
+    return <SettingsTab_DisplayLayer blockedUsers={blockedUsers} {...useDataLayer(group)} />;
 }
 
 function SettingsTab_DisplayLayer({
+    blockedUsers,
     description,
     groupTopics,
     handleBlockUsersClick,
@@ -112,6 +114,29 @@ function SettingsTab_DisplayLayer({
             <View style={styles.blockUserButtonContainer}>
                 <GeoCitiesButton buttonColor={colors.error} icon="cancel" onPress={handleBlockUsersClick} text="Block" />
             </View>
+            {typeof blockedUsers !== 'undefined' && blockedUsers.length > 0 && (
+                <View style={styles.blockedUsersListSection}>
+                    <View style={styles.blockedUsersTitleContainer}>
+                        <GeoCitiesBodyText color={colors.white} fontSize={20} fontWeight={900} text="Blocked Users" />
+                    </View>
+                    {blockedUsers.map((user, index) => (
+                        <View
+                            key={index}
+                            style={styles.userContainer}
+                        >
+                            <View>
+                                <GeoCitiesAvatar size={50} src={`${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo/${user.avatar}`} />
+                            </View>
+                            <View style={styles.userNameContainer}>
+                                <GeoCitiesBodyText color={colors.white} fontSize={12} fontWeight='normal' text={`${user.firstName} ${user.lastName}`} />
+                            </View>
+                            <View style={styles.unBlockButtonContainer}>
+                                <GeoCitiesButton buttonColor={colors.salmonPink} mode="outlined" text="Unblock" />
+                            </View>
+                        </View>
+                    ))}
+                </View>
+            )}
             <View style={styles.blockUserButtonContainer}>
                 <GeoCitiesButton buttonColor={colors.white} icon="camera" text="Avatar" />
             </View>
@@ -346,6 +371,14 @@ const styles = StyleSheet.create({
         paddingRight: 10,
         paddingTop: 20,
     },
+    blockedUsersListSection: {
+        paddingTop: 20,
+    },
+    blockedUsersTitleContainer: {
+        alignItems: 'center',
+        paddingBottom: 30,
+        width: '100%',
+    },
     captionInput: {
         height: 100,
         paddingBottom: 5,
@@ -391,4 +424,18 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingBottom: 20,
     },
+    unBlockButtonContainer: {
+        marginLeft: 'auto',
+    },
+    userContainer: {
+        columnGap: 20,
+        display: 'flex',
+        flexDirection: 'row',
+        paddingBottom: 20,
+        paddingLeft: 10,
+        paddingRight: 10,
+    },
+    userNameContainer: {
+        paddingTop: 10,
+    }
 });
