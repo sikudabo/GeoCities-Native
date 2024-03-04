@@ -180,8 +180,10 @@ function useDataLayer(group: GroupType) {
                 blockList: newBlockList,
                 description,
                 groupName,
+                isUnblocking: true,
                 rules,
                 topic,
+                userId: _id,
             },
             uri: 'update-group',
         }).then(res => {
