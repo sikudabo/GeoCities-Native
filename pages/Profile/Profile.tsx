@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { RefreshControl, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import millify from 'millify';
 import truncate from 'lodash/truncate';
@@ -13,7 +13,7 @@ import {
 } from 'react-native-paper-tabs';
 import ProfileAboutTabs from './tabs/ProfileAboutTab';
 import ProfilePostsTab from './tabs/ProfilePostsTab';
-import { GeoCitiesAvatar, GeoCitiesBodyText, GeoCitiesMarkerIcon, colors } from '../../components';
+import { GeoCitiesAvatar, GeoCitiesBodyText, GeoCitiesButton, GeoCitiesMarkerIcon, colors } from '../../components';
 import { useUser } from '../../hooks/storage-hooks';
 import { useFetchUserData } from '../../hooks/fetch-hooks';
 import { GroupType, UserType } from '../../typings';
@@ -32,6 +32,7 @@ type ProfileDisplayLayerProps = {
     fullName: string;
     handleChangeIndex: (index: number) => void;
     handleNavigation: () => void;
+    isFollowing: boolean;
     isVisitor: boolean | undefined;
     onRefresh: () => void;
     refreshing: boolean;
@@ -59,6 +60,7 @@ function Profile_DisplayLayer({
     fullName,
     handleChangeIndex,
     handleNavigation,
+    isFollowing,
     isVisitor,
     onRefresh,
     refreshing,
@@ -98,6 +100,11 @@ function Profile_DisplayLayer({
                         <GeoCitiesMarkerIcon color={colors.salmonPink} height={25} width={30} />
                         <GeoCitiesBodyText color={colors.white} text={truncate(userLocation, { length: 40 })} />
                     </View>
+                    {isVisitor && (
+                        <View style={styles.followButtonContainer}>
+                            <GeoCitiesButton buttonColor={isFollowing ? colors.error : colors.salmonPink} mode={isFollowing ? 'contained' : 'outlined'} text={isFollowing ? 'Unfollow' : 'Follow'} />
+                        </View>
+                    )}
                     <View style={styles.tabsSectionContainer}>
                         <TabsProvider defaultIndex={0} onChangeIndex={handleChangeIndex}>
                             <Tabs style={styles.tabsStyle} tabLabelStyle={styles.tabLabel} disableSwipe>
@@ -132,7 +139,8 @@ function useDataLayer({ navigation, route }: ProfileProps) {
     const { isVisitor, userId } = typeof route.params !== 'undefined' ? route.params : { isVisitor: false, userId: undefined };
     const { user, setUser } = useUser();
     const { _id } = user;
-    const { data, isLoading } = useFetchUserData({ _id });
+    const idToUse = isVisitor ? userId : _id;
+    const { data, isLoading } = useFetchUserData({ _id: idToUse });
     const { user: currentUser, userGroups } = typeof data !== 'undefined' && !isLoading ? data : { user: undefined, userGroups: [] };
     const { avatar, firstName, followers, following, lastName, locationCity, locationState } = user;
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -140,6 +148,15 @@ function useDataLayer({ navigation, route }: ProfileProps) {
     const followerCount = followers.length;
     const followingCount = following.length;
     const userLocation = `${locationCity}, ${locationState}`;
+    
+    const isFollowing = useMemo(() => {
+        if (typeof followers !== 'undefined' && isVisitor && followers.includes(_id)) {
+            return true;
+        }
+
+        return false;
+    }, [followers]);
+    
 
     const onRefresh = useCallback(() => {
         setRefreshing(true);
@@ -154,8 +171,10 @@ function useDataLayer({ navigation, route }: ProfileProps) {
         }
         let updatedUser = currentUser;
         updatedUser.isLoggedIn = true;
-        setUser(updatedUser);
-    }, [currentUser]);
+        if (!isVisitor) {
+            setUser(updatedUser);
+        }
+    }, [currentUser, isVisitor]);
 
 
     function handleNavigation() {
@@ -179,6 +198,7 @@ function useDataLayer({ navigation, route }: ProfileProps) {
         fullName: `${firstName} ${lastName}`,
         handleChangeIndex,
         handleNavigation,
+        isFollowing,
         isVisitor,
         onRefresh,
         refreshing,
@@ -211,6 +231,12 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'column',
         rowGap: 2,
+    },
+    followButtonContainer: {
+        paddingLeft: 10,
+        paddingRight: 10,
+        paddingTop: 30,
+        width: '100%',
     },
     locationSection: {
         columnGap: 10,
