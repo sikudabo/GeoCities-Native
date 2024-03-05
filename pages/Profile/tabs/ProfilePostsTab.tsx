@@ -7,6 +7,7 @@ import { GeoCitiesBodyText, GeoCitiesButton, LoadingIndicator, PostCard, colors 
 
 type ProfilePostsTabProps = {
     createButtonNavigator: () => void;
+    isVisitor: boolean | undefined;
 };
 
 type ProfilePostsTabDisplayLayerProps = ProfilePostsTabProps & {
@@ -16,13 +17,15 @@ type ProfilePostsTabDisplayLayerProps = ProfilePostsTabProps & {
 
 export default function ProfilePostsTab({
     createButtonNavigator,
+    isVisitor,
 }: ProfilePostsTabProps) {
-    return <ProfilePostsTab_DisplayLayer createButtonNavigator={createButtonNavigator} {...useDataLayer()} />;
+    return <ProfilePostsTab_DisplayLayer createButtonNavigator={createButtonNavigator} isVisitor={isVisitor} {...useDataLayer()} />;
 }
 
 function ProfilePostsTab_DisplayLayer({
     createButtonNavigator,
     isLoading,
+    isVisitor,
     posts,
 }: ProfilePostsTabDisplayLayerProps) {
     if (isLoading) {
@@ -31,9 +34,11 @@ function ProfilePostsTab_DisplayLayer({
 
     return (
         <View style={styles.container}>
-            <View style={styles.createPostButtonContainer}>
-                <GeoCitiesButton buttonColor={colors.salmonPink} icon="pencil" onPress={createButtonNavigator} text="Create" textColor={colors.black} />
-            </View>
+            {!isVisitor && (
+                <View style={styles.createPostButtonContainer}>
+                    <GeoCitiesButton buttonColor={colors.salmonPink} icon="pencil" onPress={createButtonNavigator} text="Create" textColor={colors.black} />
+                </View>
+            )}
             <View style={styles.postsSection}>
                 {posts.map((post, index) => (
                     <PostCard 

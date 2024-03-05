@@ -20,6 +20,7 @@ import { GroupType, UserType } from '../../typings';
 
 type ProfileProps = {
     navigation: any;
+    route: any;
 }
 
 type ProfileDisplayLayerProps = {
@@ -31,6 +32,7 @@ type ProfileDisplayLayerProps = {
     fullName: string;
     handleChangeIndex: (index: number) => void;
     handleNavigation: () => void;
+    isVisitor: boolean | undefined;
     onRefresh: () => void;
     refreshing: boolean;
     user: UserType;
@@ -44,8 +46,8 @@ type NavigationProps = {
     };
 };
 
-export default function Profile({ navigation }: ProfileProps) {
-    return <Profile_DisplayLayer {...useDataLayer({ navigation })} />;
+export default function Profile({ navigation, route }: ProfileProps) {
+    return <Profile_DisplayLayer {...useDataLayer({ navigation, route })} />;
 }
 
 function Profile_DisplayLayer({
@@ -57,6 +59,7 @@ function Profile_DisplayLayer({
     fullName,
     handleChangeIndex,
     handleNavigation,
+    isVisitor,
     onRefresh,
     refreshing,
     user,
@@ -114,7 +117,7 @@ function Profile_DisplayLayer({
                     </View>
                     <View>
                        {currentIndex === 0 ? (
-                            <ProfilePostsTab createButtonNavigator={createPostNavigation} />
+                            <ProfilePostsTab createButtonNavigator={createPostNavigation} isVisitor={isVisitor} />
                        ): currentIndex === 1 ? (
                             <ProfileAboutTabs user={user} userGroups={userGroups} />
                        ): null}
@@ -125,7 +128,8 @@ function Profile_DisplayLayer({
     );
 }
 
-function useDataLayer({ navigation }: ProfileProps) {
+function useDataLayer({ navigation, route }: ProfileProps) {
+    const { isVisitor, userId } = typeof route.params !== 'undefined' ? route.params : { isVisitor: false, userId: undefined };
     const { user, setUser } = useUser();
     const { _id } = user;
     const { data, isLoading } = useFetchUserData({ _id });
@@ -175,6 +179,7 @@ function useDataLayer({ navigation }: ProfileProps) {
         fullName: `${firstName} ${lastName}`,
         handleChangeIndex,
         handleNavigation,
+        isVisitor,
         onRefresh,
         refreshing,
         user,
