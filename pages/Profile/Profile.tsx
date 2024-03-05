@@ -185,11 +185,12 @@ function useDataLayer({ navigation, route }: ProfileProps) {
         if (!currentUser) {
             return;
         }
+    
         let updatedUser = currentUser;
         updatedUser.isLoggedIn = true;
-        /* if (!isVisitor) {
+        if (currentUser._id === _id) {
             setUser(updatedUser);
-        }*/
+        }
     }, [currentUser, isVisitor]);
 
 
