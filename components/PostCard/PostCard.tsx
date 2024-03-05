@@ -43,6 +43,7 @@ type PostCardDisplayLayerProps = {
     isCommentsScreen?: boolean;
     isPostAuthor: boolean;
     link?: string;
+    navigateToProfile: () => void;
     numberOfComments: number;
     numberOfLikes: number;
     openUrl: () => void;
@@ -72,6 +73,7 @@ function PostCard_DisplayLayer({
     isCommentsScreen = false,
     isPostAuthor,
     link,
+    navigateToProfile,
     numberOfComments,
     numberOfLikes,
     openUrl,
@@ -161,7 +163,9 @@ function PostCard_DisplayLayer({
     return (
         <Surface elevation={4} style={styles.cardContainer}>
             <View style={styles.topCardSection}>
-                <GeoCitiesAvatar size={50} src={`${process.env.EXPO_PUBLIC_API_BASE_URI}${postOriginType === 'profile' ? `get-photo-by-user-id/${authorId}` : `get-avatar-by-group-name/${groupName}`}`} />
+                <TouchableOpacity onPress={postOriginType === 'profile' ? navigateToProfile : undefined}>
+                    <GeoCitiesAvatar size={50} src={`${process.env.EXPO_PUBLIC_API_BASE_URI}${postOriginType === 'profile' ? `get-photo-by-user-id/${authorId}` : `get-avatar-by-group-name/${groupName}`}`} />
+                </TouchableOpacity>
                 <View style={styles.topSectionNameContainer}>
                     {postOriginType === 'community' && (
                         <GeoCitiesBodyText color={colors.white} fontSize={14} fontWeight={900} text={groupName as string} />
@@ -271,6 +275,10 @@ function useDataLayer({ post, renderedFrom }: DataLayerProps) {
     const videoRef: any = useRef(null);
     const { setIsLoading } = useShowLoader();
     const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError } = useShowDialog();
+
+    function navigateToProfile() {
+        navigation.navigate('Profile', { isVisitor: !isPostAuthor, userId: !isPostAuthor ? authorId : undefined });
+    }
 
     async function deletePost() {
         setIsLoading(true);
@@ -415,6 +423,7 @@ function useDataLayer({ post, renderedFrom }: DataLayerProps) {
         hasLikedPost: hasLikedPost(),
         isPostAuthor,
         link,
+        navigateToProfile,
         numberOfComments,
         numberOfLikes,
         openUrl,

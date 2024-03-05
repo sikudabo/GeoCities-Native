@@ -8,9 +8,10 @@ import { GeoCitiesBodyText, GeoCitiesButton, LoadingIndicator, PostCard, colors 
 type ProfilePostsTabProps = {
     createButtonNavigator: () => void;
     isVisitor: boolean | undefined;
+    userId: string | undefined;
 };
 
-type ProfilePostsTabDisplayLayerProps = ProfilePostsTabProps & {
+type ProfilePostsTabDisplayLayerProps = Omit<ProfilePostsTabProps, 'userId'>& {
     isLoading: boolean;
     posts: Array<PostType>;
 };
@@ -18,8 +19,9 @@ type ProfilePostsTabDisplayLayerProps = ProfilePostsTabProps & {
 export default function ProfilePostsTab({
     createButtonNavigator,
     isVisitor,
+    userId,
 }: ProfilePostsTabProps) {
-    return <ProfilePostsTab_DisplayLayer createButtonNavigator={createButtonNavigator} isVisitor={isVisitor} {...useDataLayer()} />;
+    return <ProfilePostsTab_DisplayLayer createButtonNavigator={createButtonNavigator} isVisitor={isVisitor} {...useDataLayer(userId)} />;
 }
 
 function ProfilePostsTab_DisplayLayer({
@@ -51,10 +53,11 @@ function ProfilePostsTab_DisplayLayer({
     );
 }
 
-function useDataLayer() {
+function useDataLayer(userId: string | undefined) {
     const { user } = useUser();
     const { _id } = user;
-    const { data: posts, isLoading } = useFetchUserProfilePosts({ _id });
+    const idToUse = typeof userId !== 'undefined' ? userId : _id;
+    const { data: posts, isLoading } = useFetchUserProfilePosts({ _id: idToUse });
     
     return {
         isLoading,

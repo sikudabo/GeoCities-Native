@@ -13,7 +13,7 @@ import {
 } from 'react-native-paper-tabs';
 import ProfileAboutTabs from './tabs/ProfileAboutTab';
 import ProfilePostsTab from './tabs/ProfilePostsTab';
-import { GeoCitiesAvatar, GeoCitiesBodyText, GeoCitiesButton, GeoCitiesMarkerIcon, colors } from '../../components';
+import { GeoCitiesAvatar, GeoCitiesBodyText, GeoCitiesButton, GeoCitiesMarkerIcon, LoadingIndicator, colors } from '../../components';
 import { useUser } from '../../hooks/storage-hooks';
 import { useFetchUserData } from '../../hooks/fetch-hooks';
 import { GroupType, UserType } from '../../typings';
@@ -33,11 +33,13 @@ type ProfileDisplayLayerProps = {
     handleChangeIndex: (index: number) => void;
     handleNavigation: () => void;
     isFollowing: boolean;
+    isLoading: boolean;
     isVisitor: boolean | undefined;
     onRefresh: () => void;
     refreshing: boolean;
     user: UserType;
     userGroups: Array<GroupType>;
+    userId: string | undefined;
     userLocation: string;
 };
 
@@ -61,13 +63,19 @@ function Profile_DisplayLayer({
     handleChangeIndex,
     handleNavigation,
     isFollowing,
+    isLoading,
     isVisitor,
     onRefresh,
     refreshing,
     user,
     userGroups,
+    userId,
     userLocation,
 }: ProfileDisplayLayerProps) {
+    if (isLoading || !user.avatar) {
+        return <LoadingIndicator />;
+    }
+
     return (
         <View style={styles.container}>
             <SafeAreaView style={styles.safeAreaContainer}>
@@ -124,7 +132,7 @@ function Profile_DisplayLayer({
                     </View>
                     <View>
                        {currentIndex === 0 ? (
-                            <ProfilePostsTab createButtonNavigator={createPostNavigation} isVisitor={isVisitor} />
+                            <ProfilePostsTab createButtonNavigator={createPostNavigation} isVisitor={isVisitor} userId={userId} />
                        ): currentIndex === 1 ? (
                             <ProfileAboutTabs user={user} userGroups={userGroups} />
                        ): null}
@@ -142,7 +150,15 @@ function useDataLayer({ navigation, route }: ProfileProps) {
     const idToUse = isVisitor ? userId : _id;
     const { data, isLoading } = useFetchUserData({ _id: idToUse });
     const { user: currentUser, userGroups } = typeof data !== 'undefined' && !isLoading ? data : { user: undefined, userGroups: [] };
-    const { avatar, firstName, followers, following, lastName, locationCity, locationState } = user;
+    const { avatar, firstName, followers, following, lastName, locationCity, locationState } = typeof currentUser !== 'undefined' ? currentUser : {
+        avatar: '',
+        firstName: '',
+        followers: [],
+        following: [],
+        lastName: '',
+        locationCity: '',
+        locationState: '',
+    }
     const [currentIndex, setCurrentIndex] = useState(0);
     const [refreshing, setRefreshing] = useState(false);
     const followerCount = followers.length;
@@ -199,11 +215,13 @@ function useDataLayer({ navigation, route }: ProfileProps) {
         handleChangeIndex,
         handleNavigation,
         isFollowing,
+        isLoading,
         isVisitor,
         onRefresh,
         refreshing,
-        user,
+        user: currentUser,
         userGroups,
+        userId,
         userLocation,
     };
 }
