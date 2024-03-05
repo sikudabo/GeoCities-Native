@@ -43,6 +43,7 @@ type PostCardDisplayLayerProps = {
     isCommentsScreen?: boolean;
     isPostAuthor: boolean;
     link?: string;
+    navigateToGroup: () => void;
     navigateToProfile: () => void;
     numberOfComments: number;
     numberOfLikes: number;
@@ -73,6 +74,7 @@ function PostCard_DisplayLayer({
     isCommentsScreen = false,
     isPostAuthor,
     link,
+    navigateToGroup,
     navigateToProfile,
     numberOfComments,
     numberOfLikes,
@@ -110,6 +112,8 @@ function PostCard_DisplayLayer({
             marginBottom: isCommentsScreen ? 0 : 20,
             paddingLeft: 10,
             paddingRight: 10,
+        },
+        groupNameContainer: {
         },
         imageContainer: {
             paddingTop: 20,
@@ -163,12 +167,14 @@ function PostCard_DisplayLayer({
     return (
         <Surface elevation={4} style={styles.cardContainer}>
             <View style={styles.topCardSection}>
-                <TouchableOpacity onPress={postOriginType === 'profile' ? navigateToProfile : undefined}>
+                <TouchableOpacity onPress={postOriginType === 'profile' ? navigateToProfile : navigateToGroup}>
                     <GeoCitiesAvatar size={50} src={`${process.env.EXPO_PUBLIC_API_BASE_URI}${postOriginType === 'profile' ? `get-photo-by-user-id/${authorId}` : `get-avatar-by-group-name/${groupName}`}`} />
                 </TouchableOpacity>
                 <View style={styles.topSectionNameContainer}>
                     {postOriginType === 'community' && (
-                        <GeoCitiesBodyText color={colors.white} fontSize={14} fontWeight={900} text={groupName as string} />
+                        <TouchableOpacity onPress={navigateToGroup} style={styles.groupNameContainer}>
+                            <GeoCitiesBodyText color={colors.white} fontSize={14} fontWeight={900} text={groupName as string} />
+                        </TouchableOpacity>
                     )}
                     <TouchableOpacity onPress={navigateToProfile}>
                         <GeoCitiesBodyText color={colors.white} fontSize={14} fontWeight={900} text={userName} />
@@ -280,6 +286,12 @@ function useDataLayer({ post, renderedFrom }: DataLayerProps) {
 
     function navigateToProfile() {
         navigation.navigate('Profile', { isVisitor: !isPostAuthor, userId: !isPostAuthor ? authorId : undefined });
+        return;
+    }
+
+    function navigateToGroup() {
+        navigation.navigate('GroupScreen', { group: { groupName }});
+        return;
     }
 
     async function deletePost() {
@@ -425,6 +437,7 @@ function useDataLayer({ post, renderedFrom }: DataLayerProps) {
         hasLikedPost: hasLikedPost(),
         isPostAuthor,
         link,
+        navigateToGroup,
         navigateToProfile,
         numberOfComments,
         numberOfLikes,
