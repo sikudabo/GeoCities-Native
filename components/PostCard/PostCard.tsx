@@ -170,7 +170,9 @@ function PostCard_DisplayLayer({
                     {postOriginType === 'community' && (
                         <GeoCitiesBodyText color={colors.white} fontSize={14} fontWeight={900} text={groupName as string} />
                     )}
-                    <GeoCitiesBodyText color={colors.white} fontSize={14} fontWeight={900} text={userName} />
+                    <TouchableOpacity onPress={navigateToProfile}>
+                        <GeoCitiesBodyText color={colors.white} fontSize={14} fontWeight={900} text={userName} />
+                    </TouchableOpacity>
                 </View>
                 <View style={styles.topSectionDateContainer}>
                     <GeoCitiesBodyText color={colors.white} fontSize={14} text={postTimeDifference(createdAt)} />

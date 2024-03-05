@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import truncate from 'lodash/truncate';
 import { StyleSheet, View } from 'react-native';
+import { useQueryClient } from '@tanstack/react-query';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Drawer, Title } from 'react-native-paper';
 import { DrawerItem, DrawerContentScrollView } from '@react-navigation/drawer';
@@ -13,6 +14,7 @@ export default function GeoCitiesNavigationDrawer({ navigation }: { navigation: 
     const { clearUser, user } = useUser();
     const { avatar, geoScore, firstName, lastName } = user;
     const fullName = `${firstName} ${lastName}`;
+    const queryClient = useQueryClient();
     const styles = StyleSheet.create({
         container: {
             backgroundColor: colors.white,
@@ -37,6 +39,11 @@ export default function GeoCitiesNavigationDrawer({ navigation }: { navigation: 
             paddingLeft: 20,
         }
     });
+
+    function handleProfileNavigation() {
+        queryClient.invalidateQueries(['fetchProfilePosts']);
+        navigation.navigate('Profile');
+    }
 
     function handleLogout() {
         clearUser();
@@ -66,7 +73,7 @@ export default function GeoCitiesNavigationDrawer({ navigation }: { navigation: 
                             />
                         )}
                         label="Profile"
-                        onPress={() => navigation.navigate('Profile')}
+                        onPress={handleProfileNavigation}
                     />
                     <DrawerItem 
                         icon={() => (

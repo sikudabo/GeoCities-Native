@@ -19,7 +19,8 @@ export default function useFetchUserProfilePosts({ _id }: UseFetchUserProfilePos
 
         return posts;
     }, {
-        refetchInterval: 600000,
+        refetchInterval: 1000,
         refetchOnMount: true,
+        staleTime: 1000,
     });
 }

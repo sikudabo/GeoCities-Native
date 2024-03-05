@@ -187,9 +187,9 @@ function useDataLayer({ navigation, route }: ProfileProps) {
         }
         let updatedUser = currentUser;
         updatedUser.isLoggedIn = true;
-        if (!isVisitor) {
+        /* if (!isVisitor) {
             setUser(updatedUser);
-        }
+        }*/
     }, [currentUser, isVisitor]);
 
 
@@ -221,7 +221,7 @@ function useDataLayer({ navigation, route }: ProfileProps) {
         refreshing,
         user: currentUser,
         userGroups,
-        userId,
+        userId: idToUse,
         userLocation,
     };
 }
