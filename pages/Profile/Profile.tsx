@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { RefreshControl, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import millify from 'millify';
 import truncate from 'lodash/truncate';
+import { useQueryClient } from '@tanstack/react-query';
 import { Divider } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import {
@@ -14,6 +15,8 @@ import {
 import ProfileAboutTabs from './tabs/ProfileAboutTab';
 import ProfilePostsTab from './tabs/ProfilePostsTab';
 import { GeoCitiesAvatar, GeoCitiesBodyText, GeoCitiesButton, GeoCitiesMarkerIcon, LoadingIndicator, colors } from '../../components';
+import { postNonBinaryData } from '../../utils/requests';
+import { useShowDialog, useShowLoader } from '../../hooks';
 import { useUser } from '../../hooks/storage-hooks';
 import { useFetchUserData } from '../../hooks/fetch-hooks';
 import { GroupType, UserType } from '../../typings';
@@ -31,6 +34,7 @@ type ProfileDisplayLayerProps = {
     followingCount: number;
     fullName: string;
     handleChangeIndex: (index: number) => void;
+    handleFollowUnfollowPress: () => void;
     handleNavigation: () => void;
     isFollowing: boolean;
     isLoading: boolean;
@@ -61,6 +65,7 @@ function Profile_DisplayLayer({
     followingCount,
     fullName,
     handleChangeIndex,
+    handleFollowUnfollowPress,
     handleNavigation,
     isFollowing,
     isLoading,
@@ -110,7 +115,7 @@ function Profile_DisplayLayer({
                     </View>
                     {isVisitor && (
                         <View style={styles.followButtonContainer}>
-                            <GeoCitiesButton buttonColor={isFollowing ? colors.error : colors.salmonPink} mode={isFollowing ? 'contained' : 'outlined'} text={isFollowing ? 'Unfollow' : 'Follow'} />
+                            <GeoCitiesButton buttonColor={isFollowing ? colors.error : colors.salmonPink} mode={isFollowing ? 'contained' : 'outlined'} onPress={handleFollowUnfollowPress} text={isFollowing ? 'Unfollow' : 'Follow'} />
                         </View>
                     )}
                     <View style={styles.tabsSectionContainer}>
@@ -164,6 +169,9 @@ function useDataLayer({ navigation, route }: ProfileProps) {
     const followerCount = followers.length;
     const followingCount = following.length;
     const userLocation = `${locationCity}, ${locationState}`;
+    const queryClient = useQueryClient();
+    const { setIsLoading } = useShowLoader();
+    const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError, } = useShowDialog();
     
     const isFollowing = useMemo(() => {
         if (typeof followers !== 'undefined' && isVisitor && followers.includes(_id)) {
@@ -206,6 +214,43 @@ function useDataLayer({ navigation, route }: ProfileProps) {
         navigation.navigate('CreatePost', { isCommunity: false });
     }
 
+    async function handleFollowUnfollowPress() {
+        setIsLoading(true);
+
+        await postNonBinaryData({
+            data: {
+                _id: idToUse,
+                followerId: _id,
+                isFollow: !isFollowing,
+
+            },
+            uri: 'follow-unfollow-user',
+        }).then(res => {
+            const { isError, message } = res;
+            setIsLoading(false);
+
+            if(!isError) {
+                queryClient.invalidateQueries(['fetchUser'])
+            }
+
+            if (isError) {
+                setDialogMessage(message);
+                setDialogTitle('Uh Oh!');
+                setIsError(true);
+                handleDialogMessageChange(true);
+                return;
+            }
+        }).catch(err => {
+            setIsLoading(false);
+            console.log(`There was an error ${isFollowing ? 'unfollowing' : 'following'} this user: ${err.message}`);
+            setDialogMessage(`There was an error ${isFollowing ? 'unfollowing' : 'following'} this user. Please try again!`);
+            setDialogTitle('Uh Oh!');
+            setIsError(true);
+            handleDialogMessageChange(true);
+            return;
+        });
+    }
+
     return {
         avatar,
         createPostNavigation,
@@ -214,6 +259,7 @@ function useDataLayer({ navigation, route }: ProfileProps) {
         followingCount,
         fullName: `${firstName} ${lastName}`,
         handleChangeIndex,
+        handleFollowUnfollowPress,
         handleNavigation,
         isFollowing,
         isLoading,
