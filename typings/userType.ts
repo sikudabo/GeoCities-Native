@@ -19,4 +19,6 @@ export type UserType = {
     groupsBlockedFrom: Array<string>;
     groups: Array<string>;
     userGroups: Array<GroupType>;
+    events: Array<string>;
+    eventsAttending: Array<string>;
 };
