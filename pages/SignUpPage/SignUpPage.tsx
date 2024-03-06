@@ -13,7 +13,7 @@ import { putBinaryData } from '../../utils/requests';
 import { checkValidAge, checkValidEmail, formatUserBirthday } from '../../utils/helpers';
 import { GeoCitiesButton, GeoCitiesLogo, colors } from '../../components';
 
-type StateObjectType = {
+export type StateObjectType = {
     label: string;
     value: string;
 }

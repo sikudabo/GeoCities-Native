@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Keyboard, KeyboardAvoidingView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Dropdown from 'react-native-paper-dropdown';
 import { useNavigation } from '@react-navigation/native';
 import { useQueryClient } from '@tanstack/react-query';
@@ -9,7 +9,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { topics } from '../../../utils/constants';
 import { GroupType, UserType } from '../../../typings';
 import { GeoCitiesAvatar, GeoCitiesBodyText, GeoCitiesButton, GeoCitiesDeleteIcon, colors } from '../../../components';
-import { postNonBinaryData, putNonBinaryData } from '../../../utils/requests';
+import { postNonBinaryData } from '../../../utils/requests';
 import { useShowDialog, useShowLoader } from '../../../hooks';
 
 
@@ -35,7 +35,6 @@ type SettingsTabDisplayLayerProps = Pick<SettingsTabProps, 'blockedUsers'> & {
     rules?: Array<string>;
     setShowDropdown: React.Dispatch<React.SetStateAction<boolean>>;
     showDropdown: boolean;
-    setTopic: React.Dispatch<React.SetStateAction<string>>;
     takePicture: () => void;
     topic: string;
 };
@@ -58,7 +57,6 @@ function SettingsTab_DisplayLayer({
     handleUnblockUser,
     rules,
     setShowDropdown,
-    setTopic,
     showDropdown,
     takePicture,
     topic,
@@ -426,7 +424,6 @@ function useDataLayer(group: GroupType) {
         handleTopicChange,
         handleUnblockUser,
         rules,
-        setTopic: setCurrentTopic,
         setShowDropdown,
         showDropdown,
         takePicture,

@@ -21,7 +21,7 @@ import {
   LoginCreateStack,
   PostComments,
   Profile,
-  SamplePage,
+  SettingsScreen,
   UserSearchScreen,
 } from './pages';
 import { GeoCitiesAppBar, GeoCitiesDialog, GeoCitiesNavigationDrawer, LoadingIndicator, colors } from './components'
@@ -153,6 +153,10 @@ function App_DisplayLayer({
                   <Drawer.Screen 
                     component={UserSearchScreen}
                     name="UserSearchScreen" 
+                  />
+                  <Drawer.Screen 
+                    component={SettingsScreen}
+                    name="SettingsScreen"
                   />
                 </>
               )}

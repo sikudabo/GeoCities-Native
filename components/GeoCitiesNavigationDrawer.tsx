@@ -144,7 +144,7 @@ export default function GeoCitiesNavigationDrawer({ navigation }: { navigation: 
                             />
                         )}
                         label="Settings"
-                        onPress={() => console.log('Settings')}
+                        onPress={() => navigation.navigate('SettingsScreen')}
                     />
                     <DrawerItem 
                         icon={() => (

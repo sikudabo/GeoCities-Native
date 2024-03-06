@@ -10,6 +10,7 @@ import PostComments from "./PostComments/PostComments";
 import Profile from "./Profile/Profile";
 import LoginCreateStack from "./LoginCreateStack";
 import SamplePage from "./SamplePage";
+import SettingsScreen from "./SettingsScreen/SettingsScreen";
 import SignInPage from "./SignInPage/SignInPage";
 import SignUpPage from "./SignUpPage/SignUpPage";
 import UserSearchScreen from "./UserSearchScreen/UserSearchScreen";
@@ -27,6 +28,7 @@ export {
     PostComments,
     Profile,
     SamplePage,
+    SettingsScreen,
     SignInPage,
     SignUpPage,
     UserSearchScreen,
