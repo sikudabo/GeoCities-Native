@@ -29,6 +29,7 @@ type SettingsScreenDisplayLayerProps = {
     locationState: string;
     setShowDropdown: React.Dispatch<React.SetStateAction<boolean>>;
     showDropdown: boolean;
+    takePicture: () => void;
     
 };
 
@@ -47,6 +48,7 @@ function SettingsScreen_DisplayLayer({
     locationState,
     setShowDropdown,
     showDropdown,
+    takePicture,
 }: SettingsScreenDisplayLayerProps) {
     return (
         <View style={styles.container}>
@@ -55,6 +57,12 @@ function SettingsScreen_DisplayLayer({
             </View>
             <SafeAreaView>
                 <ScrollView>
+                    <View style={styles.avatarSection}>
+                        <View style={styles.avatarContainer}>
+                            <GeoCitiesAvatar size={75} src={avatarPath} />
+                        </View>
+                        <GeoCitiesButton buttonColor={colors.salmonPink} icon="camera" text="Change" />
+                    </View>
                     <View style={styles.formContainer}>
                         <View style={styles.inputContainer}>
                             <TextInput activeOutlineColor={colors.salmonPink} label="Email" mode="outlined" onChangeText={handleEmailChange} outlineColor={colors.white} placeholder={email} returnKeyType="send" value={currentEmail} />
@@ -94,8 +102,9 @@ function useDataLayer() {
     const [currentEmail, setCurrentEmail] = useState(email);
     const [currentLocationCity, setCurrentLocationCity] = useState(locationCity);
     const [showDropdown, setShowDropdown] = useState(false);
-    const avatarPath = `${process.env.EXPO_PUBLIC_API}get-photo/${avatar}`;
+    const avatarPath = `${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo/${avatar}`;
     const { setIsLoading } = useShowLoader();
+    const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError, } = useShowDialog();
 
     function handleCityChange(newCity: string) {
         setCurrentLocationCity(newCity);
@@ -103,6 +112,56 @@ function useDataLayer() {
 
     function handleEmailChange(newEmail: string) {
         setCurrentEmail(newEmail);
+    }
+
+    async function takePicture() {
+        setIsLoading(true);
+        await ImagePicker.requestCameraPermissionsAsync();
+        const result = await ImagePicker.launchImageLibraryAsync({
+            allowsEditing: true,
+            aspect: [4, 3],
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            quality: 1,
+        });
+
+        if (result.canceled) {
+            setIsLoading(false);
+            return;
+        }
+
+        const localUri = result.assets[0].uri;
+
+        await FileSystem.uploadAsync(`${process.env.EXPO_PUBLIC_API_BASE_URI}${avatar}`, localUri, {
+            fieldName: 'avatar',
+            httpMethod: 'POST',
+            uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+        }).then((response: any) => {
+            const { isError, message } = JSON.parse(response.body);
+            
+            setIsLoading(false);
+
+            if (!isError) {
+                setDialogMessage(message);
+                setDialogTitle('Success!');
+                setIsError(false);
+                handleDialogMessageChange(true);
+                return;
+            } else {
+                setDialogMessage('There was an error changing the avatar image for this group. Please try again!');
+                setDialogTitle('Uh Oh!');
+                setIsError(true);
+                handleDialogMessageChange(true);
+                return;
+            }
+        }).catch(e => {
+            setIsLoading(false);
+            console.log('There was an error changing the group avatar:', e.message);
+            setDialogMessage('There was an error changing the avatar image for this group. Please try again!');
+            setDialogTitle('Uh Oh!');
+            setIsError(true);
+            handleDialogMessageChange(true);
+            return;
+        });   
     }
 
     return {
@@ -116,11 +175,21 @@ function useDataLayer() {
         locationState,
         setShowDropdown,
         showDropdown,
+        takePicture,
     };
 
 }
 
 const styles = StyleSheet.create({
+    avatarContainer: {
+        alignItems: 'center',
+    },
+    avatarSection: {
+        paddingBottom: 20,
+        paddingLeft: 10,
+        paddingRight: 10,
+        rowGap: 20,
+    },
     container: {
         backgroundColor: colors.nightGray,
         height: '100%',
