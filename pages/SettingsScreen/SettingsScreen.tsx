@@ -117,9 +117,9 @@ function useDataLayer() {
     async function takePicture() {
         setIsLoading(true);
         await ImagePicker.requestCameraPermissionsAsync();
-        const result = await ImagePicker.launchImageLibraryAsync({
+        const result = await ImagePicker.launchCameraAsync({
             allowsEditing: true,
-            aspect: [4, 3],
+            aspect: [16, 9],
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             quality: 1,
         });
