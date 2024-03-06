@@ -15,6 +15,7 @@ import {
   BuildGroup,
   CreatePostScreen,
   Feed,
+  FollowersFollowing,
   GroupScreen,
   GroupSearchScreen,
   LoginCreateStack,
@@ -143,6 +144,10 @@ function App_DisplayLayer({
                   <Drawer.Screen 
                     component={GroupSearchScreen}
                     name="GroupSearchScreen"
+                  />
+                  <Drawer.Screen 
+                    component={FollowersFollowing}
+                    name="FollowersFollowing" 
                   />
                 </>
               )}

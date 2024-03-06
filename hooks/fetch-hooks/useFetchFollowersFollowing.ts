@@ -3,13 +3,13 @@ import { getData } from "../../utils/requests";
 
 type UseFetchFollowersFollowingProps = {
     _id: string;
-    isFollowing: boolean;
+    isFollowers: boolean;
 };
 
-export default function useFetchFollowersFollowing({ _id, isFollowing }: UseFetchFollowersFollowingProps) {
+export default function useFetchFollowersFollowing({ _id, isFollowers }: UseFetchFollowersFollowingProps) {
     return useQuery(['fetchFollowersFollowing'], async () => {
         const users = await getData({
-            uri: `get-followers-following/${_id}/${isFollowing}`,
+            uri: `get-followers-following/${_id}/${isFollowers}`,
         }).then(res => {
             const { users } = res;
             return users;

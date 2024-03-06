@@ -3,6 +3,7 @@ import BuildGroup from "./BuildGroup/BuildGroup";
 import CreatePostScreen from "./Posts/CreatePostsScreen";
 import DummyIcon from "./DummyIcon";
 import Feed from "./Feed/Feed";
+import FollowersFollowing from "./FollowersFollowing/FollowersFollowing";
 import GroupSearchScreen from "./GroupSearch/GroupSearchScreen";
 import GroupScreen from "./GroupScreen/GroupScreen";
 import PostComments from "./PostComments/PostComments";
@@ -18,6 +19,7 @@ export {
     CreatePostScreen,
     DummyIcon,
     Feed,
+    FollowersFollowing,
     GroupSearchScreen,
     GroupScreen,
     LoginCreateStack,
