@@ -154,9 +154,9 @@ function useDataLayer({ navigation, route }: GroupScreenProps) {
     const { _id: userId } = user;
     const { data, isLoading } = useFetchGroup(name);
     const { blockedUsers, group } = typeof data !== 'undefined' && !isLoading ? data : { group: {}, blockedUsers: [] }
-    const { avatar, blockList, creator, description, groupName, _id, members } = !isLoading && group ? group : { 
+    const { avatar, blockedList, creator, description, groupName, _id, members } = !isLoading && group ? group : { 
         avatar: '',
-        blockList: [],
+        blockedList: [],
         creator: '',
         description: '',
         groupName: '',
@@ -174,11 +174,11 @@ function useDataLayer({ navigation, route }: GroupScreenProps) {
     const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError, } = useShowDialog();
 
     const isBlocked = useMemo(() => {
-        if (blockList.includes(userId)) {
+        if (blockedList.includes(userId)) {
             return true;
         }
         return false;
-    }, [blockList]);
+    }, [blockedList]);
 
     function handleChangeIndex(index: number) {
         setCurrentIndex(index);

@@ -28,7 +28,7 @@ type BlockScreenDisplayLayerProps = {
 
 type DataLayerProps = Pick<BlockScreenProps, 'navigation'> & {
     _id: string;
-    blockList: Array<string>;
+    blockedList: Array<string>;
     email: string;
     locationCity: string;
     locationState: string;
@@ -38,8 +38,8 @@ export default function BlockScreen({
     navigation,
     route,
 }: BlockScreenProps) {
-    const { _id, blockList, email, locationCity, locationState } = route.params;
-    return <BlockScreen_DisplayLayer {...useDataLayer({ _id, blockList, email, locationCity, locationState, navigation })} />;
+    const { _id, blockedList, email, locationCity, locationState } = route.params;
+    return <BlockScreen_DisplayLayer {...useDataLayer({ _id, blockedList, email, locationCity, locationState, navigation })} />;
 }
 
 function BlockScreen_DisplayLayer({
@@ -85,7 +85,7 @@ function BlockScreen_DisplayLayer({
                         renderDropdown={(props) => <FlatDropdown activeOutlineColor={colors.salmonPink} label="Users" mode="outlined" onChange={handleInputValChange} outlineColor={colors.salmonPink} placeholder="Users..." {...props} right={<TextInput.Icon icon="arrow-down-circle" />} value={inputVal} />}
                         renderOption={({ onSelect }, { avatarPath, fullName, _id }) => {
                             return (
-                                <TouchableOpacity style={styles.dropdownItemContainer}>
+                                <TouchableOpacity onPress={() => handleSubmit(_id)} style={styles.dropdownItemContainer}>
                                     <View style={styles.dropdownItemAvatarContainer}>
                                         <GeoCitiesAvatar size={50} src={avatarPath} />
                                     </View>
@@ -105,7 +105,7 @@ function BlockScreen_DisplayLayer({
 
 function useDataLayer({
     _id,
-    blockList,
+    blockedList,
     email,
     locationCity,
     locationState,
@@ -120,7 +120,7 @@ function useDataLayer({
 
     if (typeof users !== 'undefined' && !isLoading) {
         users.forEach(user => {
-            if (user._id === _id || blockList?.includes(user._id)) {
+            if (user._id === _id || blockedList?.includes(user._id)) {
                 return;
             }
             const option = {
@@ -154,21 +154,24 @@ function useDataLayer({
     }
 
     async function handleSubmit(userId: string) {
-        const newBlockList = [...blockList, userId];
+        console.log('The blockList is:', blockedList);
+        const newBlockList = typeof blockedList !== 'undefined' ? [...blockedList, userId] : [userId];
 
         await postNonBinaryData({
             data: {
                 _id,
-                blockList: newBlockList,
+                blockedList: newBlockList,
                 email,
+                isBlocking: true,
                 locationCity,
                 locationState,
+                userId,
             },
             uri: 'update-user',
         }).then(res => {
             const { isError, message, updatedUser } = res;
             setIsLoading(false);
-            setDialogMessage(message);
+            setDialogMessage(isError ? message : 'Successfully blocked user.');
             setDialogTitle(isError ? 'Uh Oh!' : 'Success!');
             setIsError(isError);
             handleDialogMessageChange(true);

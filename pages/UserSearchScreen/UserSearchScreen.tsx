@@ -75,13 +75,13 @@ function UserSearchScreen_DisplayLayer({
 
 function useDataLayer({ navigation }: UserSearchScreenProps) {
     const { user } = useUser();
-    const { _id, blockedFrom, blockList } = user;
+    const { _id, blockedFrom, blockedList } = user;
     const { data: users, isLoading } = useFetchAllUsers();
     let options: { label: string; value: string; }[] = [];
 
     if (typeof users !== 'undefined' && !isLoading) {
         users.forEach(user => {
-            if (user._id === _id || blockList?.includes(user._id) || blockedFrom?.includes(user._id)) {
+            if (user._id === _id || blockedList?.includes(user._id) || blockedFrom?.includes(user._id)) {
                 return;
             }
             const option = {

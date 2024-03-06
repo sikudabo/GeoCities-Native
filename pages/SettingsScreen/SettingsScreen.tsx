@@ -129,7 +129,7 @@ function SettingsScreen_DisplayLayer({
 
 function useDataLayer({ navigation }: SettingsScreenProps) {
     const { user, setUser } = useUser();
-    const { avatar, blockList, email, _id, locationCity, locationState } = user;
+    const { avatar, blockedList, email, _id, locationCity, locationState } = user;
     const { data: blockedUsers, isLoading } = useFetchBlockedUsers();
     const [currentEmail, setCurrentEmail] = useState(email);
     const [currentLocationCity, setCurrentLocationCity] = useState(locationCity);
@@ -139,7 +139,7 @@ function useDataLayer({ navigation }: SettingsScreenProps) {
     const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError, } = useShowDialog();
 
     function handleBlockScreenPress() {
-        navigation.navigate('ProfileBlockScreen', { _id, blockList, email, locationCity, locationState });
+        navigation.navigate('ProfileBlockScreen', { _id, blockedList, email, locationCity, locationState });
     }
 
     function handleCityChange(newCity: string) {
@@ -155,7 +155,7 @@ function useDataLayer({ navigation }: SettingsScreenProps) {
         await postNonBinaryData({
             data: {
                 _id,
-                blockList,
+                blockedList,
                 email,
                 locationCity,
                 locationState: newState
@@ -211,7 +211,7 @@ function useDataLayer({ navigation }: SettingsScreenProps) {
         await postNonBinaryData({
             data: {
                 _id,
-                blockList,
+                blockedList,
                 email: currentEmail.trim(),
                 locationCity: currentLocationCity.trim(),
                 locationState,

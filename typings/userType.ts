@@ -15,7 +15,7 @@ export type UserType = {
     communities: Array<string>;
     locationCity: string;
     locationState: string;
-    blockList: Array<string>;
+    blockedList: Array<string>;
     blockedFrom: Array<string>;
     groupsBlockedFrom: Array<string>;
     groups: Array<string>;
