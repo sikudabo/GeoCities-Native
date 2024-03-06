@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import Dropdown from 'react-native-paper-dropdown';
-import { HelperText, TextInput } from 'react-native-paper';
+import { TextInput } from 'react-native-paper';
 import * as FileSystem from 'expo-file-system'; 
 import * as ImagePicker from 'expo-image-picker';
 import { checkValidEmail } from '../../utils/helpers';
@@ -28,6 +28,7 @@ type SettingsScreenDisplayLayerProps = {
     email: string;
     handleCityChange: (newCity: string) => void;
     handleEmailChange: (newEmail: string) => void;
+    handleStateChange: (newState: string) => void;
     handleSubmit: () => void
     isLoading: boolean;
     locationCity: string;
@@ -50,6 +51,7 @@ function SettingsScreen_DisplayLayer({
     email,
     handleCityChange,
     handleEmailChange,
+    handleStateChange,
     handleSubmit,
     isLoading,
     locationCity,
@@ -92,13 +94,13 @@ function SettingsScreen_DisplayLayer({
                                 dropDownItemSelectedTextStyle={{
                                     color: colors.salmonPink,
                                 }}
-                                label="Topic"
+                                label="State"
                                 mode="outlined"
                                 visible={showDropdown}
                                 showDropDown={() => setShowDropdown(true)}
                                 onDismiss={() => setShowDropdown(false)}
                                 value={locationState}
-                                setValue={() => {}}
+                                setValue={(val) => handleStateChange(val)}
                                 list={statesList}
                             />
                         </View>
@@ -136,6 +138,43 @@ function useDataLayer() {
 
     function handleEmailChange(newEmail: string) {
         setCurrentEmail(newEmail);
+    }
+
+    async function handleStateChange(newState: string) {
+        setIsLoading(true);
+        await postNonBinaryData({
+            data: {
+                _id,
+                blockList,
+                email,
+                locationCity,
+                locationState: newState
+            },
+            uri: 'update-user',
+        }).then(res => {
+            const { isError, message, updatedUser } = res;
+            setIsLoading(false);
+            setDialogMessage(message);
+            setDialogTitle(isError ? 'Uh Oh!' : 'Success!');
+            setIsError(isError);
+            handleDialogMessageChange(true);
+
+            if (!isError) {
+                let newUser = updatedUser;
+                newUser.isLoggedIn = true;
+                setUser(newUser);
+            }
+
+            return;
+        }).catch(err => {
+            console.log(`There was an error updating a users' location state: ${err.message}`);
+            setIsLoading(false);
+            setDialogMessage('There was an error updating your location state. Please try again!');
+            setDialogTitle('Uh Oh!');
+            setIsError(true);
+            handleDialogMessageChange(true);
+            return;
+        });
     }
 
     async function handleSubmit() {
@@ -252,6 +291,7 @@ function useDataLayer() {
         email,
         handleCityChange,
         handleEmailChange,
+        handleStateChange,
         handleSubmit,
         isLoading,
         locationCity,
