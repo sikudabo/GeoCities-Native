@@ -1,7 +1,10 @@
 import { SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useQueryClient } from '@tanstack/react-query';
 import { useFetchFollowers, useFetchFollowing } from '../../hooks/fetch-hooks';
 import { UserType } from '../../typings';
+import { postNonBinaryData } from '../../utils/requests';
 import { useUser } from '../../hooks/storage-hooks';
+import { useShowDialog, useShowLoader } from '../../hooks';
 import { GeoCitiesAvatar, GeoCitiesBackArrowIcon, GeoCitiesButton, GeoCitiesBodyText, LoadingIndicator, colors } from '../../components';
 
 type FollowersFollowingProps = {
@@ -11,6 +14,7 @@ type FollowersFollowingProps = {
 
 type FollowersFollowingDisplayLayerProps = {
     currentUserId: string;
+    followUnfollowUser: (_id: string, isFollow: boolean) => void;
     handleBackPress: () => void;
     headerText: string;
     isFollower: (followers: Array<string>) => boolean;
@@ -35,6 +39,7 @@ export default function FollowersFollowing({
 
 function FollowersFollowing_DisplayLayer({
     currentUserId,
+    followUnfollowUser,
     handleBackPress,
     headerText,
     isFollower,
@@ -71,7 +76,7 @@ function FollowersFollowing_DisplayLayer({
                                 </View>
                                 {user._id !== currentUserId && (
                                     <View style={styles.followButtonContainer}>
-                                        <GeoCitiesButton buttonColor={colors.salmonPink} mode={isFollower(user.followers) ? 'outlined' : 'contained'} text={isFollower(user.followers) ? 'Unfollow' : 'Follow'} />
+                                        <GeoCitiesButton buttonColor={colors.salmonPink} mode={isFollower(user.followers) ? 'outlined' : 'contained'} onPress={() => followUnfollowUser(user._id, !isFollower(user.followers))} text={isFollower(user.followers) ? 'Unfollow' : 'Follow'} />
                                     </View>
                                 )}
                             </View>
@@ -89,8 +94,11 @@ function useDataLayer({
     isFollowers,
     navigation,
 }: DataLayerProps) {
+    const queryClient = useQueryClient();
     const { data: users, isLoading } = isFollowers ? useFetchFollowers({ _id }) : useFetchFollowing({ _id });
+    const { setIsLoading } = useShowLoader();
     const { user } = useUser();
+    const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError } = useShowDialog();
     const { _id: currentUserId } = user;
     const headerText = isFollowers ? 'Followers' : 'Following';
 
@@ -105,11 +113,48 @@ function useDataLayer({
     }
 
     function isFollower(followers: Array<string>) {
-        return followers.includes(_id);
+        return followers.includes(currentUserId);
+    }
+
+    async function followUnfollowUser(_id: string, isFollow: boolean) {
+        setIsLoading(true);
+
+        await postNonBinaryData({
+            data: {
+                _id,
+                followerId: currentUserId,
+                isFollow,
+            },
+            uri: 'follow-unfollow-user',
+        }).then(res => {
+            const { isError, message } = res;
+            setIsLoading(false);
+
+            if(!isError) {
+                queryClient.invalidateQueries(['fetchUser'])
+            }
+
+            if (isError) {
+                setDialogMessage(message);
+                setDialogTitle('Uh Oh!');
+                setIsError(true);
+                handleDialogMessageChange(true);
+                return;
+            }
+        }).catch(err => {
+            setIsLoading(false);
+            console.log(`There was an error this user ${isFollow ? 'following' : 'unfollowing'} this user: ${err.message}`);
+            setDialogMessage(`There was an error this ${isFollow ? 'following' : 'unfollowing'} user. Please try again!`);
+            setDialogTitle('Uh Oh!');
+            setIsError(true);
+            handleDialogMessageChange(true);
+            return;
+        });
     }
 
     return {
         currentUserId,
+        followUnfollowUser,
         handleBackPress,
         headerText,
         isFollower,
