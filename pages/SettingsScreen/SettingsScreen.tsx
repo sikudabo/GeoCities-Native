@@ -7,10 +7,12 @@ import * as ImagePicker from 'expo-image-picker';
 import { checkValidEmail } from '../../utils/helpers';
 import { states } from '../../utils/constants';
 import { StateObjectType } from '../SignUpPage/SignUpPage';
+import { useFetchBlockedUsers } from '../../hooks/fetch-hooks';
 import { useUser } from '../../hooks/storage-hooks';
+import { UserType } from '../../typings';
 import { useShowDialog, useShowLoader } from '../../hooks';
 import { postNonBinaryData } from '../../utils/requests';
-import { GeoCitiesAvatar, GeoCitiesBodyText, GeoCitiesButton, colors } from '../../components';
+import { GeoCitiesAvatar, GeoCitiesBodyText, GeoCitiesButton, LoadingIndicator, colors } from '../../components';
 
 let statesList: StateObjectType[] = []
 
@@ -20,11 +22,13 @@ states.forEach(state => {
 
 type SettingsScreenDisplayLayerProps = {
     avatarPath: string;
+    blockedUsers: Array<UserType>;
     currentLocationCity: string;
     currentEmail: string;
     email: string;
     handleCityChange: (newCity: string) => void;
     handleEmailChange: (newEmail: string) => void;
+    isLoading: boolean;
     locationCity: string;
     locationState: string;
     setShowDropdown: React.Dispatch<React.SetStateAction<boolean>>;
@@ -39,17 +43,24 @@ export default function SettingsScreen() {
 
 function SettingsScreen_DisplayLayer({
     avatarPath,
+    blockedUsers,
     currentLocationCity,
     currentEmail,
     email,
     handleCityChange,
     handleEmailChange,
+    isLoading,
     locationCity,
     locationState,
     setShowDropdown,
     showDropdown,
     takePicture,
 }: SettingsScreenDisplayLayerProps) {
+
+    if (isLoading) {
+        return <LoadingIndicator />;
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.headerContainer}>
@@ -92,6 +103,13 @@ function SettingsScreen_DisplayLayer({
                         <View style={styles.inputContainer}>
                             <GeoCitiesButton buttonColor={colors.error} icon="cancel" text="Block" />
                         </View>
+                        {blockedUsers.length > 0 && (
+                            <View>
+                                <View style={styles.blockedUsersSectionHeader}>
+                                    <GeoCitiesBodyText color={colors.white} fontSize={20} fontWeight={900} text="Blocked Users" />
+                                </View>
+                            </View>
+                        )}
                     </View>
                 </ScrollView>
             </SafeAreaView>
@@ -101,7 +119,8 @@ function SettingsScreen_DisplayLayer({
 
 function useDataLayer() {
     const { user, setUser } = useUser();
-    const { avatar, blockedUsers, email, locationCity, locationState } = user;
+    const { avatar, blockedList, email, locationCity, locationState } = user;
+    const { data: blockedUsers, isLoading } = useFetchBlockedUsers();
     const [currentEmail, setCurrentEmail] = useState(email);
     const [currentLocationCity, setCurrentLocationCity] = useState(locationCity);
     const [showDropdown, setShowDropdown] = useState(false);
@@ -169,11 +188,13 @@ function useDataLayer() {
 
     return {
         avatarPath,
+        blockedUsers,
         currentLocationCity,
         currentEmail,
         email,
         handleCityChange,
         handleEmailChange,
+        isLoading,
         locationCity,
         locationState,
         setShowDropdown,
@@ -192,6 +213,10 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         paddingRight: 10,
         rowGap: 20,
+    },
+    blockedUsersSectionHeader: {
+        alignItems: 'center',
+        paddingTop: 20,
     },
     container: {
         backgroundColor: colors.nightGray,
