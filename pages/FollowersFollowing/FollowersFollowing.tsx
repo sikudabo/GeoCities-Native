@@ -10,6 +10,7 @@ type FollowersFollowingProps = {
 };
 
 type FollowersFollowingDisplayLayerProps = {
+    currentUserId: string;
     handleBackPress: () => void;
     headerText: string;
     isFollower: (followers: Array<string>) => boolean;
@@ -33,6 +34,7 @@ export default function FollowersFollowing({
 }
 
 function FollowersFollowing_DisplayLayer({
+    currentUserId,
     handleBackPress,
     headerText,
     isFollower,
@@ -67,9 +69,11 @@ function FollowersFollowing_DisplayLayer({
                                 <View style={styles.userNameContainer}>
                                     <GeoCitiesBodyText color={colors.white} fontSize={12} fontWeight='normal' text={`${user.firstName} ${user.lastName}`} />
                                 </View>
-                                <View style={styles.followButtonContainer}>
-                                    <GeoCitiesButton buttonColor={colors.salmonPink} mode={isFollower(user.followers) ? 'outlined' : 'contained'} text={isFollower(user.followers) ? 'Unfollow' : 'Follow'} />
-                                </View>
+                                {user._id !== currentUserId && (
+                                    <View style={styles.followButtonContainer}>
+                                        <GeoCitiesButton buttonColor={colors.salmonPink} mode={isFollower(user.followers) ? 'outlined' : 'contained'} text={isFollower(user.followers) ? 'Unfollow' : 'Follow'} />
+                                    </View>
+                                )}
                             </View>
                         ))}
                     </ScrollView>
@@ -86,6 +90,8 @@ function useDataLayer({
     navigation,
 }: DataLayerProps) {
     const { data: users, isLoading } = isFollowers ? useFetchFollowers({ _id }) : useFetchFollowing({ _id });
+    const { user } = useUser();
+    const { _id: currentUserId } = user;
     const headerText = isFollowers ? 'Followers' : 'Following';
 
     function handleBackPress() {
@@ -103,6 +109,7 @@ function useDataLayer({
     }
 
     return {
+        currentUserId,
         handleBackPress,
         headerText,
         isFollower,
