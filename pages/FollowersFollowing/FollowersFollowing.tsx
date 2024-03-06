@@ -1,6 +1,7 @@
 import { SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { useFetchFollowersFollowing } from '../../hooks/fetch-hooks';
+import { useFetchFollowers, useFetchFollowing } from '../../hooks/fetch-hooks';
 import { UserType } from '../../typings';
+import { useUser } from '../../hooks/storage-hooks';
 import { GeoCitiesAvatar, GeoCitiesBackArrowIcon, GeoCitiesButton, GeoCitiesBodyText, LoadingIndicator, colors } from '../../components';
 
 type FollowersFollowingProps = {
@@ -61,7 +62,7 @@ function FollowersFollowing_DisplayLayer({
                                 style={styles.userContainer}
                             >
                                 <View style={styles.userAvatarContainer}>
-                                    <GeoCitiesAvatar src={`${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo/${user.avatar}`} />
+                                    <GeoCitiesAvatar size={35} src={`${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo/${user.avatar}`} />
                                 </View>
                                 <View style={styles.userNameContainer}>
                                     <GeoCitiesBodyText color={colors.white} fontSize={12} fontWeight='normal' text={`${user.firstName} ${user.lastName}`} />
@@ -84,7 +85,7 @@ function useDataLayer({
     isFollowers,
     navigation,
 }: DataLayerProps) {
-    const { data: users, isLoading } = useFetchFollowersFollowing({ _id, isFollowers });
+    const { data: users, isLoading } = isFollowers ? useFetchFollowers({ _id }) : useFetchFollowing({ _id });
     const headerText = isFollowers ? 'Followers' : 'Following';
 
     function handleBackPress() {
@@ -106,13 +107,13 @@ function useDataLayer({
         headerText,
         isFollower,
         isLoading,
-        users,
+        users: isLoading || typeof users === 'undefined' ? [] : users,
     };
 }
 
 const styles = StyleSheet.create({
     backButtonContainer: {
-
+     flex: 1,
     },
     bodyContainer: {
         height: '100%',
@@ -127,18 +128,22 @@ const styles = StyleSheet.create({
     },
     followButtonContainer: {
         marginLeft: 'auto',
+        flex: 1,
     },
     header: {
+        alignItems: 'center',
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'space-around',
-        paddingBottom: 20,
+        justifyContent: 'center',
+        paddingBottom: 50,
+        paddingLeft: 10,
+        paddingRight: 10,
     },
     headerTitleContainer: {
-
+        flex: 2,
     },
     userAvatarContainer: {
-
+        
     },
     userContainer: {
         columnGap: 20,
@@ -147,6 +152,7 @@ const styles = StyleSheet.create({
         paddingBottom: 20,
     },
     userNameContainer: {
-
+        flex: 1,
+        paddingTop: 10,
     },
 });

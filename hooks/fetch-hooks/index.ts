@@ -2,7 +2,8 @@ import { useFetchUserData } from "./useFetchUserData";
 import useFetchAllGroups from "./useFetchAllGroups";
 import useFetchAllUsers from "./useFetchAllUsers";
 import useFetchFeedPosts from "./useFetchFeedPosts";
-import useFetchFollowersFollowing from "./useFetchFollowersFollowing";
+import useFetchFollowers from "./useFetchFollowers";
+import useFetchFollowing from "./useFetchFollowing";
 import useFetchGroup from "./useFetchGroup";
 import useFetchGroupPosts from "./useFetchGroupPosts";
 import useFetchPost from "./useFetchPost";
@@ -13,7 +14,8 @@ export {
     useFetchAllGroups,
     useFetchAllUsers,
     useFetchFeedPosts,
-    useFetchFollowersFollowing,
+    useFetchFollowers,
+    useFetchFollowing,
     useFetchGroup,
     useFetchGroupPosts,
     useFetchUserGroups,

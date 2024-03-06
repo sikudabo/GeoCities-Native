@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { RefreshControl, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
+import { RefreshControl, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import millify from 'millify';
 import truncate from 'lodash/truncate';
 import { useQueryClient } from '@tanstack/react-query';
@@ -34,6 +34,7 @@ type ProfileDisplayLayerProps = {
     followingCount: number;
     fullName: string;
     handleChangeIndex: (index: number) => void;
+    handleFollowersFollowingClick: (isFollowers: boolean) => void;
     handleFollowUnfollowPress: () => void;
     handleNavigation: () => void;
     isFollowing: boolean;
@@ -65,6 +66,7 @@ function Profile_DisplayLayer({
     followingCount,
     fullName,
     handleChangeIndex,
+    handleFollowersFollowingClick,
     handleFollowUnfollowPress,
     handleNavigation,
     isFollowing,
@@ -100,14 +102,14 @@ function Profile_DisplayLayer({
                         <GeoCitiesBodyText color={colors.white} fontSize={24} fontWeight={900} text={truncate(fullName, { length: 40 })} />
                     </View>
                     <View style={styles.profileStatsSection}>
-                        <View style={styles.followerStatSection}>
+                        <TouchableOpacity onPress={() => handleFollowersFollowingClick(true)} style={styles.followerStatSection}>
                             <GeoCitiesBodyText color={colors.white} text={millify(followerCount)} textAlign='center'/>
                             <GeoCitiesBodyText color={colors.white} text={followerCount === 1 ? 'Follower' : 'Followers' } />
-                        </View>
-                        <View style={styles.followerStatSection}>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => handleFollowersFollowingClick(false)} style={styles.followerStatSection}>
                             <GeoCitiesBodyText color={colors.white} text={'Following'} />
                             <GeoCitiesBodyText color={colors.white} text={millify(followingCount)} textAlign='center'/>
-                        </View>
+                        </TouchableOpacity>
                     </View>
                     <View style={styles.locationSection}>
                         <GeoCitiesMarkerIcon color={colors.salmonPink} height={25} width={30} />
@@ -201,6 +203,11 @@ function useDataLayer({ navigation, route }: ProfileProps) {
         }
     }, [currentUser, isVisitor]);
 
+    function handleFollowersFollowingClick(isFollowers: boolean) {
+        navigation.navigate('FollowersFollowing', { _id: currentUser._id, isCurrentUser: _id === currentUser._id, isFollowers });
+        return;
+    }
+
 
     function handleNavigation() {
         navigation.navigate('Feed');
@@ -259,6 +266,7 @@ function useDataLayer({ navigation, route }: ProfileProps) {
         followingCount,
         fullName: `${firstName} ${lastName}`,
         handleChangeIndex,
+        handleFollowersFollowingClick,
         handleFollowUnfollowPress,
         handleNavigation,
         isFollowing,
