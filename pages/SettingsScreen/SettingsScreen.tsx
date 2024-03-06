@@ -35,6 +35,7 @@ type SettingsScreenDisplayLayerProps = {
     handleEmailChange: (newEmail: string) => void;
     handleStateChange: (newState: string) => void;
     handleSubmit: () => void
+    handleUnblockUser: (userId: string) => void;
     isLoading: boolean;
     locationCity: string;
     locationState: string;
@@ -59,6 +60,7 @@ function SettingsScreen_DisplayLayer({
     handleEmailChange,
     handleStateChange,
     handleSubmit,
+    handleUnblockUser,
     isLoading,
     locationCity,
     locationState,
@@ -118,6 +120,22 @@ function SettingsScreen_DisplayLayer({
                                 <View style={styles.blockedUsersSectionHeader}>
                                     <GeoCitiesBodyText color={colors.white} fontSize={20} fontWeight={900} text="Blocked Users" />
                                 </View>
+                                {blockedUsers.map((user, index) => (
+                                    <View
+                                        key={index}
+                                        style={styles.userContainer}
+                                    >
+                                        <View>
+                                            <GeoCitiesAvatar size={50} src={`${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo/${user.avatar}`} />
+                                        </View>
+                                        <View style={styles.userNameContainer}>
+                                            <GeoCitiesBodyText color={colors.white} fontSize={12} fontWeight='normal' text={`${user.firstName} ${user.lastName}`} />
+                                        </View>
+                                        <View style={styles.unBlockButtonContainer}>
+                                            <GeoCitiesButton buttonColor={colors.salmonPink} mode="outlined" onPress={() => handleUnblockUser(user._id)} text="Unblock" />
+                                        </View>
+                                    </View>
+                                ))}
                             </View>
                         )}
                     </View>
@@ -243,6 +261,46 @@ function useDataLayer({ navigation }: SettingsScreenProps) {
         });
     }
 
+    async function handleUnblockUser(userId: string) {
+        setIsLoading(true);
+        const newBlockedList = blockedList.filter((id: string) => id !== userId);
+
+        await postNonBinaryData({
+            data: {
+                _id,
+                blockedList: newBlockedList,
+                email,
+                isUnblocking: true,
+                locationCity,
+                locationState,
+                userId,
+            },
+            uri: 'update-user',
+        }).then(res => {
+            const { isError, message, updatedUser } = res;
+            if (!isError) {
+                let newUser = updatedUser;
+                newUser.isLoggedIn = true;
+                setUser(newUser);
+            }
+
+            setIsLoading(false);
+            setDialogMessage(isError ? message : 'Successfully unblocked user');
+            setDialogTitle(isError ? 'Uh Oh!' : 'Success!');
+            setIsError(isError);
+            handleDialogMessageChange(true);
+            return;
+        }).catch(err => {
+            console.log(`There was an error unblocking a user from a personal profile: ${err.message}`);
+            setIsLoading(false);
+            setDialogMessage('There was an error unblocking that user. Please try again!');
+            setDialogTitle('Uh Oh!');
+            setIsError(true);
+            handleDialogMessageChange(true);
+            return;
+        });
+    }
+
     async function takePicture() {
         setIsLoading(true);
         await ImagePicker.requestCameraPermissionsAsync();
@@ -304,6 +362,7 @@ function useDataLayer({ navigation }: SettingsScreenProps) {
         handleEmailChange,
         handleStateChange,
         handleSubmit,
+        handleUnblockUser,
         isLoading,
         locationCity,
         locationState,
@@ -326,6 +385,7 @@ const styles = StyleSheet.create({
     },
     blockedUsersSectionHeader: {
         alignItems: 'center',
+        paddingBottom: 30,
         paddingTop: 20,
     },
     container: {
@@ -343,5 +403,19 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
         paddingTop: 20,
+    },
+    unBlockButtonContainer: {
+        marginLeft: 'auto',
+    },
+    userContainer: {
+        columnGap: 20,
+        display: 'flex',
+        flexDirection: 'row',
+        paddingBottom: 20,
+        paddingLeft: 10,
+        paddingRight: 10,
+    },
+    userNameContainer: {
+        paddingTop: 10,
     },
 });
