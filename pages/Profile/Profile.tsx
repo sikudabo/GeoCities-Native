@@ -102,11 +102,11 @@ function Profile_DisplayLayer({
                         <GeoCitiesBodyText color={colors.white} fontSize={24} fontWeight={900} text={truncate(fullName, { length: 40 })} />
                     </View>
                     <View style={styles.profileStatsSection}>
-                        <TouchableOpacity onPress={() => handleFollowersFollowingClick(true)} style={styles.followerStatSection}>
+                        <TouchableOpacity onPress={() => followerCount === 0 ? {} : handleFollowersFollowingClick(true)} style={styles.followerStatSection}>
                             <GeoCitiesBodyText color={colors.white} text={millify(followerCount)} textAlign='center'/>
                             <GeoCitiesBodyText color={colors.white} text={followerCount === 1 ? 'Follower' : 'Followers' } />
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => handleFollowersFollowingClick(false)} style={styles.followerStatSection}>
+                        <TouchableOpacity onPress={() => followingCount === 0 ? {} : handleFollowersFollowingClick(false)} style={styles.followerStatSection}>
                             <GeoCitiesBodyText color={colors.white} text={'Following'} />
                             <GeoCitiesBodyText color={colors.white} text={millify(followingCount)} textAlign='center'/>
                         </TouchableOpacity>
