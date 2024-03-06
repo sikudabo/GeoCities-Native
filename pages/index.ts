@@ -1,3 +1,4 @@
+import BlockScreen from "./SettingsScreen/BlockScreen/BlockScreen";
 import BlockUsersScreen from "./GroupScreen/SettingsTab/BlockUserScreen/BlockUsersScreen";
 import BuildGroup from "./BuildGroup/BuildGroup";
 import CreatePostScreen from "./Posts/CreatePostsScreen";
@@ -16,6 +17,7 @@ import SignUpPage from "./SignUpPage/SignUpPage";
 import UserSearchScreen from "./UserSearchScreen/UserSearchScreen";
 
 export {
+    BlockScreen,
     BlockUsersScreen,
     BuildGroup,
     CreatePostScreen,

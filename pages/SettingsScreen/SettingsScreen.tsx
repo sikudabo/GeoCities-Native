@@ -20,12 +20,17 @@ states.forEach(state => {
     statesList.push({ label: state, value: state });
 });
 
+type SettingsScreenProps = {
+    navigation: any;
+};
+
 type SettingsScreenDisplayLayerProps = {
     avatarPath: string;
     blockedUsers: Array<UserType>;
     currentLocationCity: string;
     currentEmail: string;
     email: string;
+    handleBlockScreenPress: () => void;
     handleCityChange: (newCity: string) => void;
     handleEmailChange: (newEmail: string) => void;
     handleStateChange: (newState: string) => void;
@@ -39,8 +44,8 @@ type SettingsScreenDisplayLayerProps = {
     
 };
 
-export default function SettingsScreen() {
-    return <SettingsScreen_DisplayLayer {...useDataLayer()} />;
+export default function SettingsScreen({ navigation }: SettingsScreenProps) {
+    return <SettingsScreen_DisplayLayer {...useDataLayer({ navigation })} />;
 }
 
 function SettingsScreen_DisplayLayer({
@@ -49,6 +54,7 @@ function SettingsScreen_DisplayLayer({
     currentLocationCity,
     currentEmail,
     email,
+    handleBlockScreenPress,
     handleCityChange,
     handleEmailChange,
     handleStateChange,
@@ -105,7 +111,7 @@ function SettingsScreen_DisplayLayer({
                             />
                         </View>
                         <View style={styles.inputContainer}>
-                            <GeoCitiesButton buttonColor={colors.error} icon="cancel" text="Block" />
+                            <GeoCitiesButton buttonColor={colors.error} icon="cancel" onPress={handleBlockScreenPress} text="Block" />
                         </View>
                         {blockedUsers.length > 0 && (
                             <View>
@@ -121,7 +127,7 @@ function SettingsScreen_DisplayLayer({
     );
 }
 
-function useDataLayer() {
+function useDataLayer({ navigation }: SettingsScreenProps) {
     const { user, setUser } = useUser();
     const { avatar, blockList, email, _id, locationCity, locationState } = user;
     const { data: blockedUsers, isLoading } = useFetchBlockedUsers();
@@ -131,6 +137,10 @@ function useDataLayer() {
     const avatarPath = `${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo/${avatar}`;
     const { setIsLoading } = useShowLoader();
     const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError, } = useShowDialog();
+
+    function handleBlockScreenPress() {
+        navigation.navigate('ProfileBlockScreen', { _id, blockList, email, locationCity, locationState });
+    }
 
     function handleCityChange(newCity: string) {
         setCurrentLocationCity(newCity);
@@ -289,6 +299,7 @@ function useDataLayer() {
         currentLocationCity,
         currentEmail,
         email,
+        handleBlockScreenPress,
         handleCityChange,
         handleEmailChange,
         handleStateChange,

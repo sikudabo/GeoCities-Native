@@ -18,6 +18,9 @@ export default function useFetchAllUsers() {
 
         return users;
     }, {
+        initialData: [],
+        placeholderData: [],
+        refetchInterval: 50000,
         refetchOnMount: true,
         staleTime: 30000
     });
