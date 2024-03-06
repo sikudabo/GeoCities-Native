@@ -28,6 +28,7 @@ type SettingsScreenDisplayLayerProps = {
     email: string;
     handleCityChange: (newCity: string) => void;
     handleEmailChange: (newEmail: string) => void;
+    handleSubmit: () => void
     isLoading: boolean;
     locationCity: string;
     locationState: string;
@@ -49,6 +50,7 @@ function SettingsScreen_DisplayLayer({
     email,
     handleCityChange,
     handleEmailChange,
+    handleSubmit,
     isLoading,
     locationCity,
     locationState,
@@ -76,10 +78,10 @@ function SettingsScreen_DisplayLayer({
                     </View>
                     <View style={styles.formContainer}>
                         <View style={styles.inputContainer}>
-                            <TextInput activeOutlineColor={colors.salmonPink} label="Email" mode="outlined" onChangeText={handleEmailChange} outlineColor={colors.white} placeholder={email} returnKeyType="send" value={currentEmail} />
+                            <TextInput activeOutlineColor={colors.salmonPink} label="Email" mode="outlined" onChangeText={handleEmailChange} onSubmitEditing={() => handleSubmit()} outlineColor={colors.white} placeholder={email} returnKeyType="send" value={currentEmail} />
                         </View>
                         <View style={styles.inputContainer}>
-                            <TextInput activeOutlineColor={colors.salmonPink} label="City" mode="outlined" onChangeText={handleCityChange} outlineColor={colors.white} placeholder={locationCity} returnKeyType="send" value={currentLocationCity} />
+                            <TextInput activeOutlineColor={colors.salmonPink} label="City" mode="outlined" onChangeText={handleCityChange} onSubmitEditing={() => handleSubmit()} outlineColor={colors.white} placeholder={locationCity} returnKeyType="send" value={currentLocationCity} />
                         </View>
                         <View style={styles.inputContainer}>
                             <Dropdown
@@ -119,7 +121,7 @@ function SettingsScreen_DisplayLayer({
 
 function useDataLayer() {
     const { user, setUser } = useUser();
-    const { avatar, blockedList, email, locationCity, locationState } = user;
+    const { avatar, blockList, email, _id, locationCity, locationState } = user;
     const { data: blockedUsers, isLoading } = useFetchBlockedUsers();
     const [currentEmail, setCurrentEmail] = useState(email);
     const [currentLocationCity, setCurrentLocationCity] = useState(locationCity);
@@ -134,6 +136,62 @@ function useDataLayer() {
 
     function handleEmailChange(newEmail: string) {
         setCurrentEmail(newEmail);
+    }
+
+    async function handleSubmit() {
+        setIsLoading(true);
+
+        if (!currentEmail.trim() || !checkValidEmail(currentEmail.trim())) {
+            setIsLoading(false);
+            setDialogMessage('Please enter a valid email.');
+            setDialogTitle('Uh Oh!');
+            setIsError(true);
+            handleDialogMessageChange(true);
+            return;
+        }
+
+        if (!currentLocationCity.trim()) {
+            setIsLoading(false);
+            setDialogMessage('You must enter the city you reside in.');
+            setDialogTitle('Uh Oh!');
+            setIsError(true);
+            handleDialogMessageChange(true);
+            return;
+        }
+
+        await postNonBinaryData({
+            data: {
+                _id,
+                blockList,
+                email: currentEmail.trim(),
+                locationCity: currentLocationCity.trim(),
+                locationState,
+            },
+            uri: 'update-user',
+        }).then(res => {
+            const { isError, message, updatedUser } = res;
+            setIsLoading(false);
+            setDialogMessage(message);
+            setDialogTitle(isError ? 'Uh Oh!' : 'Success');
+            setIsError(isError);
+            handleDialogMessageChange(true);
+
+            if (!isError) {
+                let newUser = updatedUser;
+                newUser.isLoggedIn = true;
+                setUser(newUser);
+            }
+
+            return;
+        }).catch(err => {
+            console.log(`There was an error updating a user: ${err.message}`);
+            setIsLoading(false);
+            setDialogMessage('There was an error updating your profile. Please try again!');
+            setDialogTitle('Uh Oh!');
+            setIsError(true);
+            handleDialogMessageChange(true);
+            return;
+        });
     }
 
     async function takePicture() {
@@ -194,6 +252,7 @@ function useDataLayer() {
         email,
         handleCityChange,
         handleEmailChange,
+        handleSubmit,
         isLoading,
         locationCity,
         locationState,
