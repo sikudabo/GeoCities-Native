@@ -2,6 +2,7 @@ import { GroupType } from "./groupType";
 
 export type UserType = {
     createdOn: number;
+    description: string;
     firstName: string;
     lastName: string;
     email: string;
