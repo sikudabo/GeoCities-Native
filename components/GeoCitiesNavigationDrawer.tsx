@@ -95,7 +95,7 @@ export default function GeoCitiesNavigationDrawer({ navigation }: { navigation: 
                         label="Groups"
                         onPress={() => navigation.navigate('GroupSearchScreen')}
                     />
-                    <DrawerItem 
+                    {/*<DrawerItem 
                         icon={() => (
                             <MaterialCommunityIcons 
                                 name="email"
@@ -104,6 +104,17 @@ export default function GeoCitiesNavigationDrawer({ navigation }: { navigation: 
                         )}
                         label="Messages"
                         onPress={() => console.log('Messages')}
+                        />
+                    */}
+                    <DrawerItem 
+                        icon={() => (
+                            <MaterialCommunityIcons
+                                name="magnify"
+                                size={20}
+                            />
+                        )}
+                        label="Users"
+                        onPress={() => console.log('Users')}
                     />
                     <DrawerItem 
                         icon={() => (
