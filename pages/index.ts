@@ -12,6 +12,7 @@ import LoginCreateStack from "./LoginCreateStack";
 import SamplePage from "./SamplePage";
 import SignInPage from "./SignInPage/SignInPage";
 import SignUpPage from "./SignUpPage/SignUpPage";
+import UserSearchScreen from "./UserSearchScreen/UserSearchScreen";
 
 export {
     BlockUsersScreen,
@@ -28,4 +29,5 @@ export {
     SamplePage,
     SignInPage,
     SignUpPage,
+    UserSearchScreen,
 };

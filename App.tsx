@@ -22,6 +22,7 @@ import {
   PostComments,
   Profile,
   SamplePage,
+  UserSearchScreen,
 } from './pages';
 import { GeoCitiesAppBar, GeoCitiesDialog, GeoCitiesNavigationDrawer, LoadingIndicator, colors } from './components'
 
@@ -148,6 +149,10 @@ function App_DisplayLayer({
                   <Drawer.Screen 
                     component={FollowersFollowing}
                     name="FollowersFollowing" 
+                  />
+                  <Drawer.Screen 
+                    component={UserSearchScreen}
+                    name="UserSearchScreen" 
                   />
                 </>
               )}

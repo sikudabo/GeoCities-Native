@@ -114,7 +114,7 @@ export default function GeoCitiesNavigationDrawer({ navigation }: { navigation: 
                             />
                         )}
                         label="Users"
-                        onPress={() => console.log('Users')}
+                        onPress={() => navigation.navigate('UserSearchScreen')}
                     />
                     <DrawerItem 
                         icon={() => (

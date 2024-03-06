@@ -1,66 +1,42 @@
 import { useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { useQueryClient } from '@tanstack/react-query';
 import { TextInput } from 'react-native-paper';
 import { Autocomplete, FlatDropdown } from '@telenko/react-native-paper-autocomplete';
-import { GroupType } from '../../../../typings';
-import { postNonBinaryData } from '../../../../utils/requests';
-import { useFetchAllUsers } from '../../../../hooks/fetch-hooks';
-import { useUser } from '../../../../hooks/storage-hooks';
-import { useShowDialog, useShowLoader } from '../../../../hooks';
-import { GeoCitiesAvatar, GeoCitiesBackArrowIcon, GeoCitiesBodyText, GeoCitiesDropdownArrow, LoadingIndicator, colors } from '../../../../components';
+import { UserType } from '../../typings';
+import { useFetchAllUsers } from '../../hooks/fetch-hooks';
+import { useUser } from '../../hooks/storage-hooks';
+import { BlockUsersScreenDisplayLayerProps } from '../GroupScreen/SettingsTab/BlockUserScreen/BlockUsersScreen';
+import { GeoCitiesAvatar, GeoCitiesBodyText, LoadingIndicator, colors } from '../../components';
 
-type BlockUsersScreenProps = {
-    navigation: any;
-    route: any;
-};
-
-export type BlockUsersScreenDisplayLayerProps = {
-    handleAutocompleteChange: (props: any) => void;
-    handleBackPress: () => void;
-    handleInputValChange: (props: any) => void;
-    handleUserPress: (_id: string) => void;
-    inputVal: string;
-    isLoading: boolean;
-    options: { label: string; value: string; }[];
-    selectedUser: any;
-};
-
-type DataLayerProps = {
-    group: GroupType
+type UserSearchScreenProps = {
     navigation: any;
 };
 
-export default function BlockUsersScreen({
-    navigation,
-    route,
-}: BlockUsersScreenProps) {
-    const { group } = route.params;
-    return <BlockUsersScreen_DisplayLayer {...useDataLayer({ group, navigation})} />;
+type UserSearchScreenDisplayLayerProps = Omit<BlockUsersScreenDisplayLayerProps, 'handleBackPress' | 'handleUserPress'> & {
+    handleUserPress: (userId: string) => void;
+};
+
+export default function UserSearchScreen({ navigation }: UserSearchScreenProps) {
+    return <UserSearchScreen_DisplayLayer {...useDataLayer({ navigation })} />;
 }
 
-function BlockUsersScreen_DisplayLayer({
+function UserSearchScreen_DisplayLayer({
     handleAutocompleteChange,
-    handleBackPress,
     handleInputValChange,
     handleUserPress,
     inputVal,
     isLoading,
     options,
     selectedUser,
-}: BlockUsersScreenDisplayLayerProps) {
-
+}: UserSearchScreenDisplayLayerProps) {
     if (isLoading) {
         return <LoadingIndicator />;
     }
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity onPress={handleBackPress} style={styles.backIconContainer}>
-                <GeoCitiesBackArrowIcon color={colors.white} height={25} width={25} />
-            </TouchableOpacity>
             <View style={styles.headerTitleContainer}>
-                <GeoCitiesBodyText color={colors.white} fontSize={20} fontWeight={900} text="Block Users" />
+                <GeoCitiesBodyText color={colors.white} fontSize={20} fontWeight={900} text="Users" />
             </View>
             <View style={styles.autoCompleteHolder}>
                 <Autocomplete 
@@ -74,7 +50,6 @@ function BlockUsersScreen_DisplayLayer({
                             return option.label.includes(input);
                         });
                     }}
-                    icon={() => <GeoCitiesDropdownArrow color={colors.white} height={200} width={200} />}
                     inputValue={selectedUser}
                     onChange={handleAutocompleteChange}
                     renderDropdown={(props) => <FlatDropdown activeOutlineColor={colors.salmonPink} label="Users" mode="outlined" onChange={handleInputValChange} outlineColor={colors.salmonPink} placeholder="Users..." {...props} right={<TextInput.Icon icon="arrow-down-circle" />} value={inputVal} />}
@@ -98,22 +73,15 @@ function BlockUsersScreen_DisplayLayer({
     );
 }
 
-function useDataLayer({
-    group,
-    navigation,
-}: DataLayerProps) {
-    const { blockList, description, groupName, rules, topic } = group;
+function useDataLayer({ navigation }: UserSearchScreenProps) {
+    const { user } = useUser();
+    const { _id, blockedFrom, blockList } = user;
     const { data: users, isLoading } = useFetchAllUsers();
     let options: { label: string; value: string; }[] = [];
-    const queryClient = useQueryClient();
-    const { setIsLoading } = useShowLoader();
-    const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError } = useShowDialog();
-    const { user } = useUser();
-    const { _id } = user;
 
     if (typeof users !== 'undefined' && !isLoading) {
         users.forEach(user => {
-            if (user._id === _id || blockList?.includes(user._id)) {
+            if (user._id === _id || blockList?.includes(user._id) || blockedFrom?.includes(user._id)) {
                 return;
             }
             const option = {
@@ -128,76 +96,33 @@ function useDataLayer({
             options.push(option);
         });
     }
+
     const [selectedUser, setSelectedUser] = useState('');
     const [inputVal, setInputVal] = useState(selectedUser);
-    
+
     function handleAutocompleteChange(props: any) {
         setSelectedUser(props);
         setInputVal(props);
-    }
-
-    function handleBackPress() {
-        navigation.navigate('GroupScreen', { group: { groupName }, settingsIndex: true })
     }
 
     function handleInputValChange(props: any) {
         setInputVal(props);
     }
 
-    async function handleUserPress(_id: string) {
-        setIsLoading(true);
-        const newBlockList = [...blockList as Array<string>, _id];
-        await postNonBinaryData({
-            data: {
-                blockList: newBlockList,
-                description,
-                groupName,
-                isBlocking: true,
-                rules,
-                topic,
-                userId: _id,
-            },
-            uri: 'update-group',
-        }).then(res => {
-            const { isSuccess } = res;
-            if (isSuccess) {
-                setIsLoading(false);
-                queryClient.invalidateQueries(['fetchGroup']);
-                setDialogMessage('Successfully blocked user.');
-                setDialogTitle('Success!');
-                setIsError(false);
-                handleDialogMessageChange(true);
-                navigation.navigate('GroupScreen', { group: { groupName }, settingsIndex: true })
-                return;
-            } else {
-                setIsLoading(false);
-                setDialogMessage('There was an error blocking that user. Please try again!');
-                setDialogTitle('Whoops!');
-                setIsError(true);
-                handleDialogMessageChange(true);
-                return;
-            }
-        }).catch(err => {
-            console.log(`There was an error blocking that user: ${err.message}`);
-            setIsLoading(false);
-            setDialogMessage('There was an error blocking that user. Please try again!');
-            setDialogTitle('Whoops!');
-            setIsError(true);
-            handleDialogMessageChange(true);
-            return;
-        });
+    function handleUserPress(userId: string) {
+        navigation.navigate('Profile', { isVisitor: true, userId });
+        return;
     }
 
     return {
         handleAutocompleteChange,
-        handleBackPress,
         handleInputValChange,
         handleUserPress,
         inputVal,
         isLoading,
         options,
         selectedUser,
-    }
+    };
 }
 
 const styles = StyleSheet.create({
@@ -206,9 +131,6 @@ const styles = StyleSheet.create({
         paddingRight: 10,
         paddingTop: 20,
         width: '100%',
-    },
-    backIconContainer: {
-        paddingLeft: 20,
     },
     container: {
         backgroundColor: colors.nightGray,
