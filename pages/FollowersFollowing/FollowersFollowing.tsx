@@ -16,6 +16,7 @@ type FollowersFollowingDisplayLayerProps = {
     currentUserId: string;
     followUnfollowUser: (_id: string, isFollow: boolean) => void;
     handleBackPress: () => void;
+    handleProfileClick: (userId: string) => void;
     headerText: string;
     isFollower: (followers: Array<string>) => boolean;
     isLoading: boolean;
@@ -41,6 +42,7 @@ function FollowersFollowing_DisplayLayer({
     currentUserId,
     followUnfollowUser,
     handleBackPress,
+    handleProfileClick,
     headerText,
     isFollower,
     isLoading,
@@ -68,12 +70,12 @@ function FollowersFollowing_DisplayLayer({
                                 key={index}
                                 style={styles.userContainer}
                             >
-                                <View style={styles.userAvatarContainer}>
+                                <TouchableOpacity onPress={() => handleProfileClick(user._id)} style={styles.userAvatarContainer}>
                                     <GeoCitiesAvatar size={35} src={`${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo/${user.avatar}`} />
-                                </View>
-                                <View style={styles.userNameContainer}>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => handleProfileClick(user._id)} style={styles.userNameContainer}>
                                     <GeoCitiesBodyText color={colors.white} fontSize={12} fontWeight='normal' text={`${user.firstName} ${user.lastName}`} />
-                                </View>
+                                </TouchableOpacity>
                                 {user._id !== currentUserId && (
                                     <View style={styles.followButtonContainer}>
                                         <GeoCitiesButton buttonColor={colors.salmonPink} mode={isFollower(user.followers) ? 'outlined' : 'contained'} onPress={() => followUnfollowUser(user._id, !isFollower(user.followers))} text={isFollower(user.followers) ? 'Unfollow' : 'Follow'} />
@@ -116,6 +118,16 @@ function useDataLayer({
         return followers.includes(currentUserId);
     }
 
+    function handleProfileClick(userId: string) {
+        if (userId === currentUserId) {
+            navigation.navigate('Profile');
+            return;
+        }
+
+        navigation.navigate('Profile', { isVisitor: true, userId });
+        return;
+    }
+
     async function followUnfollowUser(_id: string, isFollow: boolean) {
         setIsLoading(true);
 
@@ -156,6 +168,7 @@ function useDataLayer({
         currentUserId,
         followUnfollowUser,
         handleBackPress,
+        handleProfileClick,
         headerText,
         isFollower,
         isLoading,
