@@ -89,6 +89,9 @@ function SettingsScreen_DisplayLayer({
                                 list={statesList}
                             />
                         </View>
+                        <View style={styles.inputContainer}>
+                            <GeoCitiesButton buttonColor={colors.error} icon="cancel" text="Block" />
+                        </View>
                     </View>
                 </ScrollView>
             </SafeAreaView>
