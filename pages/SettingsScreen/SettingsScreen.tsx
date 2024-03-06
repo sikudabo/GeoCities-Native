@@ -27,6 +27,9 @@ type SettingsScreenDisplayLayerProps = {
     handleEmailChange: (newEmail: string) => void;
     locationCity: string;
     locationState: string;
+    setShowDropdown: React.Dispatch<React.SetStateAction<boolean>>;
+    showDropdown: boolean;
+    
 };
 
 export default function SettingsScreen() {
@@ -42,6 +45,8 @@ function SettingsScreen_DisplayLayer({
     handleEmailChange,
     locationCity,
     locationState,
+    setShowDropdown,
+    showDropdown,
 }: SettingsScreenDisplayLayerProps) {
     return (
         <View style={styles.container}>
@@ -57,6 +62,25 @@ function SettingsScreen_DisplayLayer({
                         <View style={styles.inputContainer}>
                             <TextInput activeOutlineColor={colors.salmonPink} label="City" mode="outlined" onChangeText={handleCityChange} outlineColor={colors.white} placeholder={locationCity} returnKeyType="send" value={currentLocationCity} />
                         </View>
+                        <View style={styles.inputContainer}>
+                            <Dropdown
+                                activeColor={colors.salmonPink}
+                                dropDownItemTextStyle={{
+                                    color: colors.white,
+                                }}
+                                dropDownItemSelectedTextStyle={{
+                                    color: colors.salmonPink,
+                                }}
+                                label="Topic"
+                                mode="outlined"
+                                visible={showDropdown}
+                                showDropDown={() => setShowDropdown(true)}
+                                onDismiss={() => setShowDropdown(false)}
+                                value={locationState}
+                                setValue={() => {}}
+                                list={statesList}
+                            />
+                        </View>
                     </View>
                 </ScrollView>
             </SafeAreaView>
@@ -69,6 +93,7 @@ function useDataLayer() {
     const { avatar, blockedUsers, email, locationCity, locationState } = user;
     const [currentEmail, setCurrentEmail] = useState(email);
     const [currentLocationCity, setCurrentLocationCity] = useState(locationCity);
+    const [showDropdown, setShowDropdown] = useState(false);
     const avatarPath = `${process.env.EXPO_PUBLIC_API}get-photo/${avatar}`;
     const { setIsLoading } = useShowLoader();
 
@@ -89,6 +114,8 @@ function useDataLayer() {
         handleEmailChange,
         locationCity,
         locationState,
+        setShowDropdown,
+        showDropdown,
     };
 
 }

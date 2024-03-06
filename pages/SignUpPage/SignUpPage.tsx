@@ -271,7 +271,7 @@ export default function SignUpPage() {
                                 color: colors.white,
                             }}
                             dropDownItemSelectedTextStyle={{
-                                color: colors.geoCitiesGreen,
+                                color: colors.salmonPink,
                             }}
                             label="State"
                             mode="outlined"
