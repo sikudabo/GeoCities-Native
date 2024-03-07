@@ -306,7 +306,7 @@ function useDataLayer({ navigation }: SettingsScreenProps) {
         await ImagePicker.requestCameraPermissionsAsync();
         const result = await ImagePicker.launchCameraAsync({
             allowsEditing: true,
-            aspect: [16, 9],
+            aspect: [4, 3],
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             quality: 1,
         });
