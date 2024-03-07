@@ -84,7 +84,7 @@ function SettingsScreen_DisplayLayer({
                         <View style={styles.avatarContainer}>
                             <GeoCitiesAvatar size={75} src={avatarPath} />
                         </View>
-                        <GeoCitiesButton buttonColor={colors.salmonPink} icon="camera" text="Change" />
+                        <GeoCitiesButton buttonColor={colors.salmonPink} icon="camera" onPress={takePicture} text="Change" />
                     </View>
                     <View style={styles.formContainer}>
                         <View style={styles.inputContainer}>
@@ -318,12 +318,12 @@ function useDataLayer({ navigation }: SettingsScreenProps) {
 
         const localUri = result.assets[0].uri;
 
-        await FileSystem.uploadAsync(`${process.env.EXPO_PUBLIC_API_BASE_URI}${avatar}`, localUri, {
+        await FileSystem.uploadAsync(`${process.env.EXPO_PUBLIC_API_BASE_URI}change-user-avatar/${_id}/${avatar}`, localUri, {
             fieldName: 'avatar',
             httpMethod: 'POST',
             uploadType: FileSystem.FileSystemUploadType.MULTIPART,
         }).then((response: any) => {
-            const { isError, message } = JSON.parse(response.body);
+            const { isError, message, updatedUser } = JSON.parse(response.body);
             
             setIsLoading(false);
 
@@ -332,9 +332,12 @@ function useDataLayer({ navigation }: SettingsScreenProps) {
                 setDialogTitle('Success!');
                 setIsError(false);
                 handleDialogMessageChange(true);
+                let newUser = updatedUser;
+                newUser.isLoggedIn = true;
+                setUser(newUser);
                 return;
             } else {
-                setDialogMessage('There was an error changing the avatar image for this group. Please try again!');
+                setDialogMessage('There was an error changing your avatar image. Please try again!');
                 setDialogTitle('Uh Oh!');
                 setIsError(true);
                 handleDialogMessageChange(true);
@@ -342,8 +345,8 @@ function useDataLayer({ navigation }: SettingsScreenProps) {
             }
         }).catch(e => {
             setIsLoading(false);
-            console.log('There was an error changing the group avatar:', e.message);
-            setDialogMessage('There was an error changing the avatar image for this group. Please try again!');
+            console.log('There was an error changing a user avatar:', e.message);
+            setDialogMessage('There was an error changing your avatar. Please try again!');
             setDialogTitle('Uh Oh!');
             setIsError(true);
             handleDialogMessageChange(true);
