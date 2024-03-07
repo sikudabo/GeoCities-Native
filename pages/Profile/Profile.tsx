@@ -37,6 +37,7 @@ type ProfileDisplayLayerProps = {
     handleFollowersFollowingClick: (isFollowers: boolean) => void;
     handleFollowUnfollowPress: () => void;
     handleNavigation: () => void;
+    isBlocked: boolean;
     isFollowing: boolean;
     isLoading: boolean;
     isVisitor: boolean | undefined;
@@ -69,6 +70,7 @@ function Profile_DisplayLayer({
     handleFollowersFollowingClick,
     handleFollowUnfollowPress,
     handleNavigation,
+    isBlocked,
     isFollowing,
     isLoading,
     isVisitor,
@@ -81,6 +83,16 @@ function Profile_DisplayLayer({
 }: ProfileDisplayLayerProps) {
     if (isLoading || !user.avatar) {
         return <LoadingIndicator />;
+    }
+
+    if (isBlocked) {
+        return (
+            <View style={styles.container}>
+                <View style={styles.blockedHeaderContainer}>
+                    <GeoCitiesBodyText color={colors.white} fontSize={20} fontWeight={900} text="Blocked" />
+                </View>
+            </View>
+        );
     }
 
     return (
@@ -157,8 +169,9 @@ function useDataLayer({ navigation, route }: ProfileProps) {
     const idToUse = isVisitor ? userId : _id;
     const { data, isLoading } = useFetchUserData({ _id: idToUse });
     const { user: currentUser, userGroups } = typeof data !== 'undefined' && !isLoading ? data : { user: undefined, userGroups: [] };
-    const { avatar, firstName, followers, following, lastName, locationCity, locationState } = typeof currentUser !== 'undefined' ? currentUser : {
+    const { avatar, blockedList, firstName, followers, following, lastName, locationCity, locationState } = typeof currentUser !== 'undefined' ? currentUser : {
         avatar: '',
+        blockedList: [],
         firstName: '',
         followers: [],
         following: [],
@@ -174,6 +187,14 @@ function useDataLayer({ navigation, route }: ProfileProps) {
     const queryClient = useQueryClient();
     const { setIsLoading } = useShowLoader();
     const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError, } = useShowDialog();
+
+    const isBlocked = useMemo(() => {
+        if (isVisitor && typeof blockedList !== 'undefined' && blockedList.includes(_id)) {
+            return true;
+        }
+
+        return false;
+    }, [blockedList]);
     
     const isFollowing = useMemo(() => {
         if (typeof followers !== 'undefined' && isVisitor && followers.includes(_id)) {
@@ -269,6 +290,7 @@ function useDataLayer({ navigation, route }: ProfileProps) {
         handleFollowersFollowingClick,
         handleFollowUnfollowPress,
         handleNavigation,
+        isBlocked,
         isFollowing,
         isLoading,
         isVisitor,
@@ -288,6 +310,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         paddingTop: 20,
         width: '100%',
+    },
+    blockedHeaderContainer: {
+        alignItems: 'center',
+        paddingTop: 20,
     },
     container: {
         alignItems: 'center',

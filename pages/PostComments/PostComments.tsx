@@ -3,6 +3,7 @@ import { RefreshControl, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity,
 import orderBy from 'lodash/orderBy';
 import { useNavigation } from '@react-navigation/native';
 import { useFetchPost } from '../../hooks/fetch-hooks';
+import { useUser } from '../../hooks/storage-hooks';
 import { CommentType, PostType } from '../../typings';
 import { CommentCard, GeoCitiesBackArrowIcon, GeoCitiesBodyText, LoadingIndicator, PostCard, colors } from '../../components';
 
@@ -12,6 +13,7 @@ type PostCommentsProps = {
 };
 
 type PostCommentsDisplayLayerProps = {
+    blockedFrom: Array<string>;
     comments: Array<CommentType>;
     groupName?: string;
     handleBackPress: () => void;
@@ -29,6 +31,7 @@ export default function PostComments({ navigation, route }: PostCommentsProps) {
 
 
 function PostComments_DisplayLayer({
+    blockedFrom,
     comments,
     handleBackPress,
     isLoading,
@@ -88,10 +91,16 @@ function PostComments_DisplayLayer({
                             ): (
                                 <>
                                     {comments.map((comment, index) => (
-                                        <CommentCard 
-                                            comment={comment}
-                                            key={index} 
-                                        />
+                                        <View 
+                                            key={index}
+                                        >
+                                            {!blockedFrom.includes(comment.authorId) && (
+                                                <CommentCard 
+                                                    comment={comment}
+                                                    key={index} 
+                                                />
+                                            )}
+                                        </View>
                                     ))}
                                 </>
                             )}
@@ -105,6 +114,8 @@ function PostComments_DisplayLayer({
 
 function useDataLayer({ navigation, route }: PostCommentsProps) {
     const [refreshing, setRefreshing] = useState(false);
+    const { user } = useUser();
+    const { blockedFrom } = user;
     const { groupName, _id, renderedFrom } = route.params;
     const { data, isLoading } = useFetchPost({ _id });
     const { isPostDeleted, post } = typeof data !== 'undefined' && !isLoading ? data : { isPostDeleted: false, post: {} };
@@ -137,6 +148,7 @@ function useDataLayer({ navigation, route }: PostCommentsProps) {
     }, []);
 
     return {
+        blockedFrom,
         comments: typeof comments !== 'undefined' &&  comments.length > 0 ? orderBy(comments, ['createdAt'], ['desc']) : comments,
         groupName,
         handleBackPress,
