@@ -4,19 +4,25 @@ import { useFetchAllEvents } from "../../hooks/fetch-hooks";
 import { EventType } from "../../typings";
 import { GeoCitiesBodyText, GeoCitiesButton, LoadingIndicator, colors } from "../../components";
 
+type EventsScreenProps = {
+    navigation: any;
+}
+
 type EventsScreenDisplayLayerProps = {
     events: Array<EventType>;
+    handleCreateEventPress: () => void;
     isLoading: boolean;
     setShowAllEvents: React.Dispatch<React.SetStateAction<boolean>>;
     showAllEvents: boolean;
 };
 
-export default function EventsScreen() {
-    return <EventsScreen_DisplayLayer { ...useDataLayer()} />;
+export default function EventsScreen({ navigation }: EventsScreenProps) {
+    return <EventsScreen_DisplayLayer { ...useDataLayer({ navigation })} />;
 }
 
 function EventsScreen_DisplayLayer({
     events,
+    handleCreateEventPress,
     isLoading,
     setShowAllEvents,
     showAllEvents,
@@ -41,21 +47,26 @@ function EventsScreen_DisplayLayer({
                 <GeoCitiesBodyText color={colors.white} fontSize={20} fontWeight={900} text="Events" />
             </View>
             <View style={styles.headerActionButtonContainer}>
-                <GeoCitiesButton buttonColor={colors.salmonPink} icon="pencil" text="Create Event" />
+                <GeoCitiesButton buttonColor={colors.salmonPink} icon="pencil" onPress={handleCreateEventPress} text="Create Event" />
             </View>
             <View style={styles.headerActionButtonContainer}>
-                <GeoCitiesButton buttonColor={showAllEvents ? colors.hornetsTeal : colors.coolBlue} onPress={() => setShowAllEvents(!showAllEvents)} text={showAllEvents ? "Show Nearby" : "Show All"} />
+                <GeoCitiesButton buttonColor={showAllEvents ? colors.atlassianBlue : colors.hornetsTeal} onPress={() => setShowAllEvents(!showAllEvents)} text={showAllEvents ? "Show Nearby" : "Show All"} />
             </View>
         </View>
     );
 }
 
-function useDataLayer() {
+function useDataLayer({ navigation }: EventsScreenProps) {
     const { data: events, isLoading } = useFetchAllEvents();
     const [showAllEvents, setShowAllEvents] = useState(true);
 
+    function handleCreateEventPress() {
+        navigation.navigate('CreateEventScreen');
+    }
+
     return {
         events: isLoading || typeof events === 'undefined' ? [] : events,
+        handleCreateEventPress,
         isLoading,
         setShowAllEvents,
         showAllEvents,

@@ -14,6 +14,7 @@ import {
   BlockScreen,
   BlockUsersScreen,
   BuildGroup,
+  CreateEventScreen,
   CreatePostScreen,
   EventsScreen,
   Feed,
@@ -167,6 +168,10 @@ function App_DisplayLayer({
                   <Drawer.Screen
                     component={EventsScreen}
                     name="EventsScreen"
+                  />
+                  <Drawer.Screen 
+                    component={CreateEventScreen}
+                    name="CreateEventScreen"
                   />
                 </>
               )}

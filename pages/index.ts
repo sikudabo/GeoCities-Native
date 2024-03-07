@@ -1,6 +1,7 @@
 import BlockScreen from "./SettingsScreen/BlockScreen/BlockScreen";
 import BlockUsersScreen from "./GroupScreen/SettingsTab/BlockUserScreen/BlockUsersScreen";
 import BuildGroup from "./BuildGroup/BuildGroup";
+import CreateEventScreen from "./EventsScreen/CreateEventScreen/CreateEventScreen";
 import CreatePostScreen from "./Posts/CreatePostsScreen";
 import DummyIcon from "./DummyIcon";
 import EventsScreen from "./EventsScreen/EventsScreen";
@@ -21,6 +22,7 @@ export {
     BlockScreen,
     BlockUsersScreen,
     BuildGroup,
+    CreateEventScreen,
     CreatePostScreen,
     DummyIcon,
     EventsScreen,
