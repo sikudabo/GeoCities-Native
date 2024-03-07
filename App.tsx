@@ -15,6 +15,7 @@ import {
   BlockUsersScreen,
   BuildGroup,
   CreatePostScreen,
+  EventsScreen,
   Feed,
   FollowersFollowing,
   GroupScreen,
@@ -162,6 +163,10 @@ function App_DisplayLayer({
                    <Drawer.Screen 
                     component={BlockScreen}
                     name="ProfileBlockScreen"
+                  />
+                  <Drawer.Screen
+                    component={EventsScreen}
+                    name="EventsScreen"
                   />
                 </>
               )}

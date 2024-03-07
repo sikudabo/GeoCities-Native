@@ -134,7 +134,7 @@ export default function GeoCitiesNavigationDrawer({ navigation }: { navigation: 
                             />
                         )}
                         label="Events"
-                        onPress={() => console.log('Events')}
+                        onPress={() => navigation.navigate('EventsScreen')}
                     />
                     <DrawerItem 
                         icon={() => (

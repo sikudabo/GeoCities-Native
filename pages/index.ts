@@ -3,6 +3,7 @@ import BlockUsersScreen from "./GroupScreen/SettingsTab/BlockUserScreen/BlockUse
 import BuildGroup from "./BuildGroup/BuildGroup";
 import CreatePostScreen from "./Posts/CreatePostsScreen";
 import DummyIcon from "./DummyIcon";
+import EventsScreen from "./EventsScreen/EventsScreen";
 import Feed from "./Feed/Feed";
 import FollowersFollowing from "./FollowersFollowing/FollowersFollowing";
 import GroupSearchScreen from "./GroupSearch/GroupSearchScreen";
@@ -22,6 +23,7 @@ export {
     BuildGroup,
     CreatePostScreen,
     DummyIcon,
+    EventsScreen,
     Feed,
     FollowersFollowing,
     GroupSearchScreen,

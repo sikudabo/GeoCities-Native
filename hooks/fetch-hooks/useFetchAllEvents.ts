@@ -11,7 +11,7 @@ export default function useFetchAllEvents() {
             uri: `get-all-events/${_id}`,
         }).then(res => {
             const { events } = res;
-            return events;
+            return typeof events === 'undefined' ? [] : events;
         });
 
         return events;
