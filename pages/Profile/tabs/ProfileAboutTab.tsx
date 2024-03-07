@@ -36,7 +36,7 @@ function ProfileAboutTabs_DisplayLayer({
                 <GeoCitiesBodyText color={colors.white} fontSize={14} text={`${age.toString()} years old`} />
             </View>
             <View style={styles.createdOnContainer}>
-                <GeoCitiesBodyText color={colors.white} fontSize={14} text={`Account made ${createdOnString}`} />
+                <GeoCitiesBodyText color={colors.white} fontSize={14} text={`Joined ${createdOnString}`} />
             </View>
             <TouchableOpacity onPress={handleEmailPress} style={styles.emailContainer}>
                 <GeoCitiesMailIconOutlined color={colors.white} height={20} width={20} />
