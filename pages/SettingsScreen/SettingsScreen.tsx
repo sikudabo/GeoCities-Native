@@ -307,6 +307,7 @@ function useDataLayer({ navigation }: SettingsScreenProps) {
         const result = await ImagePicker.launchCameraAsync({
             allowsEditing: true,
             aspect: [4, 3],
+            cameraType: ImagePicker.CameraType.front,
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             quality: 1,
         });
