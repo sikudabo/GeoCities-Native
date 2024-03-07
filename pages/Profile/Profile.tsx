@@ -81,7 +81,7 @@ function Profile_DisplayLayer({
     userId,
     userLocation,
 }: ProfileDisplayLayerProps) {
-    if (isLoading || !user.avatar) {
+    if (isLoading || typeof user === 'undefined' || !user.avatar) {
         return <LoadingIndicator />;
     }
 
