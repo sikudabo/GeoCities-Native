@@ -1,4 +1,4 @@
-import { useFetchUserData } from "./useFetchUserData";
+import useFetchAllEvents from "./useFetchAllEvents";
 import useFetchAllGroups from "./useFetchAllGroups";
 import useFetchAllUsers from "./useFetchAllUsers";
 import useFetchBlockedUsers from "./useFetchBlockedUsers";
@@ -10,8 +10,10 @@ import useFetchGroupPosts from "./useFetchGroupPosts";
 import useFetchPost from "./useFetchPost";
 import useFetchUserGroups from "./useFetchUserGroups";
 import useFetchUserProfilePosts from './useFetchUserProfilePosts';
+import { useFetchUserData } from "./useFetchUserData";
 
 export {
+    useFetchAllEvents,
     useFetchAllGroups,
     useFetchAllUsers,
     useFetchBlockedUsers,
