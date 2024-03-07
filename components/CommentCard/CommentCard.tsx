@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { Image, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import millify from 'millify';
 import { useQueryClient } from '@tanstack/react-query';
+import { useNavigation } from '@react-navigation/native';
 import { Surface } from 'react-native-paper';
 import { LinkPreview } from '@flyerhq/react-native-link-preview';
 import { Video } from 'expo-av';
@@ -33,6 +34,7 @@ type CommentCardDisplayLayerProps = {
     createdAt: number;
     deleteComment: () => void;
     handleLikeButtonPress: () => void;
+    handleNavigate: () => void;
     hashTags?: Array<string>;
     hasLikedComment: boolean;
     link?: string;
@@ -55,6 +57,7 @@ function CommentCard_DisplayLayer({
     createdAt,
     deleteComment,
     handleLikeButtonPress,
+    handleNavigate,
     hashTags = [],
     hasLikedComment,
     link,
@@ -67,10 +70,12 @@ function CommentCard_DisplayLayer({
     return (
         <Surface elevation={4} style={styles.cardContainer}>
             <View style={styles.topCardSection}>
-                <GeoCitiesAvatar size={50} src={avatarUri} />
-                <View style={styles.topSectionNameContainer}>
+                <TouchableOpacity onPress={handleNavigate}>
+                    <GeoCitiesAvatar size={50} src={avatarUri} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleNavigate} style={styles.topSectionNameContainer}>
                     <GeoCitiesBodyText color={colors.white} fontSize={14} fontWeight={900} text={userName} />
-                </View>
+                </TouchableOpacity>
                 <View style={styles.topSectionDateContainer}>
                     <GeoCitiesBodyText color={colors.white} fontSize={14} text={postTimeDifference(createdAt)} />
                 </View>
@@ -158,11 +163,13 @@ function useDataLayer({ comment }: DataLayerProps) {
     const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError } = useShowDialog();
     const { user } = useUser();
     const { _id } = user;
+    const navigation: any = useNavigation();
     const { authorId, caption, commentType, createdAt, hashTags, _id: commentId, likes, link, postAuthorId, postId, postMediaId, userName } = comment;
     const avatarUri = `${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo-by-user-id/${authorId}`;
     const canDeleteComment = _id === authorId || _id === postAuthorId ? true : false;
     const numberOfLikes = typeof likes !== 'undefined' ? likes.length : 0;
     const videoRef: any = useRef(null);
+    const isAuthor = _id === authorId;
 
     function hasLikedComment() {
         if (typeof likes !== 'undefined' && likes.length > 0) {
@@ -173,6 +180,15 @@ function useDataLayer({ comment }: DataLayerProps) {
         }
 
         return false;
+    }
+
+    function handleNavigate() {
+        if (isAuthor) {
+            navigation.navigate('Profile');
+            return;
+        }
+
+        navigation.navigate('Profile', { isVisitor: true, userId: authorId });
     }
 
     async function deleteComment() {
@@ -299,6 +315,7 @@ function useDataLayer({ comment }: DataLayerProps) {
       createdAt,
       deleteComment,
       handleLikeButtonPress,
+      handleNavigate,
       hashTags,
       hasLikedComment: hasLikedComment(),
       link,
