@@ -10,6 +10,7 @@ import Feed from "./Feed/Feed";
 import FollowersFollowing from "./FollowersFollowing/FollowersFollowing";
 import GroupSearchScreen from "./GroupSearch/GroupSearchScreen";
 import GroupScreen from "./GroupScreen/GroupScreen";
+import HashtagFeed from "./Feed/HashtagFeed";
 import PostComments from "./PostComments/PostComments";
 import Profile from "./Profile/Profile";
 import LoginCreateStack from "./LoginCreateStack";
@@ -32,6 +33,7 @@ export {
     FollowersFollowing,
     GroupSearchScreen,
     GroupScreen,
+    HashtagFeed,
     LoginCreateStack,
     PostComments,
     Profile,

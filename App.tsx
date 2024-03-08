@@ -22,6 +22,7 @@ import {
   FollowersFollowing,
   GroupScreen,
   GroupSearchScreen,
+  HashtagFeed,
   LoginCreateStack,
   PostComments,
   Profile,
@@ -177,6 +178,10 @@ function App_DisplayLayer({
                   <Drawer.Screen 
                     component={AttendingEventScreen}
                     name="AttendingEventScreen"
+                  />
+                  <Drawer.Screen 
+                    component={HashtagFeed}
+                    name="HashtagFeed"
                   />
                 </>
               )}

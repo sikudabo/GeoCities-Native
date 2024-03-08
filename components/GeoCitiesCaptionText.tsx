@@ -1,16 +1,20 @@
 import { StyleSheet, Text } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { colors } from './colors';
 
 type GeoCitiesCaptionTextProps = {
     hashTags: Array<string>;
     text: string;
-}
+};
 
 export default function GeoCitiesCaptionText({ text, hashTags }: GeoCitiesCaptionTextProps) {
     const chunks = text.split(' ');
+    const navigation: any = useNavigation();
 
-    function hashtagPress() {
-        console.log('Hashtag being pressed');
+    function hashtagPress(chunk: string) {
+        const newChunk = chunk.replace(/[^A-Za-z0-9]/g, '').trim();
+        navigation.navigate('HashtagFeed', { hashtag: newChunk });
+        return;
     }
 
     if (typeof hashTags === 'undefined' || hashTags.length === 0) {
@@ -22,7 +26,7 @@ export default function GeoCitiesCaptionText({ text, hashTags }: GeoCitiesCaptio
             {chunks.map((chunk: string, index: number) => (
                 <>
                    {hashTags.includes(chunk.replace(/[^A-Za-z0-9]/g, '')) ? (
-                        <Text key={index} onPress={hashtagPress} style={styles.hashtagTextStyle}>
+                        <Text key={index} onPress={() => hashtagPress(chunk)} style={styles.hashtagTextStyle}>
                             {chunk}
                         </Text>
                    ): (

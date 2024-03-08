@@ -8,6 +8,7 @@ import useFetchFollowers from "./useFetchFollowers";
 import useFetchFollowing from "./useFetchFollowing";
 import useFetchGroup from "./useFetchGroup";
 import useFetchGroupPosts from "./useFetchGroupPosts";
+import useFetchHashtagFeedPosts from "./useFetchHashtagFeedPosts";
 import useFetchPost from "./useFetchPost";
 import useFetchUserEvents from "./useFetchUserEvents";
 import useFetchUserGroups from "./useFetchUserGroups";
@@ -25,6 +26,7 @@ export {
     useFetchFollowing,
     useFetchGroup,
     useFetchGroupPosts,
+    useFetchHashtagFeedPosts,
     useFetchUserGroups,
     useFetchPost,
     useFetchUserData,
