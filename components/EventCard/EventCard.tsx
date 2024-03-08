@@ -3,7 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Surface } from 'react-native-paper';
 import { EventType } from '../../typings';
 import { convertToDate } from '../../utils/helpers';
-import { postNonBinaryData } from '../../utils/requests';
+import { deleteData, postNonBinaryData } from '../../utils/requests';
 import { useUser } from '../../hooks/storage-hooks';
 import { useShowDialog, useShowLoader } from '../../hooks';
 import { GeoCitiesAvatar, GeoCitiesBodyText, GeoCitiesButton, GeoCitiesDeleteIcon, LoadingIndicator, colors } from '../../components';
@@ -15,6 +15,7 @@ type EventCardDisplayLayerProps = {
     eventAddress: string;
     eventDate: string;
     handleAttend: (isAttending: boolean) => void;
+    handleDeleteEvent: () => void;
     handleNavigate: () => void;
     handleViewAttendees: () => void;
     imgSrc: string;
@@ -36,6 +37,7 @@ function EventCard_DisplayLayer({
     eventAddress,
     eventDate,
     handleAttend,
+    handleDeleteEvent,
     handleNavigate,
     handleViewAttendees,
     imgSrc,
@@ -80,7 +82,7 @@ function EventCard_DisplayLayer({
                     </TouchableOpacity>
                 )}
                 {isAuthor && (
-                    <TouchableOpacity style={styles.deleteButtonContainer}>
+                    <TouchableOpacity onPress={handleDeleteEvent} style={styles.deleteButtonContainer}>
                         <GeoCitiesDeleteIcon color={colors.salmonPink} height={25} width={25} />
                     </TouchableOpacity>
                 )}
@@ -133,6 +135,36 @@ function useDataLayer({ event }: { event: EventType }) {
         });
     }
 
+    async function handleDeleteEvent() {
+        setIsLoading(true);
+
+        await deleteData({
+            data: {
+                attendees,
+                avatar,
+                eventId,
+                userId: _id,
+            },
+            uri: 'delete-event',
+        }).then(res => {
+            const { isError, message } = res;
+            setIsLoading(false);
+            setDialogMessage(message);
+            setDialogTitle(isError? 'Whoops!' : 'Success!');
+            setIsError(isError);
+            handleDialogMessageChange(true);
+            return;
+        }).catch(err => {
+            console.log(`There was an error deleting an event: ${err.message}`);
+            setIsLoading(false);
+            setIsError(true);
+            setDialogTitle('Whoops!');
+            setDialogMessage('There was an error deleting that event. Please try again!');
+            handleDialogMessageChange(true);
+            return;
+        });
+    }
+
     function handleNavigate() {
         if (_id === authorId) {
             navigation.navigate('Profile');
@@ -154,6 +186,7 @@ function useDataLayer({ event }: { event: EventType }) {
         eventAddress,
         eventDate: convertToDate(eventDate),
         handleAttend,
+        handleDeleteEvent,
         handleNavigate,
         handleViewAttendees,
         imgSrc,
