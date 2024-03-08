@@ -13,6 +13,7 @@ import {
     useTabNavigation,
 } from 'react-native-paper-tabs';
 import ProfileAboutTabs from './tabs/ProfileAboutTab';
+import ProfileEventsTab from './tabs/ProfileEventsTab';
 import ProfilePostsTab from './tabs/ProfilePostsTab';
 import { GeoCitiesAvatar, GeoCitiesBodyText, GeoCitiesButton, GeoCitiesMarkerIcon, LoadingIndicator, colors } from '../../components';
 import { postNonBinaryData } from '../../utils/requests';
@@ -154,6 +155,8 @@ function Profile_DisplayLayer({
                             <ProfilePostsTab createButtonNavigator={createPostNavigation} isVisitor={isVisitor} userId={userId} />
                        ): currentIndex === 1 ? (
                             <ProfileAboutTabs user={user} userGroups={userGroups} />
+                       ): currentIndex === 2 ? (
+                            <ProfileEventsTab userId={user._id}/>
                        ): null}
                     </View>
                 </ScrollView>

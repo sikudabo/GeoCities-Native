@@ -9,6 +9,7 @@ import useFetchFollowing from "./useFetchFollowing";
 import useFetchGroup from "./useFetchGroup";
 import useFetchGroupPosts from "./useFetchGroupPosts";
 import useFetchPost from "./useFetchPost";
+import useFetchUserEvents from "./useFetchUserEvents";
 import useFetchUserGroups from "./useFetchUserGroups";
 import useFetchUserProfilePosts from './useFetchUserProfilePosts';
 import { useFetchUserData } from "./useFetchUserData";
@@ -27,5 +28,6 @@ export {
     useFetchUserGroups,
     useFetchPost,
     useFetchUserData,
+    useFetchUserEvents,
     useFetchUserProfilePosts,
 };
