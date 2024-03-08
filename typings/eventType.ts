@@ -5,7 +5,7 @@ export type EventType = {
     createdAt: number;
     description: string;
     eventCity: string;
-    eventData: number;
+    eventDate: number;
     eventState: string;
     _id: string;
     title: string;

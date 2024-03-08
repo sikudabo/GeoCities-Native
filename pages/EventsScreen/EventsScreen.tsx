@@ -2,7 +2,7 @@ import { useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import { useFetchAllEvents } from "../../hooks/fetch-hooks";
 import { EventType } from "../../typings";
-import { GeoCitiesBodyText, GeoCitiesButton, LoadingIndicator, colors } from "../../components";
+import { EventCard, GeoCitiesBodyText, GeoCitiesButton, LoadingIndicator, colors } from "../../components";
 
 type EventsScreenProps = {
     navigation: any;
@@ -43,15 +43,35 @@ function EventsScreen_DisplayLayer({
 
     return (
         <View style={styles.container}>
-            <View style={styles.topHeaderContainer}>
-                <GeoCitiesBodyText color={colors.white} fontSize={20} fontWeight={900} text="Events" />
-            </View>
-            <View style={styles.headerActionButtonContainer}>
-                <GeoCitiesButton buttonColor={colors.salmonPink} icon="pencil" onPress={handleCreateEventPress} text="Create Event" />
-            </View>
-            <View style={styles.headerActionButtonContainer}>
-                <GeoCitiesButton buttonColor={showAllEvents ? colors.atlassianBlue : colors.hornetsTeal} onPress={() => setShowAllEvents(!showAllEvents)} text={showAllEvents ? "Show Nearby" : "Show All"} />
-            </View>
+            <SafeAreaView>
+                <ScrollView>
+                    <View style={styles.topHeaderContainer}>
+                        <GeoCitiesBodyText color={colors.white} fontSize={20} fontWeight={900} text={typeof events !== 'undefined' && events.length > 0 ? 'Events' : 'No Events'} />
+                    </View>
+                    <View style={styles.headerActionButtonContainer}>
+                        <GeoCitiesButton buttonColor={colors.salmonPink} icon="pencil" onPress={handleCreateEventPress} text="Create Event" />
+                    </View>
+                    {typeof events!== 'undefined' && events.length !== 0 && (
+                        <View>
+                            <View style={styles.headerActionButtonContainer}>
+                                <GeoCitiesButton buttonColor={showAllEvents ? colors.atlassianBlue : colors.hornetsTeal} onPress={() => setShowAllEvents(!showAllEvents)} text={showAllEvents ? "Show Nearby" : "Show All"} />
+                            </View>
+                            <View style={styles.eventsContainer}>
+                                {events.map((event, index) => (
+                                    <View
+                                        key={index}
+                                        style={styles.eventCardContainer}
+                                    >
+                                        <EventCard 
+                                            event={event}
+                                        />
+                                    </View>
+                                ))}
+                            </View>
+                        </View>
+                    )}
+                </ScrollView>
+            </SafeAreaView>
         </View>
     );
 }
@@ -59,6 +79,7 @@ function EventsScreen_DisplayLayer({
 function useDataLayer({ navigation }: EventsScreenProps) {
     const { data: events, isLoading } = useFetchAllEvents();
     const [showAllEvents, setShowAllEvents] = useState(true);
+    console.log('The events are:', events);
 
     function handleCreateEventPress() {
         navigation.navigate('CreateEventScreen');
@@ -79,11 +100,25 @@ const styles = StyleSheet.create({
         height: '100%',
         paddingTop: 20,
     },
+    eventCardContainer: {
+        paddingTop: 10,
+    },
+    eventsContainer: {
+        height: '100%',
+        paddingBottom: 30,
+        paddingLeft: 10,
+        paddingRight: 10,
+        paddingTop: 20,
+    },
     headerActionButtonContainer: {
         paddingLeft: 10,
         paddingRight: 10,
         paddingTop: 30,
         width: '100%',
+    },
+    noEventsContainer: {
+        alignItems: 'center',
+        paddingTop: 20,
     },
     topHeaderContainer: {
         alignItems: 'center',
