@@ -10,9 +10,11 @@ import { GeoCitiesAvatar, GeoCitiesBodyText, GeoCitiesButton, GeoCitiesDeleteIco
 type EventCardDisplayLayerProps = {
     attendeeCount: number;
     description: string;
+    eventAddress: string;
     eventDate: string;
     handleNavigate: () => void;
     imgSrc: string;
+    location: string;
     src: string;
     title: string;
     userName: string;
@@ -25,9 +27,11 @@ export default function EventCard({ event }: { event: EventType }) {
 function EventCard_DisplayLayer({
     attendeeCount,
     description,
+    eventAddress,
     eventDate,
     handleNavigate,
     imgSrc,
+    location,
     src,
     title,
     userName,
@@ -36,13 +40,19 @@ function EventCard_DisplayLayer({
         <Surface style={styles.container}>
             <View style={styles.headerContainer}>
                 <GeoCitiesAvatar size={25} src={src} />
-                <GeoCitiesBodyText color={colors.white} fontSize={16} fontWeight={900} text={userName} />
+                <GeoCitiesBodyText color={colors.white} fontSize={12} fontWeight={900} text={userName} />
                 <View style={styles.dateContainer}>
-                    <GeoCitiesBodyText color={colors.white} fontSize={16} fontWeight={900} text={eventDate} />
+                    <GeoCitiesBodyText color={colors.white} fontSize={12} fontWeight={900} text={eventDate} />
                 </View>
             </View>
             <View style={styles.titleContainer}>
-                <GeoCitiesBodyText color={colors.white} fontSize={20} fontWeight={500} text={title} />
+                <GeoCitiesBodyText color={colors.white} fontSize={16} fontWeight={500} text={title} />
+            </View>
+            <View style={styles.locationSection}>
+                <GeoCitiesBodyText color={colors.white} fontSize={12} fontWeight={'normal'} text={location} />
+            </View>
+            <View style={styles.addressSectionContainer}>
+                <GeoCitiesBodyText color={colors.white} fontSize={12} fontWeight={'normal'} text={eventAddress} />
             </View>
             <View style={styles.imageContainer}>
                 <Image source={{ uri: imgSrc }} style={styles.image} />
@@ -63,11 +73,12 @@ function EventCard_DisplayLayer({
 
 function useDataLayer({ event }: { event: EventType }) {
     const navigation: any = useNavigation();
-    const { attendees, authorId, avatar, description, eventDate, title, userName } = event;
+    const { attendees, authorId, avatar, description, eventAddress, eventCity, eventDate, eventState, title, userName } = event;
     const { user } = useUser();
     const { _id } = user;
     const src = `${process.env.EXPO_PUBLIC_API_BASE_URI}get-avatar-by-user-id/${authorId}`;
     const imgSrc = `${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo/${avatar}`;
+    const location = `${eventCity}, ${eventState}`;
 
     function handleNavigate() {
         if (_id === authorId) {
@@ -82,9 +93,11 @@ function useDataLayer({ event }: { event: EventType }) {
     return {
         attendeeCount: attendees.length,
         description,
+        eventAddress,
         eventDate: convertToDate(eventDate),
         handleNavigate,
         imgSrc,
+        location,
         src,
         title,
         userName,
@@ -97,6 +110,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         paddingBottom: 20,
         paddingTop: 20,
+    },
+    addressSectionContainer: {
+        alignItems: 'center',
+        paddingTop: 10,
     },
     container: {
         paddingLeft: 10,
@@ -122,6 +139,10 @@ const styles = StyleSheet.create({
     imageContainer: {
         height: 350,
         paddingTop: 20,
+    },
+    locationSection: {
+        alignItems: 'center',
+        paddingTop: 10,
     },
     titleContainer: {
         alignItems: 'center',

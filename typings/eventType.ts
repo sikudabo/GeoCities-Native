@@ -4,6 +4,7 @@ export type EventType = {
     avatar: string;
     createdAt: number;
     description: string;
+    eventAddress: string;
     eventCity: string;
     eventDate: number;
     eventState: string;
