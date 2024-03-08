@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import { useFetchAllEvents } from "../../hooks/fetch-hooks";
+import { useUser } from "../../hooks/storage-hooks";
 import { EventType } from "../../typings";
 import { EventCard, GeoCitiesBodyText, GeoCitiesButton, LoadingIndicator, colors } from "../../components";
 
@@ -12,6 +13,7 @@ type EventsScreenDisplayLayerProps = {
     events: Array<EventType>;
     handleCreateEventPress: () => void;
     isLoading: boolean;
+    nearByEvents: Array<EventType>;
     setShowAllEvents: React.Dispatch<React.SetStateAction<boolean>>;
     showAllEvents: boolean;
 };
@@ -24,6 +26,7 @@ function EventsScreen_DisplayLayer({
     events,
     handleCreateEventPress,
     isLoading,
+    nearByEvents,
     setShowAllEvents,
     showAllEvents,
 }: EventsScreenDisplayLayerProps) {
@@ -56,18 +59,34 @@ function EventsScreen_DisplayLayer({
                             <View style={styles.headerActionButtonContainer}>
                                 <GeoCitiesButton buttonColor={showAllEvents ? colors.atlassianBlue : colors.hornetsTeal} onPress={() => setShowAllEvents(!showAllEvents)} text={showAllEvents ? "Show Nearby" : "Show All"} />
                             </View>
-                            <View style={styles.eventsContainer}>
-                                {events.map((event, index) => (
-                                    <View
-                                        key={index}
-                                        style={styles.eventCardContainer}
-                                    >
-                                        <EventCard 
-                                            event={event}
-                                        />
-                                    </View>
-                                ))}
-                            </View>
+                            {showAllEvents && (
+                                <View style={styles.eventsContainer}>
+                                    {events.map((event, index) => (
+                                        <View
+                                            key={index}
+                                            style={styles.eventCardContainer}
+                                        >
+                                            <EventCard 
+                                                event={event}
+                                            />
+                                        </View>
+                                    ))}
+                                </View>
+                            )}
+                            {!showAllEvents && (
+                                <View style={styles.eventsContainer}>
+                                    {nearByEvents.map((event, index) => (
+                                        <View
+                                            key={index}
+                                            style={styles.eventCardContainer}
+                                        >
+                                            <EventCard 
+                                                event={event}
+                                            />
+                                        </View>
+                                    ))}
+                                </View>
+                            )}
                         </View>
                     )}
                 </ScrollView>
@@ -79,7 +98,9 @@ function EventsScreen_DisplayLayer({
 function useDataLayer({ navigation }: EventsScreenProps) {
     const { data: events, isLoading } = useFetchAllEvents();
     const [showAllEvents, setShowAllEvents] = useState(true);
-    console.log('The events are:', events);
+    const { user } = useUser();
+    const { locationState } = user;
+    const nearByEvents = typeof events !== 'undefined' && events.length > 0 ? events.filter((event: EventType) => event.eventState === locationState) : [];
 
     function handleCreateEventPress() {
         navigation.navigate('CreateEventScreen');
@@ -89,6 +110,7 @@ function useDataLayer({ navigation }: EventsScreenProps) {
         events: isLoading || typeof events === 'undefined' ? [] : events,
         handleCreateEventPress,
         isLoading,
+        nearByEvents,
         setShowAllEvents,
         showAllEvents,
     };
