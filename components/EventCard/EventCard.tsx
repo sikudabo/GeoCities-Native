@@ -13,6 +13,7 @@ type EventCardDisplayLayerProps = {
     eventAddress: string;
     eventDate: string;
     handleNavigate: () => void;
+    handleViewAttendees: () => void;
     imgSrc: string;
     isAttending: boolean;
     isAuthor: boolean;
@@ -32,6 +33,7 @@ function EventCard_DisplayLayer({
     eventAddress,
     eventDate,
     handleNavigate,
+    handleViewAttendees,
     imgSrc,
     isAttending,
     isAuthor,
@@ -65,7 +67,7 @@ function EventCard_DisplayLayer({
                 <GeoCitiesBodyText color={colors.white} fontSize={12} fontWeight={'normal'} text={description} />
             </View>
             <View style={styles.actionsSectionContainer}>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={attendeeCount !== 0 ? handleViewAttendees : () => {}}>
                     <GeoCitiesButton buttonColor={colors.salmonPink} mode="text" text={`${attendeeCount} ${attendeeCount === 1 ? 'attendee' : 'attendees' }`} />
                 </TouchableOpacity>
                 {!isAuthor && (
@@ -73,9 +75,11 @@ function EventCard_DisplayLayer({
                         <GeoCitiesButton buttonColor={colors.salmonPink} mode="text" text={isAttending ? 'Unattend' : 'Attend'} />
                     </TouchableOpacity>
                 )}
-                <TouchableOpacity style={styles.deleteButtonContainer}>
-                    <GeoCitiesDeleteIcon color={colors.salmonPink} height={25} width={25} />
-                </TouchableOpacity>
+                {isAuthor && (
+                    <TouchableOpacity style={styles.deleteButtonContainer}>
+                        <GeoCitiesDeleteIcon color={colors.salmonPink} height={25} width={25} />
+                    </TouchableOpacity>
+                )}
             </View>
         </Surface>       
     );
@@ -85,7 +89,7 @@ function EventCard_DisplayLayer({
 
 function useDataLayer({ event }: { event: EventType }) {
     const navigation: any = useNavigation();
-    const { attendees, authorId, avatar, description, eventAddress, eventCity, eventDate, eventState, title, userName } = event;
+    const { attendees, authorId, avatar, description, eventAddress, eventCity, eventDate, eventState, _id: eventId, title, userName } = event;
     const { user } = useUser();
     const { _id } = user;
     const src = `${process.env.EXPO_PUBLIC_API_BASE_URI}get-avatar-by-user-id/${authorId}`;
@@ -104,12 +108,18 @@ function useDataLayer({ event }: { event: EventType }) {
         return;
     }
 
+    function handleViewAttendees() {
+        navigation.navigate('AttendingEventScreen', { eventId });
+        return;
+    }
+
     return {
         attendeeCount: attendees.length,
         description,
         eventAddress,
         eventDate: convertToDate(eventDate),
         handleNavigate,
+        handleViewAttendees,
         imgSrc,
         isAttending,
         isAuthor,
