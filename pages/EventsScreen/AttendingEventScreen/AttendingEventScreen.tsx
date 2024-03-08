@@ -109,6 +109,8 @@ const styles = StyleSheet.create({
         paddingBottom: 20,
     },
     usersSection: {
+        paddingLeft: 10,
+        paddingRight: 10,
         paddingTop: 20,
     },
 });
