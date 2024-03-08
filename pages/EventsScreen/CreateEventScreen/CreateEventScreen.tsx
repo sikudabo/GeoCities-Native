@@ -27,6 +27,8 @@ type CreateEventScreenDisplayLayerProps = {
     handleEventDescriptionChange: (newDescription: string) => void;
     handleEventStateChange: (newState: string) => void;
     handleEventTitleChange: (newTitle: string) => void;
+    pickerIsOpen: boolean;
+    setPickerIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
     takePicture: () => void;
     title: string;
 }
@@ -48,6 +50,8 @@ function CreateEventScreen_DisplayLayer({
     handleEventDateChange,
     handleEventStateChange,
     handleEventTitleChange,
+    pickerIsOpen,
+    setPickerIsOpen,
     takePicture,
     title,
 }: CreateEventScreenDisplayLayerProps) {
@@ -60,6 +64,150 @@ function CreateEventScreen_DisplayLayer({
                 <View style={styles.headerTitleContainer}>
                     <GeoCitiesBodyText color={colors.white} fontSize={20} fontWeight={900} text="Create Event" />
                 </View>
+            </View>
+            <View style={styles.formContainer}>
+                <Surface elevation={4} style={styles.form}>
+                    <SafeAreaView>
+                        <ScrollView>
+                            <View style={styles.inputContainer}>
+                                <TextInput
+                                    activeOutlineColor={colors.salmonPink}
+                                    editable={true}
+                                    keyboardType="default"
+                                    label="Title"
+                                    maxLength={75}
+                                    mode="outlined"
+                                    onChangeText={handleEventTitleChange}
+                                    outlineColor={colors.white}
+                                    placeholder="Title..."
+                                    returnKeyType="done"
+                                    style={styles.textInput}
+                                    value={title}
+                                    dense
+                                />
+                                <HelperText type="info">
+                                    Required* {`(${title.length} / 75)`}
+                                </HelperText>
+                            </View>
+                            <View style={styles.inputContainer}>
+                                <TextInput
+                                    activeOutlineColor={colors.salmonPink}
+                                    editable={true}
+                                    keyboardType="default"
+                                    label="Description"
+                                    maxLength={300}
+                                    mode="outlined"
+                                    numberOfLines={5}
+                                    onChangeText={handleEventDescriptionChange}
+                                    outlineColor={colors.white}
+                                    placeholder="Description..."
+                                    returnKeyType="done"
+                                    style={styles.textInputMulti}
+                                    value={description}
+                                    blurOnSubmit
+                                    dense
+                                    multiline
+                                />
+                                <HelperText type="info">
+                                    Required* {`(${description.length} / 300)`}
+                                </HelperText>
+                            </View>
+                            <View style={styles.inputContainer}>
+                                <TextInput
+                                    activeOutlineColor={colors.salmonPink}
+                                    editable={true}
+                                    keyboardType="default"
+                                    label="City"
+                                    mode="outlined"
+                                    onChangeText={handleEventCityChange}
+                                    outlineColor={colors.white}
+                                    placeholder="City..."
+                                    returnKeyType="done"
+                                    style={styles.textInput}
+                                    value={eventCity}
+                                    dense
+                                />
+                                <HelperText type="info">
+                                    Required*
+                                </HelperText>
+                            </View>
+                            <View style={styles.inputContainer}>
+                                <TextInput
+                                    activeOutlineColor={colors.salmonPink}
+                                    editable={true}
+                                    keyboardType="default"
+                                    label="State"
+                                    mode="outlined"
+                                    onChangeText={handleEventStateChange}
+                                    outlineColor={colors.white}
+                                    placeholder="State..."
+                                    returnKeyType="done"
+                                    style={styles.textInput}
+                                    value={eventState}
+                                    dense
+                                />
+                                <HelperText type="info">
+                                    Required*
+                                </HelperText>
+                            </View>
+                            <View style={styles.inputContainer}>
+                                <TextInput
+                                    activeOutlineColor={colors.salmonPink}
+                                    editable={true}
+                                    keyboardType="default"
+                                    label="Address"
+                                    mode="outlined"
+                                    onChangeText={handleEventAddressChange}
+                                    outlineColor={colors.white}
+                                    placeholder="Address..."
+                                    returnKeyType="done"
+                                    style={styles.textInput}
+                                    value={eventAddress}
+                                    dense
+                                />
+                                <HelperText type="info">
+                                    Required*
+                                </HelperText>
+                            </View>
+                            {!pickerIsOpen && (
+                                <View style={styles.inputContainer}>
+                                    <GeoCitiesButton buttonColor={colors.babyBlue} icon="calendar" onPress={() => setPickerIsOpen(true)} text="Date" textColor={colors.white} />
+                                    <HelperText type="info">
+                                        Required* (Select a date)
+                                    </HelperText>
+                                </View>
+                            )}
+                            {pickerIsOpen && (
+                                <View>
+                                    <GeoCitiesButton
+                                        buttonColor={colors.babyBlue}
+                                        onPress={() => setPickerIsOpen(false)}
+                                        text="Press to confirm date"
+                                        textColor={colors.white}
+                                    />
+                                    <DateTimePicker
+                                        accentColor={colors.white}
+                                        display="spinner"
+                                        minimumDate={new Date()}
+                                        mode="date"
+                                        onChange={handleEventDateChange}
+                                        testID="dateTimePicker"
+                                        value={new Date(eventDate)}
+                                    />
+                                </View>
+                            )}
+                            <View style={styles.inputContainer}>
+                                <GeoCitiesButton buttonColor={colors.crimson} icon="camera" onPress={takePicture} text="Event Avatar" />
+                                <HelperText type="info">
+                                    Required* (Photo for event)
+                                </HelperText>
+                            </View>
+                            <View style={styles.submitButtonContainer}>
+                                <GeoCitiesButton buttonColor={colors.salmonPink} text="Submit" />
+                            </View>
+                        </ScrollView>
+                    </SafeAreaView>
+                </Surface>
             </View>
         </View>
     );
@@ -76,6 +224,7 @@ function useDataLayer({ navigation }: CreateEventScreenProps) {
     const [eventState, setEventState] = useState('');
     const [photoName, setPhotoName] = useState('');
     const [photoUri, setPhotoUri] = useState<Blob | null>(null);
+    const [pickerIsOpen, setPickerIsOpen] = useState<boolean>(false);
     const [title, setEventTitle] = useState('');
     const userName = `${firstName} ${lastName}`;
 
@@ -143,6 +292,8 @@ function useDataLayer({ navigation }: CreateEventScreenProps) {
         handleEventDateChange,
         handleEventStateChange,
         handleEventTitleChange,
+        pickerIsOpen,
+        setPickerIsOpen,
         takePicture,
         title,
     };
@@ -157,6 +308,16 @@ const styles = StyleSheet.create({
         height: '100%',
         paddingTop: 20,
     },
+    formContainer: {
+        paddingLeft: 10,
+        paddingRight: 10,
+    },
+    form: {
+        borderRadius: 20,
+        height: '80%',
+        paddingLeft: 10,
+        paddingRight: 10,
+    },
     header: {
         alignItems: 'center',
         display: 'flex',
@@ -168,5 +329,18 @@ const styles = StyleSheet.create({
     },
     headerTitleContainer: {
         flex: 2,
+    },
+    inputContainer: {
+        paddingTop: 20,
+    },
+    submitButtonContainer: {
+        paddingBottom: 20,
+        paddingTop: 20,
+    },
+    textInput: {
+        height: 50,
+    },
+    textInputMulti: {
+        height: 75,
     },
 });

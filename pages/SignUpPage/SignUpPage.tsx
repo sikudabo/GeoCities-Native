@@ -311,7 +311,7 @@ export default function SignUpPage() {
                                         textColor={colors.white}
                                     />
                                 </View>
-                            )}
+                        )}
                         <View style={styles.inputHolder}>
                             <GeoCitiesButton
                                 buttonColor={colors.geoCitiesGreen}
