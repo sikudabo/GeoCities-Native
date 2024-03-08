@@ -2,13 +2,14 @@ import { useCallback, useState } from 'react';
 import { RefreshControl, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import { useFetchHashtagFeedPosts } from '../../hooks/fetch-hooks';
 import { PostType } from '../../typings';
-import { colors, LoadingIndicator, PostCard } from '../../components';
+import { colors, GeoCitiesBodyText, LoadingIndicator, PostCard } from '../../components';
 
 type HashtagFeedProps = {
     route: any;
 };
 
 type HashtagFeedDisplayLayerProps = {
+    hashtag: string
     isLoading: boolean;
     onRefresh: () => void;
     posts: Array<PostType>;
@@ -25,6 +26,7 @@ export default function HashtagFeed({ route }: HashtagFeedProps) {
 }
 
 function HashtagFeed_DisplayLayer({
+    hashtag,
     isLoading,
     onRefresh,
     posts,
@@ -49,6 +51,9 @@ function HashtagFeed_DisplayLayer({
                         />
                     }
                 >
+                    <View style={styles.headerTitleContainer}>
+                        <GeoCitiesBodyText color={colors.white} fontSize={20} fontWeight={900} text={`#${hashtag}`} />
+                    </View>
                     <View style={styles.postsSectionContainer}>
                         {posts.map((post, index) => (
                             <PostCard 
@@ -76,6 +81,7 @@ function useDataLayer({ hashtag }: DataLayerProps) {
     }, []);
 
     return {
+        hashtag,
         isLoading,
         onRefresh,
         posts: typeof posts!== 'undefined' && !isLoading ? posts : [],
@@ -89,6 +95,10 @@ const styles = StyleSheet.create({
         height: '100%',
         paddingTop: 20,
         width: '100%',
+    },
+    headerTitleContainer: {
+        alignItems: 'center',
+        paddingBottom: 30,
     },
     postsSectionContainer: {
         paddingLeft: 10,
