@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Dropdown from 'react-native-paper-dropdown';
+import { GenericFormData } from 'axios';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { HelperText, Surface, TextInput } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
@@ -38,6 +39,7 @@ type CreateEventScreenDisplayLayerProps = {
     handleEventDescriptionChange: (newDescription: string) => void;
     handleEventStateChange: (newState: string) => void;
     handleEventTitleChange: (newTitle: string) => void;
+    handleSubmit: () => void;
     pickerIsOpen: boolean;
     setPickerIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
     setShowDropdown: React.Dispatch<React.SetStateAction<boolean>>;
@@ -63,6 +65,7 @@ function CreateEventScreen_DisplayLayer({
     handleEventDateChange,
     handleEventStateChange,
     handleEventTitleChange,
+    handleSubmit,
     pickerIsOpen,
     setPickerIsOpen,
     setShowDropdown,
@@ -220,7 +223,7 @@ function CreateEventScreen_DisplayLayer({
                                 </HelperText>
                             </View>
                             <View style={styles.submitButtonContainer}>
-                                <GeoCitiesButton buttonColor={colors.salmonPink} text="Submit" />
+                                <GeoCitiesButton buttonColor={colors.salmonPink} onPress={handleSubmit} text="Submit" />
                             </View>
                         </ScrollView>
                     </SafeAreaView>
@@ -310,6 +313,50 @@ function useDataLayer({ navigation }: CreateEventScreenProps) {
             setIsLoading(false);
             return;
         }
+
+        if (!avatar) {
+            setDialogMessage('You must upload an image for this event!');
+            handleDialogMessageChange(true);
+            setIsLoading(false);
+            return;
+        }
+
+        const fd: GenericFormData = new FormData();
+        const createdAt = new Date().getTime();
+        fd.append('authorId', authorId);
+        fd.append('createdAt', createdAt.toString());
+        fd.append('description', description);
+        fd.append('eventAddress', eventAddress);
+        fd.append('eventCity', eventCity);
+        fd.append('eventDate', eventDate.toString());
+        fd.append('eventState', eventState);
+        fd.append('title', title);
+        fd.append('userName', userName);
+        fd.append('avatar', { name: photoName, uri: photoUri, type: 'image' });
+
+        await putBinaryData({
+            data: fd,
+            uri: 'create-event',
+        }).then(res => {
+            const { isError, message } = res;
+            setIsLoading(false);
+            setDialogMessage(message);
+            setDialogTitle(isError? 'Uh Oh!' : 'Success!');
+            setIsError(isError);
+            handleDialogMessageChange(true);
+            if (!isError) {
+                navigation.navigate('EventsScreen');
+            }
+            return;
+        }).catch(err => {
+            console.log('Error creating a new Event:', err.message);
+            setIsLoading(false);
+            setDialogMessage('There was an error creating a new event. Please try again!');
+            setDialogTitle('Uh Oh!');
+            setIsError(true);
+            handleDialogMessageChange(true);
+            return;
+        });
     }
 
     async function takePicture() {
@@ -346,6 +393,7 @@ function useDataLayer({ navigation }: CreateEventScreenProps) {
         handleEventDateChange,
         handleEventStateChange,
         handleEventTitleChange,
+        handleSubmit,
         pickerIsOpen,
         setPickerIsOpen,
         setShowDropdown,
