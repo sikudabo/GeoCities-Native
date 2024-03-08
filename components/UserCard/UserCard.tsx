@@ -42,7 +42,7 @@ function UserCard_DisplayLayer({
                 <GeoCitiesBodyText color={colors.white} fontSize={16} fontWeight={500} text={fullName} />
             </View>
             <View style={styles.nameContainer}>
-                <GeoCitiesBodyText color={colors.white} fontSize={16} fontWeight={500} text={userAge.toString()} />
+                <GeoCitiesBodyText color={colors.white} fontSize={16} fontWeight={500} text={userAge.toString() + ' years old'} />
             </View>
             <View style={styles.nameContainer}>
                 <GeoCitiesBodyText color={colors.white} fontSize={16} fontWeight={500} text={cityStatePath} />

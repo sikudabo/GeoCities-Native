@@ -3,7 +3,9 @@ import { useNavigation } from '@react-navigation/native';
 import { Surface } from 'react-native-paper';
 import { EventType } from '../../typings';
 import { convertToDate } from '../../utils/helpers';
+import { postNonBinaryData } from '../../utils/requests';
 import { useUser } from '../../hooks/storage-hooks';
+import { useShowDialog, useShowLoader } from '../../hooks';
 import { GeoCitiesAvatar, GeoCitiesBodyText, GeoCitiesButton, GeoCitiesDeleteIcon, LoadingIndicator, colors } from '../../components';
 
 
@@ -12,6 +14,7 @@ type EventCardDisplayLayerProps = {
     description: string;
     eventAddress: string;
     eventDate: string;
+    handleAttend: (isAttending: boolean) => void;
     handleNavigate: () => void;
     handleViewAttendees: () => void;
     imgSrc: string;
@@ -32,6 +35,7 @@ function EventCard_DisplayLayer({
     description,
     eventAddress,
     eventDate,
+    handleAttend,
     handleNavigate,
     handleViewAttendees,
     imgSrc,
@@ -72,7 +76,7 @@ function EventCard_DisplayLayer({
                 </TouchableOpacity>
                 {!isAuthor && (
                     <TouchableOpacity style={styles.attendButtonSection}>
-                        <GeoCitiesButton buttonColor={colors.salmonPink} mode="text" text={isAttending ? 'Unattend' : 'Attend'} />
+                        <GeoCitiesButton buttonColor={colors.salmonPink} mode="text" onPress={() => handleAttend(isAttending ? false : true)} text={isAttending ? 'Unattend' : 'Attend'} />
                     </TouchableOpacity>
                 )}
                 {isAuthor && (
@@ -97,6 +101,37 @@ function useDataLayer({ event }: { event: EventType }) {
     const location = `${eventCity}, ${eventState}`;
     const isAttending = attendees.includes(_id) || authorId === _id;
     const isAuthor = authorId === _id;
+    const { setIsLoading } = useShowLoader();
+    const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError, } = useShowDialog();
+
+    async function handleAttend(isAttending: boolean) {
+        setIsLoading(true);
+
+        await postNonBinaryData({
+            data: {
+                eventId,
+                isAttending,
+                userId: _id,
+            },
+            uri: 'attend-event',
+        }).then(res => {
+            const { isError, message } = res;
+            setIsLoading(false);
+            setDialogMessage(message);
+            setDialogTitle(isError? 'Whoops!' : 'Success!');
+            setIsError(isError);
+            handleDialogMessageChange(true);
+            return;
+        }).catch(err => {
+            console.log(`There was an error ${isAttending ? 'attending' : 'unattending'} an event: ${err.message}`);
+            setIsLoading(false);
+            setIsError(true);
+            setDialogTitle('Whoops!');
+            setDialogMessage('There was an error. Please try again!');
+            handleDialogMessageChange(true);
+            return;
+        });
+    }
 
     function handleNavigate() {
         if (_id === authorId) {
@@ -118,6 +153,7 @@ function useDataLayer({ event }: { event: EventType }) {
         description,
         eventAddress,
         eventDate: convertToDate(eventDate),
+        handleAttend,
         handleNavigate,
         handleViewAttendees,
         imgSrc,
