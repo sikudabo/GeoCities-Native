@@ -10,6 +10,17 @@ import { useUser } from '../../../hooks/storage-hooks';
 import { useShowDialog, useShowLoader } from '../../../hooks';
 import { GeoCitiesBackArrowIcon, GeoCitiesBodyText, GeoCitiesButton, colors } from '../../../components';
 
+export type StateObjectType = {
+    label: string;
+    value: string;
+}
+
+let statesList: StateObjectType[] = []
+
+states.forEach(state => {
+    statesList.push({ label: state, value: state });
+});
+
 type CreateEventScreenProps = {
     navigation: any;
 }
@@ -29,6 +40,8 @@ type CreateEventScreenDisplayLayerProps = {
     handleEventTitleChange: (newTitle: string) => void;
     pickerIsOpen: boolean;
     setPickerIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    setShowDropdown: React.Dispatch<React.SetStateAction<boolean>>;
+    showDropdown: boolean;
     takePicture: () => void;
     title: string;
 }
@@ -52,6 +65,8 @@ function CreateEventScreen_DisplayLayer({
     handleEventTitleChange,
     pickerIsOpen,
     setPickerIsOpen,
+    setShowDropdown,
+    showDropdown,
     takePicture,
     title,
 }: CreateEventScreenDisplayLayerProps) {
@@ -132,19 +147,21 @@ function CreateEventScreen_DisplayLayer({
                                 </HelperText>
                             </View>
                             <View style={styles.inputContainer}>
-                                <TextInput
-                                    activeOutlineColor={colors.salmonPink}
-                                    editable={true}
-                                    keyboardType="default"
+                                <Dropdown
+                                    dropDownItemTextStyle={{
+                                        color: colors.white,
+                                    }}
+                                    dropDownItemSelectedTextStyle={{
+                                        color: colors.salmonPink,
+                                    }}
                                     label="State"
                                     mode="outlined"
-                                    onChangeText={handleEventStateChange}
-                                    outlineColor={colors.white}
-                                    placeholder="State..."
-                                    returnKeyType="done"
-                                    style={styles.textInput}
+                                    visible={showDropdown}
+                                    showDropDown={() => setShowDropdown(true)}
+                                    onDismiss={() => setShowDropdown(false)}
                                     value={eventState}
-                                    dense
+                                    setValue={handleEventStateChange}
+                                    list={statesList}
                                 />
                                 <HelperText type="info">
                                     Required*
@@ -221,12 +238,15 @@ function useDataLayer({ navigation }: CreateEventScreenProps) {
     const [eventAddress, setEventAddress] = useState('');
     const [eventCity, setEventCity] = useState('');
     const [eventDate, setEventDate] = useState(new Date().getTime());
-    const [eventState, setEventState] = useState('');
+    const [eventState, setEventState] = useState(states[0]);
     const [photoName, setPhotoName] = useState('');
     const [photoUri, setPhotoUri] = useState<Blob | null>(null);
     const [pickerIsOpen, setPickerIsOpen] = useState<boolean>(false);
+    const [showDropdown, setShowDropdown] = useState<boolean>(false);
     const [title, setEventTitle] = useState('');
     const userName = `${firstName} ${lastName}`;
+    const { setIsLoading } = useShowLoader();
+    const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError } = useShowDialog();
 
     function handleBackPress() {
         navigation.navigate('EventsScreen');
@@ -256,6 +276,40 @@ function useDataLayer({ navigation }: CreateEventScreenProps) {
 
     function handleEventTitleChange(newTitle: string) {
         setEventTitle(newTitle);
+    }
+
+    async function handleSubmit() {
+        setIsLoading(true);
+        setIsError(true);
+        setDialogTitle('Uh Oh!');
+
+        if (!description.trim()) {
+            setDialogMessage('You must enter a description!');
+            handleDialogMessageChange(true);
+            setIsLoading(false);
+            return;
+        }
+
+        if (description.length > 300) {
+            setDialogMessage('The group description must be 300 characters or less.');
+            handleDialogMessageChange(true);
+            setIsLoading(false);
+            return;
+        }
+
+        if (!eventAddress.trim()) {
+            setDialogMessage('You must enter an address for this event!');
+            handleDialogMessageChange(true);
+            setIsLoading(false);
+            return;
+        }
+
+        if (!eventCity.trim()) {
+            setDialogMessage('You must enter a city for this event!');
+            handleDialogMessageChange(true);
+            setIsLoading(false);
+            return;
+        }
     }
 
     async function takePicture() {
@@ -294,6 +348,8 @@ function useDataLayer({ navigation }: CreateEventScreenProps) {
         handleEventTitleChange,
         pickerIsOpen,
         setPickerIsOpen,
+        setShowDropdown,
+        showDropdown,
         takePicture,
         title,
     };
