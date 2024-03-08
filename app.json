@@ -16,7 +16,7 @@
     ],
     "ios": {
       "bundleIdentifier": "com.sikudabo.GeoGroups",
-      "supportsTablet": true,
+      "supportsTablet": false,
       "infoPlist": {
         "NSUserTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you.",
         "SKAdNetworkItems": [
