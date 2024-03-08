@@ -14,6 +14,8 @@ type EventCardDisplayLayerProps = {
     eventDate: string;
     handleNavigate: () => void;
     imgSrc: string;
+    isAttending: boolean;
+    isAuthor: boolean;
     location: string;
     src: string;
     title: string;
@@ -31,6 +33,8 @@ function EventCard_DisplayLayer({
     eventDate,
     handleNavigate,
     imgSrc,
+    isAttending,
+    isAuthor,
     location,
     src,
     title,
@@ -62,7 +66,15 @@ function EventCard_DisplayLayer({
             </View>
             <View style={styles.actionsSectionContainer}>
                 <TouchableOpacity>
-                    <GeoCitiesBodyText color={colors.white} fontSize={12} fontWeight='normal' text={`${attendeeCount} ${attendeeCount === 1 ? 'attendee' : 'attendees' }`} />
+                    <GeoCitiesButton buttonColor={colors.salmonPink} mode="text" text={`${attendeeCount} ${attendeeCount === 1 ? 'attendee' : 'attendees' }`} />
+                </TouchableOpacity>
+                {!isAuthor && (
+                    <TouchableOpacity style={styles.attendButtonSection}>
+                        <GeoCitiesButton buttonColor={colors.salmonPink} mode="text" text={isAttending ? 'Unattend' : 'Attend'} />
+                    </TouchableOpacity>
+                )}
+                <TouchableOpacity style={styles.deleteButtonContainer}>
+                    <GeoCitiesDeleteIcon color={colors.salmonPink} height={25} width={25} />
                 </TouchableOpacity>
             </View>
         </Surface>       
@@ -79,6 +91,8 @@ function useDataLayer({ event }: { event: EventType }) {
     const src = `${process.env.EXPO_PUBLIC_API_BASE_URI}get-avatar-by-user-id/${authorId}`;
     const imgSrc = `${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo/${avatar}`;
     const location = `${eventCity}, ${eventState}`;
+    const isAttending = attendees.includes(_id) || authorId === _id;
+    const isAuthor = authorId === _id;
 
     function handleNavigate() {
         if (_id === authorId) {
@@ -97,6 +111,8 @@ function useDataLayer({ event }: { event: EventType }) {
         eventDate: convertToDate(eventDate),
         handleNavigate,
         imgSrc,
+        isAttending,
+        isAuthor,
         location,
         src,
         title,
@@ -106,6 +122,7 @@ function useDataLayer({ event }: { event: EventType }) {
 
 const styles = StyleSheet.create({
     actionsSectionContainer: {
+        columnGap: 30,
         display: 'flex',
         flexDirection: 'row',
         paddingBottom: 20,
@@ -114,6 +131,10 @@ const styles = StyleSheet.create({
     addressSectionContainer: {
         alignItems: 'center',
         paddingTop: 10,
+    },
+    attendButtonSection: {
+        height: 40,
+        marginLeft: 'auto',
     },
     container: {
         paddingLeft: 10,
@@ -126,6 +147,10 @@ const styles = StyleSheet.create({
     },
     dateContainer: {
         marginLeft: 'auto',
+    },
+    deleteButtonContainer: {
+        marginLeft: 'auto',
+        paddingTop: 5,
     },
     headerContainer: {
         display: 'flex',
