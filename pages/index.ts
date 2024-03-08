@@ -1,3 +1,4 @@
+import AttendingEventScreen from "./EventsScreen/AttendingEventScreen/AttendingEventScreen";
 import BlockScreen from "./SettingsScreen/BlockScreen/BlockScreen";
 import BlockUsersScreen from "./GroupScreen/SettingsTab/BlockUserScreen/BlockUsersScreen";
 import BuildGroup from "./BuildGroup/BuildGroup";
@@ -19,6 +20,7 @@ import SignUpPage from "./SignUpPage/SignUpPage";
 import UserSearchScreen from "./UserSearchScreen/UserSearchScreen";
 
 export {
+    AttendingEventScreen,
     BlockScreen,
     BlockUsersScreen,
     BuildGroup,

@@ -11,6 +11,7 @@ import NewRulesScreen from './pages/GroupScreen/SettingsTab/NewRuleScreen/NewRul
 import { useShowLoader } from './hooks';
 import { useUser } from './hooks/storage-hooks';
 import {
+  AttendingEventScreen,
   BlockScreen,
   BlockUsersScreen,
   BuildGroup,
@@ -172,6 +173,10 @@ function App_DisplayLayer({
                   <Drawer.Screen 
                     component={CreateEventScreen}
                     name="CreateEventScreen"
+                  />
+                  <Drawer.Screen 
+                    component={AttendingEventScreen}
+                    name="AttendingEventScreen"
                   />
                 </>
               )}

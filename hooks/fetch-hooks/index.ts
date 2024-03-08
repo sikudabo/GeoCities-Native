@@ -2,6 +2,7 @@ import useFetchAllEvents from "./useFetchAllEvents";
 import useFetchAllGroups from "./useFetchAllGroups";
 import useFetchAllUsers from "./useFetchAllUsers";
 import useFetchBlockedUsers from "./useFetchBlockedUsers";
+import useFetchEventAttendees from "./useFetchEventAttendees";
 import useFetchFeedPosts from "./useFetchFeedPosts";
 import useFetchFollowers from "./useFetchFollowers";
 import useFetchFollowing from "./useFetchFollowing";
@@ -17,6 +18,7 @@ export {
     useFetchAllGroups,
     useFetchAllUsers,
     useFetchBlockedUsers,
+    useFetchEventAttendees,
     useFetchFeedPosts,
     useFetchFollowers,
     useFetchFollowing,
