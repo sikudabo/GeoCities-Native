@@ -1,0 +1,24 @@
+{
+  "cli": {
+    "version": ">= 5.1.0"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal"
+    },
+    "production": {}
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "appleId": "simironcrusher@icloud.com",
+        "ascAppId": "6479181193",
+        "appleTeamId": "LQG9FS9VF7"
+      }
+    }
+  }
+}

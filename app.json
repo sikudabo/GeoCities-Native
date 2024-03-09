@@ -42,8 +42,16 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "scheme": ["GeoCities", "fb345919778379017"],
+    "scheme": [
+      "GeoCities",
+      "fb345919778379017"
+    ],
     "facebookAppId": "345919778379017",
-    "facebookDisplayName": "GeoCities"
+    "facebookDisplayName": "GeoCities",
+    "extra": {
+      "eas": {
+        "projectId": "035e2e9f-014c-40cb-b245-eabbf93f5b34"
+      }
+    }
   }
 }
