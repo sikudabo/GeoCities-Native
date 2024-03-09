@@ -65,15 +65,10 @@ export default function SignUpPage() {
 
     async function takePicture() {
         await ImagePicker.requestCameraPermissionsAsync();
-        /* const result = await ImagePicker.launchCameraAsync({
-            allowsEditing: false,
+        const result = await ImagePicker.launchCameraAsync({
+            allowsEditing: true,
             aspect: [16, 9],
             cameraType: ImagePicker.CameraType.front,
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        }); */
-
-        const result = await ImagePicker.launchImageLibraryAsync({
-            allowsEditing: false,
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
         });
 
@@ -92,7 +87,7 @@ export default function SignUpPage() {
 
     async function facebookConfirmation() {
 
-        /* const response = await fbPromptAsync();
+        const response = await fbPromptAsync();
         
         if (response.type === 'success') {
             const { accessToken } = response?.authentication ? response.authentication : { accessToken: '' };
@@ -132,7 +127,7 @@ export default function SignUpPage() {
             setDialogMessage('You must log in with Facebook in order to verify your account.');
             handleDialogMessageChange(true);
             return;
-        } */
+        }
     }
 
     async function handleSubmit() {
@@ -192,16 +187,14 @@ export default function SignUpPage() {
         } */
 
         const fd: GenericFormData = new FormData();
-        // fd.append('firstName', firstName);
-        // fd.append('lastName', lastName);
-        fd.append('firstName', 'Jack');
-        fd.append('lastName', 'Ma');
+        fd.append('firstName', firstName);
+        fd.append('lastName', lastName);
         fd.append('email', email);
         fd.append('password', password); 
         fd.append('dob', String(birthday));
         fd.append('locationCity', city);
         fd.append('locationState', locationState);
-        // fd.append('fbId', fbId);
+        fd.append('fbId', fbId);
         fd.append('avatar', { name, uri, type: 'image' });
 
         await putBinaryData({
@@ -329,7 +322,7 @@ export default function SignUpPage() {
                                 buttonColor={colors.fbBlue}
                                 icon="facebook"
                                 onPress={facebookConfirmation}
-                                text="Facebook Login"
+                                text="Facebook Verification"
                                 textColor={colors.white}
                             />
                         </View>
