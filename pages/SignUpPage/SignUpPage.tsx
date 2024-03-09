@@ -177,14 +177,14 @@ export default function SignUpPage() {
             return;
         }
 
-        /* if (!firstName || !lastName) {
+        if (!firstName || !lastName) {
             setIsLoading(false);
             setIsError(true);
             setDialogTitle('Whoops!');
             setDialogMessage('You need to login with Facebook so that we can retrieve your first and last name to make sure you are a real human.');
             handleDialogMessageChange(true);
             return;
-        } */
+        }
 
         const fd: GenericFormData = new FormData();
         fd.append('firstName', firstName);
