@@ -10,7 +10,13 @@
     "preview": {
       "distribution": "internal"
     },
-    "production": {}
+    "production": {
+      "env": {
+        "EXPO_PUBLIC_API_BASE_URI" : "https://geocities-2d9809ea38c9.herokuapp.com/api/",
+        "EXPO_PUBLIC_API_FB_CODE" : "345919778379017"
+
+      }
+    }
   },
   "submit": {
     "production": {
