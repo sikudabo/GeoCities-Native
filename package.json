@@ -61,7 +61,9 @@
     "styled-components": "^6.1.1",
     "undefined": "expo-auth-session/providers/facebook",
     "valid-url": "^1.0.9",
-    "zustand": "^4.4.7"
+    "zustand": "^4.4.7",
+    "expo-face-detector": "~12.2.0",
+    "expo-camera": "~13.4.4"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

@@ -12,6 +12,7 @@ import { useUser } from '../../hooks/storage-hooks';
 import { putBinaryData } from '../../utils/requests';
 import { checkValidAge, checkValidEmail, formatUserBirthday } from '../../utils/helpers';
 import { GeoCitiesButton, GeoCitiesLogo, colors } from '../../components';
+import * as FaceDetector from 'expo-face-detector'; // This is a test of the face detector.
 
 export type StateObjectType = {
     label: string;
@@ -65,7 +66,7 @@ export default function SignUpPage() {
 
     async function takePicture() {
         await ImagePicker.requestCameraPermissionsAsync();
-        const result = await ImagePicker.launchCameraAsync({
+        const result = await ImagePicker.launchImageLibraryAsync({
             allowsEditing: true,
             aspect: [16, 9],
             cameraType: ImagePicker.CameraType.front,
@@ -77,6 +78,19 @@ export default function SignUpPage() {
         }
 
         const localUri = result.assets[0].uri;
+
+        await FaceDetector.detectFacesAsync(localUri, {
+            mode: FaceDetector.FaceDetectorMode.accurate,
+            runClassifications: FaceDetector.FaceDetectorClassifications.all,
+        }).then(result => {
+            if (!result.faces) {
+                setDialogMessage('You must enter a picture with a human face.');
+                setDialogTitle('Uh Oh!');
+                setIsError(true);
+                handleDialogMessageChange(true);
+                return;
+            }
+        });
         
         const filename = localUri.split('/').pop();
 
