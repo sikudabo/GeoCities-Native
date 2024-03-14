@@ -326,7 +326,7 @@ function useDataLayer({ navigation }: SettingsScreenProps) {
             runClassifications: FaceDetector.FaceDetectorClassifications.all,
         }).then(result => {
             if (result.faces.length === 0) {
-                setDialogMessage('You must enter a picture with a human face.');
+                setDialogMessage('We could not detect a human face in this picture. Please select another picture.');
                 setDialogTitle('Uh Oh!');
                 setIsError(true);
                 handleDialogMessageChange(true);
