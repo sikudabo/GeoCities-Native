@@ -85,7 +85,7 @@ export default function SignUpPage() {
             runClassifications: FaceDetector.FaceDetectorClassifications.all,
         }).then(result => {
             if (result.faces.length === 0) {
-                setDialogMessage('We could not detect a human face in this picture. Please select another picture.');
+                setDialogMessage('Picture must be from selfies camera roll. We could not detect a human face in this picture. Please select another picture.');
                 setDialogTitle('Uh Oh!');
                 setIsError(true);
                 handleDialogMessageChange(true);
@@ -329,7 +329,7 @@ export default function SignUpPage() {
                                 textColor={colors.white}
                             />
                             <HelperText type="info">
-                                Required* 
+                                Required* (Must be selfie picture from camera roll)
                             </HelperText>
                         </View>
                         <View style={styles.inputHolder}>

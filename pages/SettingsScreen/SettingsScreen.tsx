@@ -12,9 +12,8 @@ import { useFetchBlockedUsers } from '../../hooks/fetch-hooks';
 import { useUser } from '../../hooks/storage-hooks';
 import { UserType } from '../../typings';
 import { useShowDialog, useShowLoader } from '../../hooks';
-import { postNonBinaryData, postBinaryData } from '../../utils/requests';
+import { postNonBinaryData } from '../../utils/requests';
 import { GeoCitiesAvatar, GeoCitiesBodyText, GeoCitiesButton, LoadingIndicator, colors } from '../../components';
-import { GenericFormData } from 'axios';
 
 let statesList: StateObjectType[] = []
 
@@ -157,8 +156,6 @@ function useDataLayer({ navigation }: SettingsScreenProps) {
     const avatarPath = `${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo/${avatar}`;
     const { setIsLoading } = useShowLoader();
     const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError, } = useShowDialog();
-    const [name, setName] = useState('');
-    const [uri, setUri] = useState<Blob | null>(null);
 
     function handleBlockScreenPress() {
         navigation.navigate('ProfileBlockScreen', { _id, blockedList, email, locationCity, locationState });
@@ -322,17 +319,13 @@ function useDataLayer({ navigation }: SettingsScreenProps) {
         }
 
         const localUri = result.assets[0].uri;
-        const filename = localUri.split('/').pop();
-        setName(filename as any);
-        setUri(localUri as any);
-
 
         await FaceDetector.detectFacesAsync(localUri, {
             detectLandmarks: FaceDetector.FaceDetectorLandmarks.all,
             mode: FaceDetector.FaceDetectorMode.fast,
             runClassifications: FaceDetector.FaceDetectorClassifications.all,
-        }).then(currentResult => {
-            if (currentResult.faces.length === 0) {
+        }).then(result => {
+            if (result.faces.length === 0) {
                 setDialogMessage('We could not detect a human face in this picture. Please select another picture.');
                 setDialogTitle('Uh Oh!');
                 setIsError(true);
@@ -340,18 +333,12 @@ function useDataLayer({ navigation }: SettingsScreenProps) {
                 setIsLoading(false);
                 return;
             } else {
-                /*FileSystem.uploadAsync(`${process.env.EXPO_PUBLIC_API_BASE_URI}change-user-avatar/${_id}/${avatar}`, localUri, {
+                FileSystem.uploadAsync(`${process.env.EXPO_PUBLIC_API_BASE_URI}change-user-avatar/${_id}/${avatar}`, localUri, {
                     fieldName: 'avatar',
                     httpMethod: 'POST',
                     uploadType: FileSystem.FileSystemUploadType.MULTIPART,
-                })*/ 
-                const fd: GenericFormData = new FormData();
-                fd.append('avatar', { name, uri, type: 'image' });
-                postBinaryData({
-                    data: fd,
-                    uri: `change-user-avatar/${_id}/${avatar}`,
-                }).then((res) => {
-                    const { isError, message, updatedUser } = res;
+                }).then((response: any) => {
+                    const { isError, message, updatedUser } = JSON.parse(response.body);
                     
                     setIsLoading(false);
         
