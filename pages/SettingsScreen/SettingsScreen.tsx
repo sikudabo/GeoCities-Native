@@ -330,6 +330,7 @@ function useDataLayer({ navigation }: SettingsScreenProps) {
                 setDialogTitle('Uh Oh!');
                 setIsError(true);
                 handleDialogMessageChange(true);
+                setIsLoading(false);
                 return;
             }
         });
