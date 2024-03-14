@@ -12,8 +12,9 @@ import { useFetchBlockedUsers } from '../../hooks/fetch-hooks';
 import { useUser } from '../../hooks/storage-hooks';
 import { UserType } from '../../typings';
 import { useShowDialog, useShowLoader } from '../../hooks';
-import { postNonBinaryData } from '../../utils/requests';
+import { postNonBinaryData, postBinaryData } from '../../utils/requests';
 import { GeoCitiesAvatar, GeoCitiesBodyText, GeoCitiesButton, LoadingIndicator, colors } from '../../components';
+import { GenericFormData } from 'axios';
 
 let statesList: StateObjectType[] = []
 
@@ -156,6 +157,8 @@ function useDataLayer({ navigation }: SettingsScreenProps) {
     const avatarPath = `${process.env.EXPO_PUBLIC_API_BASE_URI}get-photo/${avatar}`;
     const { setIsLoading } = useShowLoader();
     const { handleDialogMessageChange, setDialogMessage, setDialogTitle, setIsError, } = useShowDialog();
+    const [name, setName] = useState('');
+    const [uri, setUri] = useState<Blob | null>(null);
 
     function handleBlockScreenPress() {
         navigation.navigate('ProfileBlockScreen', { _id, blockedList, email, locationCity, locationState });
@@ -319,48 +322,67 @@ function useDataLayer({ navigation }: SettingsScreenProps) {
         }
 
         const localUri = result.assets[0].uri;
+        const filename = localUri.split('/').pop();
+        setName(filename as any);
+        setUri(localUri as any);
+
 
         await FaceDetector.detectFacesAsync(localUri, {
             detectLandmarks: FaceDetector.FaceDetectorLandmarks.all,
             mode: FaceDetector.FaceDetectorMode.fast,
             runClassifications: FaceDetector.FaceDetectorClassifications.all,
-        }).then(result => {
-            if (result.faces.length === 0) {
+        }).then(currentResult => {
+            if (currentResult.faces.length === 0) {
                 setDialogMessage('We could not detect a human face in this picture. Please select another picture.');
                 setDialogTitle('Uh Oh!');
                 setIsError(true);
                 handleDialogMessageChange(true);
                 setIsLoading(false);
                 return;
-            }
-        });
-
-        await FileSystem.uploadAsync(`${process.env.EXPO_PUBLIC_API_BASE_URI}change-user-avatar/${_id}/${avatar}`, localUri, {
-            fieldName: 'avatar',
-            httpMethod: 'POST',
-            uploadType: FileSystem.FileSystemUploadType.MULTIPART,
-        }).then((response: any) => {
-            const { isError, message, updatedUser } = JSON.parse(response.body);
-            
-            setIsLoading(false);
-
-            if (!isError) {
-                setDialogMessage(message);
-                setDialogTitle('Success!');
-                setIsError(false);
-                handleDialogMessageChange(true);
-                let newUser = updatedUser;
-                newUser.isLoggedIn = true;
-                setUser(newUser);
-                return;
             } else {
-                setDialogMessage('There was an error changing your avatar image. Please try again!');
-                setDialogTitle('Uh Oh!');
-                setIsError(true);
-                handleDialogMessageChange(true);
-                return;
+                /*FileSystem.uploadAsync(`${process.env.EXPO_PUBLIC_API_BASE_URI}change-user-avatar/${_id}/${avatar}`, localUri, {
+                    fieldName: 'avatar',
+                    httpMethod: 'POST',
+                    uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+                })*/ 
+                const fd: GenericFormData = new FormData();
+                fd.append('avatar', { name, uri, type: 'image' });
+                postBinaryData({
+                    data: fd,
+                    uri: `change-user-avatar/${_id}/${avatar}`,
+                }).then((res) => {
+                    const { isError, message, updatedUser } = res;
+                    
+                    setIsLoading(false);
+        
+                    if (!isError) {
+                        setDialogMessage(message);
+                        setDialogTitle('Success!');
+                        setIsError(false);
+                        handleDialogMessageChange(true);
+                        let newUser = updatedUser;
+                        newUser.isLoggedIn = true;
+                        setUser(newUser);
+                        return;
+                    } else {
+                        setDialogMessage('There was an error changing your avatar image. Please try again!');
+                        setDialogTitle('Uh Oh!');
+                        setIsError(true);
+                        handleDialogMessageChange(true);
+                        return;
+                    }
+                }).catch(e => {
+                    setIsLoading(false);
+                    console.log('There was an error changing a user avatar:', e.message);
+                    setDialogMessage('There was an error changing your avatar. Please try again!');
+                    setDialogTitle('Uh Oh!');
+                    setIsError(true);
+                    handleDialogMessageChange(true);
+                    return;
+                });
             }
         }).catch(e => {
+            console.log('Error uploading image:', e.message);
             setIsLoading(false);
             console.log('There was an error changing a user avatar:', e.message);
             setDialogMessage('There was an error changing your avatar. Please try again!');
@@ -368,7 +390,7 @@ function useDataLayer({ navigation }: SettingsScreenProps) {
             setIsError(true);
             handleDialogMessageChange(true);
             return;
-        });   
+        });
     }
 
     return {
