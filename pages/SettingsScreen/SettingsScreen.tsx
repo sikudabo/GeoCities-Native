@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import Dropdown from 'react-native-paper-dropdown';
 import { TextInput } from 'react-native-paper';
+import * as FaceDetector from 'expo-face-detector';
 import * as FileSystem from 'expo-file-system'; 
 import * as ImagePicker from 'expo-image-picker';
 import { checkValidEmail } from '../../utils/helpers';
@@ -304,7 +305,7 @@ function useDataLayer({ navigation }: SettingsScreenProps) {
     async function takePicture() {
         setIsLoading(true);
         await ImagePicker.requestCameraPermissionsAsync();
-        const result = await ImagePicker.launchCameraAsync({
+        const result = await ImagePicker.launchImageLibraryAsync({
             allowsEditing: true,
             aspect: [4, 3],
             cameraType: ImagePicker.CameraType.front,
@@ -318,6 +319,20 @@ function useDataLayer({ navigation }: SettingsScreenProps) {
         }
 
         const localUri = result.assets[0].uri;
+
+        await FaceDetector.detectFacesAsync(localUri, {
+            detectLandmarks: FaceDetector.FaceDetectorLandmarks.all,
+            mode: FaceDetector.FaceDetectorMode.fast,
+            runClassifications: FaceDetector.FaceDetectorClassifications.all,
+        }).then(result => {
+            if (result.faces.length === 0) {
+                setDialogMessage('You must enter a picture with a human face.');
+                setDialogTitle('Uh Oh!');
+                setIsError(true);
+                handleDialogMessageChange(true);
+                return;
+            }
+        });
 
         await FileSystem.uploadAsync(`${process.env.EXPO_PUBLIC_API_BASE_URI}change-user-avatar/${_id}/${avatar}`, localUri, {
             fieldName: 'avatar',

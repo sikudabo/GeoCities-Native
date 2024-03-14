@@ -80,10 +80,11 @@ export default function SignUpPage() {
         const localUri = result.assets[0].uri;
 
         await FaceDetector.detectFacesAsync(localUri, {
-            mode: FaceDetector.FaceDetectorMode.accurate,
+            detectLandmarks: FaceDetector.FaceDetectorLandmarks.all,
+            mode: FaceDetector.FaceDetectorMode.fast,
             runClassifications: FaceDetector.FaceDetectorClassifications.all,
         }).then(result => {
-            if (!result.faces) {
+            if (result.faces.length === 0) {
                 setDialogMessage('You must enter a picture with a human face.');
                 setDialogTitle('Uh Oh!');
                 setIsError(true);
