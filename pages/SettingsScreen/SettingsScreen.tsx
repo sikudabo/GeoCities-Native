@@ -324,7 +324,7 @@ function useDataLayer({ navigation }: SettingsScreenProps) {
             detectLandmarks: FaceDetector.FaceDetectorLandmarks.all,
             mode: FaceDetector.FaceDetectorMode.fast,
             runClassifications: FaceDetector.FaceDetectorClassifications.all,
-        }).then(result => {
+        }).then(async (result) => {
             if (result.faces.length === 0) {
                 setDialogMessage('We could not detect a human face in this picture. Please select another picture.');
                 setDialogTitle('Uh Oh!');
@@ -333,7 +333,7 @@ function useDataLayer({ navigation }: SettingsScreenProps) {
                 setIsLoading(false);
                 return;
             } else {
-                FileSystem.uploadAsync(`${process.env.EXPO_PUBLIC_API_BASE_URI}change-user-avatar/${_id}/${avatar}`, localUri, {
+                await FileSystem.uploadAsync(`${process.env.EXPO_PUBLIC_API_BASE_URI}change-user-avatar/${_id}/${avatar}`, localUri, {
                     fieldName: 'avatar',
                     httpMethod: 'POST',
                     uploadType: FileSystem.FileSystemUploadType.MULTIPART,

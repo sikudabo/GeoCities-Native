@@ -2,7 +2,7 @@
   "expo": {
     "name": "GeoGroups",
     "slug": "GeoGroups",
-    "version": "1.0.9",
+    "version": "1.2.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
